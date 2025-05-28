@@ -1,0 +1,7 @@
+*.html
+*.parquet
+.ipynb_checkpoints
+*.pyc
+*.pickle
+*.pkl
+*.h5
