@@ -25,9 +25,9 @@ class GCN(nn.Module):
     when fed a normalized adjacency matrix.
     """
 
-    def __init__(self, in_features, units):
+    def __init__(self, num_features, units):
         super().__init__()
-        self.linear = nn.Linear(in_features, units)
+        self.linear = nn.Linear(num_features, units)
 
     def forward(self, inputs, adjacency):
         return adjacency @ self.linear(inputs)
@@ -36,6 +36,38 @@ def masked_average(batch, mask):
     batch = batch.masked_fill(mask[..., np.newaxis], 0)
     sizes = (~mask).sum(axis=1, keepdim=True)
     return batch.sum(axis=1) / sizes
+
+class OutputLayer(nn.Module):
+    def __init__(self, num_inputs):
+        super().__init__()
+        self.output_layer = nn.Sequential(
+            nn.Linear(num_inputs, 1)
+        )
+    
+    def forward(self, x):
+        x = self.output_layer(x)
+        return x
+    
+class DeepSetLayer(nn.Module):
+    def __init__(self, num_features=8, units=32):
+        super().__init__()
+        self.per_item_mlp = nn.Sequential(
+            nn.Linear(num_features, units),
+            nn.ReLU(),
+        )
+        self.global_mlp = nn.Sequential(
+            nn.Linear(units, units),
+            nn.ReLU()
+        )
+
+    def forward(self, x, mask=None):
+        x = self.per_item_mlp(x)
+        if mask is not None:
+            x = masked_average(x, mask)
+        else:
+            x = x.mean(axis=-2)
+        x = self.global_mlp(x)
+        return x
 
 
 # --------------------------------------------------
@@ -50,111 +82,89 @@ with open("pdg_mapping.json") as f:
 class DeepSet(nn.Module):
     def __init__(self, num_features=8, units=32):
         super().__init__()
-        self.per_item_mlp = nn.Sequential(
-            nn.Linear(num_features, units),
-            nn.ReLU(),
-        )
-        self.global_mlp = nn.Sequential(
-            nn.Linear(units, units),
-            nn.ReLU(),
-            nn.Linear(units, 1)
-        )
+        self.deep_set_layer = DeepSetLayer(num_features, units)
+        self.output_layer = OutputLayer(units)
 
     def forward(self, inputs, mask=None):
         x = inputs["feat"]
-        x = self.per_item_mlp(x)
-        if mask is not None:
-            x = masked_average(x, mask)
-        else:
-            x = x.mean(axis=-2)
-        x = self.global_mlp(x)
+        x = self.deep_set_layer(x, mask)
+        x = self.output_layer(x)
         return x
 
 
 class CombinedModel(nn.Module):
     def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
-        self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.deep_set = DeepSet(num_features=num_feat + embed_dim, units=units)
+        self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
+        self.deep_set_layer = DeepSetLayer(num_features=num_feat + embed_dim, units=units)
+        self.output_layer = OutputLayer(units)
 
     def forward(self, inputs, mask=None):
         pdg = inputs["pdg"]
         feat = inputs["feat"]
-        emb = self.embedding(pdg)
+        emb = self.embedding_layer(pdg)
         x = torch.cat([feat, emb], -1)
-        return self.deep_set(dict(feat=x), mask=mask)
 
-class CombinedModel_wGCN(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
-        super().__init__()
-        self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.deep_set = DeepSet_GCN(num_features=num_feat + embed_dim, units=units)
-
-    def forward(self, inputs, mask=None):
-        pdg = inputs["pdg"]
-        feat = inputs["feat"]
-        emb = self.embedding(pdg)
-        x = torch.cat([feat, emb], -1)
-        return self.deep_set(dict(feat=x, adj=inputs["adj"]), mask=mask)
-
-class OutputLayer(nn.Module):
-    def __init__(self, num_inputs):
-        self.output_layer = nn.Sequential(
-            nn.Linear(num_inputs, 1)
-        )
+        x = self.deep_set_layer(x, mask)
+        x = self.output_layer(x)
+        return x
     
-    def forward(self):
-        return  self.output_layer
-
-
 class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
     """
-    def __init__(self, in_features, units=32):
+    def __init__(self, num_features=8, units=32):
         super().__init__()
-        self.gcn = GCN(in_features, units)
+        self.gcn_layer = GCN(num_features, units)
+        self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs):
+    def forward(self, inputs, mask=None):
         adj = inputs["adj"]
         feat = inputs["feat"]
         adj = normalize_adjacency(adj)
-        return self.gcn(feat, adj)
+        x = self.gcn_layer(feat, adj)
+        x = self.output_layer(x)
+        return x
 
 class DeepSet_GCN(nn.Module):
     def __init__(self, num_features=8, units=32):
         super().__init__()
-        self.gcn = GCN(units, units)
-        self.per_item_mlp = nn.Sequential(
-            nn.Linear(num_features, units),
-            nn.ReLU()
-        )
-        self.global_mlp = nn.Sequential(
-            nn.Linear(units, units),
-            nn.ReLU(),
-            nn.Linear(units, 1)
-        )
+        self.gcn_layer = GCN(num_features, units)
+        self.deep_set_layer = DeepSetLayer(units, units)
+        self.output_layer = OutputLayer(units)
 
     def forward(self, inputs, mask=None):
-        feat= inputs["feat"]
+        x = inputs["feat"]
+        adj = inputs["adj"]
+        adj = normalize_adjacency(adj)
+        x = self.gcn_layer(x, adj)
+        x = self.deep_set_layer(x, mask)
+        
+        x = self.output_layer(x)
+        return x
+    
+    
+class CombinedModel_wGCN(nn.Module):
+    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        super().__init__()
+        self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
+        self.gcn_layer = GCN(num_feat + embed_dim, units)
+        self.deep_set_layer = DeepSetLayer(units, units)
+        self.output_layer = OutputLayer(units)
+
+    def forward(self, inputs, mask=None):
+        pdg = inputs["pdg"]
+        feat = inputs["feat"]
         adj = inputs["adj"]
         adj = normalize_adjacency(adj)
 
-        x = self.per_item_mlp(feat) # batch x particles x units
-        x = self.gcn(x, adj) # batch x particles x units
-
-        if mask is not None:
-            x = masked_average(x, mask)
-        else:
-            x = x.mean(axis=-2)
-        x = self.global_mlp(x)
+        emb = self.embedding_layer(pdg)
+        x = torch.cat([feat, emb], -1)
+        x = self.gcn_layer(x, adj)
+        x = self.deep_set_layer(x, mask)
+        x = self.output_layer(x)
         return x
 
-
-
-
-
-    
 
 def from_config(config):
     """
