@@ -108,7 +108,8 @@ class CombinedModel(nn.Module):
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
         return x
-    
+
+# This does not work
 class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
