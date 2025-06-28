@@ -93,7 +93,10 @@ After processing all the data, we are now able to analyse the detection of the e
 The three informations that Belle II detectors can provide are about Momentum, Energy, and PID probability. In most cases only two of them are available for a given particle. Most particles can not survive long enough to be detected. For this reason one needs to reconstruct these particles by measuring their decay products. 
 
 
+**Comments Vyron
 
+# note because we have nergy beams 7+4 we see the pz distribution a bump!
+# we use uneven energies because in this way the B mesons have time to fly and then we can do nice observation like CP-violation!
 
 
 
