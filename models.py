@@ -78,7 +78,7 @@ class DeepSetLayer(nn.Module):
 with open("pdg_mapping.json") as f:
     PDG_MAPPING = json.load(f)
 
-
+# This works!
 class DeepSet(nn.Module):
     def __init__(self, num_features=8, units=32):
         super().__init__()
@@ -91,7 +91,7 @@ class DeepSet(nn.Module):
         x = self.output_layer(x)
         return x
 
-
+# This works!
 class CombinedModel(nn.Module):
     def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
@@ -109,7 +109,7 @@ class CombinedModel(nn.Module):
         x = self.output_layer(x)
         return x
 
-# This does not work
+# This does not work!
 class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
@@ -126,7 +126,8 @@ class GraphNetwork(nn.Module):
         x = self.gcn_layer(feat, adj)
         x = self.output_layer(x)
         return x
-
+        
+# This works!
 class DeepSet_GCN(nn.Module):
     def __init__(self, num_features=8, units=32):
         super().__init__()
@@ -144,7 +145,7 @@ class DeepSet_GCN(nn.Module):
         x = self.output_layer(x)
         return x
     
-    
+# This works!
 class CombinedModel_wGCN(nn.Module):
     def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
