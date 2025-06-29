@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import torch
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 from utils import (
     load_data,
@@ -86,14 +87,10 @@ def main():
     torch.save(model.state_dict(), model_path / "state.pt")
     print("Model and training history saved to:", model_path)
 
-    try:
-        import matplotlib.pyplot as plt
-        df_history.plot()
-        plt.title("Training history")
-        plt.savefig(model_path / "history.png")
-        print("Training plot saved.")
-    except ImportError:
-        print("matplotlib not installed. Skipping plot.")
+    df_history.plot()
+    plt.title("Training history")
+    plt.savefig(model_path / "history.png")
+    print("History plot saved.")
 
 if __name__ == "__main__":
     main()
