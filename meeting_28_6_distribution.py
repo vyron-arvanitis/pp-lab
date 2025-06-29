@@ -1,5 +1,5 @@
-# TODO 01: [@Paul] Write the workbook in .py 
-# TODO 02: [@Paul] Make models work with OutputLayer class → create a separate branch
+# TODO 01: [@Paul] Write the workbook in .py -> Done
+# TODO 02: [@Paul] Make models work with OutputLayer class → create a separate branch -> Done
 
 # TODO 03: [@paul] Does it help to increase the number of layers — both Linear and GCN?
 
