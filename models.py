@@ -114,7 +114,7 @@ class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
     """
-    def __init__(self, num_features=8, units=32):
+    def __init__(self, num_features=7, units=32):
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.output_layer = OutputLayer(units)

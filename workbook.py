@@ -88,7 +88,7 @@ def main():
     print("Model and training history saved to:", model_path)
 
     df_history.plot()
-    plt.title("Training history")
+    plt.title("Deepset Combined GCN no 'p'")
     plt.savefig(model_path / "history.png")
     print("History plot saved.")
 
