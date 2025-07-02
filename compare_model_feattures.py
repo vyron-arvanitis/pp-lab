@@ -9,7 +9,7 @@ summary = {}
 x_axis_map = {
     "deepset_combined_wgcn": "all features",
     "deepset_combined_wgcn_no_E": "no E",
-    "deepset_combined_wgcn_no_p": "no p",
+    "deepset_combined_wgcn_no_p": r"no $\vec{p}$",
     "deepset_combined_wgcn_no_prodTime": "no prodTime",
     "deepset_combined_wgcn_no_x_y": "no x/y",
     "deepset_combined_wgcn_no_x_y_z": "no x/y/z",
