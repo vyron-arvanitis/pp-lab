@@ -49,7 +49,6 @@ print(summary_df)
 max_val_loss= summary_df["best_val_loss"].min()
 max_val_acc= summary_df["best_val_acc"].max()
 
-# Draw vertical line between them on y-axis at a fixed x position (e.g., to the right of the plot)
 
 
 # Plot the values
