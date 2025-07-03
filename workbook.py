@@ -20,11 +20,11 @@ from models import from_config
 
 def main():
     # --- Select Model ---
-    tag = "deepset_combined_wgcn_no_x"
+    tag = "deepset_combined_wgcn_normalize"
     print("Selected model: ", tag)
 
     # --- Configuration ---
-    feature_columns = ["y","z","energy","px", "py", "pz"]
+    feature_columns = ["prodTime","y","z","energy","px", "py", "pz"]
     dataset_path = "smartbkg_dataset_4k.parquet"
     pdg_map_path = "pdg_mapping.json"
     save_path = Path("saved_models")
@@ -68,7 +68,7 @@ def main():
     num_feat = len(feature_columns)
 
     config = {
-        "model_name": "deepset_combined_wgcn",
+        "model_name": "deepset_combined_wgcn_normalized",
         "units": 32,
         "num_feat": num_feat
     }

@@ -14,7 +14,9 @@ x_axis_map = {
     "deepset_combined_wgcn_no_prodTime": "no prodTime",
     "deepset_combined_wgcn_no_x_y": "no x/y",
     "deepset_combined_wgcn_no_x_y_z": "no x/y/z",
-    "deepset_combined_wgcn_no_x"     : "no x"
+    "deepset_combined_wgcn_no_x"     : "no x",
+    "deepset_combined_wgcn_normalize" : "norm",
+    "deepset_combined_wgcn_reversed" : "reversed"
 }
 
 
@@ -44,7 +46,7 @@ print(summary_df)
 
 # Get the maximum validation loss and validation accuracy 
 
-max_val_loss= summary_df["best_val_loss"].max()
+max_val_loss= summary_df["best_val_loss"].min()
 max_val_acc= summary_df["best_val_acc"].max()
 
 # Draw vertical line between them on y-axis at a fixed x position (e.g., to the right of the plot)
@@ -57,7 +59,7 @@ plt.scatter(x, summary_df["best_val_loss"], marker="o", label="Best Val Loss")
 plt.scatter(x, summary_df["best_val_acc"], marker="s", label="Best Val Acc")
 plt.xticks(x, summary_df["x_axis_mapping"], rotation=0, ha="center")
 
-plt.axhline(y=max_val_loss, color='red', linestyle='--', label='Max Val Loss')
+plt.axhline(y=max_val_loss, color='red', linestyle='--', label='Min Val Loss')
 plt.axhline(y=max_val_acc, color='blue', linestyle='--', label='Max Val Acc')
 
 plt.ylabel("Metric Value")
