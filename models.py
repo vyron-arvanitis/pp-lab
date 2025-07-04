@@ -168,6 +168,7 @@ class CombinedModel_wGCN(nn.Module):
         return x
 
 
+# Todo 09
 class CombinedModel_wGCN_Normalized(nn.Module):
     def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
@@ -190,6 +191,74 @@ class CombinedModel_wGCN_Normalized(nn.Module):
         inputs = self.normalize_inputs(inputs)
         x = self.model(inputs, mask)
         return x
+    
+# Todo 04
+class DeepSet_GCN_variable(nn.Module):
+    def _init_(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
+        super()._init_()
+
+        self.hidden_layers = hidden_layers
+        self.gcn_layers = gcn_layers
+        self.layer_in = layer_in
+
+        # Input layer
+        if layer_in == "linear":
+            self.input_layer = nn.Linear(num_features, units)
+        elif layer_in == "gcn":
+            self.input_layer = GCN(num_features, units)
+        else:
+            print("Error input layer")
+
+        # Hidden layers
+        self.layers = nn.ModuleList()
+        for i in range(hidden_layers):
+            if i in gcn_layers:
+                self.layers.append(GCN(units, units))
+            else:
+                self.layers.append(nn.Linear(units, units))
+
+        # Global MLP
+        self.global_mlp = nn.Sequential(
+            nn.Linear(units, 1)
+        )
+        
+    def forward(self, inputs, mask=None):
+        adj = inputs["adj"]
+        feat = inputs["feat"]
+
+        adj = normalize_adjacency(adj)
+
+        if self.layer_in == "linear":
+            x = F.relu(self.input_layer(feat))
+        elif self.layer_in == "gcn":
+            x = F.relu(self.input_layer(feat, adj))
+
+        for layer in self.layers:
+            if isinstance(layer, GCN):
+                x = F.relu(layer(x, adj))
+            else:
+                x = F.relu(layer(x))
+        
+        if mask is not None:
+            x = masked_average(x, mask)
+        else:
+            x = x.mean(axis=-2)
+            
+        return self.global_mlp(x)
+    
+    
+class CombinedModel_wGCN_variable(nn.Module):
+    def _init_(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        super()._init_()
+        self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
+        self.deep_set = DeepSet_GCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
+
+    def forward(self, inputs, mask=None):
+        pdg = inputs["pdg"]
+        feat = inputs["feat"]
+        emb = self.embedding(pdg)
+        x = torch.cat([feat, emb], -1)
+        return self.deep_set(dict(feat=x, adj=inputs["adj"]), mask=mask)
 
 
 def from_config(config):
@@ -202,7 +271,9 @@ def from_config(config):
         "gcn": GraphNetwork,
         "deepset_gcn": DeepSet_GCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
-        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized
+        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized,
+        "deepset_wgcn_variable": DeepSet_GCN_variable,
+        "deepset_combined_wgcn_variable": CombinedModel_wGCN_variable,
     }
     config = config.copy()
     return models[config.pop("model_name")](**config)
