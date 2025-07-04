@@ -171,7 +171,7 @@ class CombinedModel_wGCN(nn.Module):
         x = torch.cat([feat, emb], -1)
         x = self.gcn_layer(x, adj)
 
-        # Apply BatchNorm
+        # Apply Norm
         x = self.batch_norm(x.transpose(1, 2)).transpose(1, 2)
         x = self.dropout(x)  # Dropout after GCN
 
