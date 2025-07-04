@@ -65,12 +65,11 @@ def main():
     ]
 
     # --- Model config ---
-    num_feat = len(feature_columns)
 
     config = {
         "model_name": "deepset_combined_wgcn_normalized",
         "units": 32,
-        "num_feat": num_feat
+        "num_features": len(feature_columns)
     }
     with open(model_path / "config.json", "w") as f:
         json.dump(config, f)

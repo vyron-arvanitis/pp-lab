@@ -94,10 +94,10 @@ class DeepSet(nn.Module):
 
 # This works!
 class CombinedModel(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.deep_set_layer = DeepSetLayer(num_features=num_feat + embed_dim, units=units)
+        self.deep_set_layer = DeepSetLayer(num_features=num_features+ embed_dim, units=units)
         self.output_layer = OutputLayer(units)
 
     def forward(self, inputs, mask=None):
@@ -148,10 +148,10 @@ class DeepSet_GCN(nn.Module):
     
 # This works!
 class CombinedModel_wGCN(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.gcn_layer = GCN(num_feat + embed_dim, units)
+        self.gcn_layer = GCN(num_features + embed_dim, units)
         self.deep_set_layer = DeepSetLayer(units, units)
         self.output_layer = OutputLayer(units)
 
@@ -171,10 +171,10 @@ class CombinedModel_wGCN(nn.Module):
 
 # Todo 09
 class CombinedModel_wGCN_Normalized(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
         self.model = CombinedModel_wGCN(
-            num_feat=num_feat,
+            num_features=num_features,
             embed_dim=embed_dim,
             num_pdg_ids=num_pdg_ids,
             units=units
