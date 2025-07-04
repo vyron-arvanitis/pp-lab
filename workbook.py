@@ -77,7 +77,7 @@ def main():
     # --- Train model ---
     print("Training...")
     history = []
-    history = fit(model, dl_train, dl_val, epochs=10, history=history)
+    history = fit(model, dl_train, dl_val, epochs=10, history=history, weight_decay=1e-4)   # Adjusted weight decay so its a hyperparameters
 
     # --- Save history ---
     df_history = pd.DataFrame(history)

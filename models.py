@@ -147,10 +147,16 @@ class DeepSet_GCN(nn.Module):
     
 # This works!
 class CombinedModel_wGCN(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.gcn_layer = GCN(num_feat + embed_dim, units)
+
+        #  Add BatchNorm
+        self.batch_norm = nn.BatchNorm1d(units)
+        self.dropout = nn.Dropout(dropout_rate)  # Dropout layer defined here
+        # Note: Dropout is applied after the embedding layer and GCN layer
+        # This is to prevent overfitting by randomly dropping units during training
         self.deep_set_layer = DeepSetLayer(units, units)
         self.output_layer = OutputLayer(units)
 
@@ -161,8 +167,14 @@ class CombinedModel_wGCN(nn.Module):
         adj = normalize_adjacency(adj)
 
         emb = self.embedding_layer(pdg)
+        emb = self.dropout(emb)  # Apply dropout after the embeddings
         x = torch.cat([feat, emb], -1)
         x = self.gcn_layer(x, adj)
+
+        # Apply BatchNorm
+        x = self.batch_norm(x.transpose(1, 2)).transpose(1, 2)
+        x = self.dropout(x)  # Dropout after GCN
+
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
         return x
