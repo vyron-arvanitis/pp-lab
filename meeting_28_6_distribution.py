@@ -9,7 +9,7 @@
 
 # TODO 06: [@emanuele] How important is the masking in this case?-> this is done
 
-# TODO 07: [@moritz] Likely your model will show signs of overfitting. How can this be avoided?
+# TODO 07: [@moritz] Likely your model will show signs of overfitting. How can this be avoided?-> this is done
 
 # TODO 08: [@all] By taking the average over all hidden states we may lose information on the size of the event (number of particles). How could this information be included?
 
