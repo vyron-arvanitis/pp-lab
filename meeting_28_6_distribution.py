@@ -23,4 +23,4 @@
 
 # TODO 13: [@emanuele] Can you inspect the embedding layer for the PDG IDs? E.g. are similar particles embedded to similar vectors? (this one is nice)
 
-# TODO 14: [@all, moritz] Ideas for different model architectures?
+# TODO 14: [@all, moritz] Ideas for different model architectures?-> this is done
