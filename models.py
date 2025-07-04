@@ -130,7 +130,7 @@ class GraphNetwork(nn.Module):
         return x
         
 # This works!
-class DeepSet_GCN(nn.Module):
+class DeepSet_wGCN(nn.Module):
     def __init__(self, num_features=8, units=32):
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
