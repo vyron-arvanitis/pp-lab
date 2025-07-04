@@ -27,7 +27,7 @@ def map_np(array, mapping, fallback):
     return np_mapping[inv]
 
 
-def preprocess(df, pdg_mapping, feature_columns):
+def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
     """
     Preprocess data from pandas DataFrame and return dictionary of flat numpy arrays per event.
 
@@ -36,12 +36,21 @@ def preprocess(df, pdg_mapping, feature_columns):
         feature_columns (list): columns to use as input features
     """
     df = df.assign(pdg_mapped=map_np(df.pdg, pdg_mapping, fallback=len(pdg_mapping) + 1))
-    flat = {
+    if coordinates == "cartesian":
+        flat = {
         "features": df[feature_columns].to_numpy(),
         "pdg_mapped": df["pdg_mapped"].to_numpy(),
         "index": df["index"].to_numpy(),
         "mother": df["mother_index"].to_numpy(),
-    }
+        }
+    elif coordinates == "cylindrical":
+        flat = {
+        "features": transform_to_cylindrical(df)[feature_columns].to_numpy(),
+        "pdg_mapped": df["pdg_mapped"].to_numpy(),
+        "index": df["index"].to_numpy(),
+        "mother": df["mother_index"].to_numpy(),
+        }
+    
     data = {}
     for idx in df.groupby("event").indices.values():
         for k, array in flat.items():
@@ -237,3 +246,17 @@ def fit(model, dl_train, dl_val, epochs=50, device="cpu", history=None, patience
                 break
 
     return history
+
+def transform_to_cylindrical(df):
+        df = df.copy()
+
+        # Compute radial position and transverse momentum
+        x, y = df["x"].to_numpy(), df["y"].to_numpy()
+        px, py = df["px"].to_numpy(), df["py"].to_numpy()
+
+        df["r"] = np.sqrt(x**2 + y**2)
+        df["p_xy"] = np.sqrt(px**2 + py**2)
+
+        # Select and return processed features as a NumPy array or tensor
+        feats = df[["r", "z", "p_xy", "pz", "prodTime", "energy"]]
+        return feats

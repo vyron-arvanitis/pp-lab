@@ -1,0 +1,8 @@
+Model Validation Accuracies:
+
+deepset: 0.6266513302618143
+deepset_gcn: 0.6398486847780189
+deepset_combined: 0.7366944545385788
+deepset_combined_wgcn: 0.7631745776351617
+deepset_combined_extra_layer: 0.743700270141874
+deepset_combined_wgcn_extra_layer: 0.75418336963167

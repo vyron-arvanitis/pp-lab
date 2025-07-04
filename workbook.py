@@ -24,7 +24,7 @@ def main():
     print("Selected model: ", tag)
 
     # --- Configuration ---
-    feature_columns = ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"]
+    feature_columns = ["prodTime","x","y","z","energy","px", "py", "pz"]
     dataset_path = "smartbkg_dataset_4k.parquet"
     pdg_map_path = "pdg_mapping.json"
     save_path = Path("saved_models")
@@ -65,13 +65,15 @@ def main():
     ]
 
     # --- Model config ---
+
     config = {
     "model_name": "transformer",
     "embed_dim": 6,          # add embedding size 8 was better
     "dropout_rate": 0.17,     # add dropout     30 was better
     "num_heads": 4,          # add number of heads
     "num_layers": 2,         # add number of transformer layers
-    "units": 32
+    "units": 32,
+     "num_features": len(feature_columns)
     }   
     with open(model_path / "config.json", "w") as f:
         json.dump(config, f)
@@ -92,7 +94,7 @@ def main():
     print("Model and training history saved to:", model_path)
 
     df_history.plot()
-    plt.title("Training history")
+    plt.title("Deepset Combined GCN no 'p'")
     plt.savefig(model_path / "history.png")
     print("History plot saved.")
 

@@ -2,6 +2,7 @@ import json
 import numpy as np
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 def normalize_adjacency(adj):
     """
@@ -93,10 +94,10 @@ class DeepSet(nn.Module):
 
 # This works!
 class CombinedModel(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.deep_set_layer = DeepSetLayer(num_features=num_feat + embed_dim, units=units)
+        self.deep_set_layer = DeepSetLayer(num_features=num_features+ embed_dim, units=units)
         self.output_layer = OutputLayer(units)
 
     def forward(self, inputs, mask=None):
@@ -114,7 +115,7 @@ class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
     """
-    def __init__(self, num_features=8, units=32):
+    def __init__(self, num_features=7, units=32):
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.output_layer = OutputLayer(units)
@@ -147,10 +148,11 @@ class DeepSet_GCN(nn.Module):
     
 # This works!
 class CombinedModel_wGCN(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.gcn_layer = GCN(num_feat + embed_dim, units)
+        self.gcn_layer = GCN(num_features + embed_dim, units)
+        self.gcn_layer = GCN(num_features + embed_dim, units)
 
         #  Add BatchNorm
         self.batch_norm = nn.BatchNorm1d(units)
@@ -233,6 +235,99 @@ class TransformerModel(nn.Module):
         return x
 
 
+# Todo 09
+class CombinedModel_wGCN_Normalized(nn.Module):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        super().__init__()
+        self.model = CombinedModel_wGCN(
+            num_features=num_features,
+            embed_dim=embed_dim,
+            num_pdg_ids=num_pdg_ids,
+            units=units
+        )
+
+    def normalize_inputs(self, inputs):
+        x = inputs["feat"]
+        # x.shape = (batch_size, num_particles, num_features)
+        mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
+        std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+        x_norm = (x - mean) / std
+        return {**inputs, "feat": x_norm}
+
+    def forward(self, inputs, mask=None):
+        inputs = self.normalize_inputs(inputs)
+        x = self.model(inputs, mask)
+        return x
+    
+# Todo 04
+class DeepSet_wGCN_variable(nn.Module):
+    def __init__(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
+        super().__init__()
+
+        self.hidden_layers = hidden_layers
+        self.gcn_layers = gcn_layers
+        self.layer_in = layer_in
+
+        # Input layer
+        if layer_in == "linear":
+            self.input_layer = nn.Linear(num_features, units)
+        elif layer_in == "gcn":
+            self.input_layer = GCN(num_features, units)
+        else:
+            print("Error input layer")
+
+        # Hidden layers
+        self.layers = nn.ModuleList()
+        for i in range(hidden_layers):
+            if i in gcn_layers:
+                self.layers.append(GCN(units, units))
+            else:
+                self.layers.append(nn.Linear(units, units))
+
+        # Global MLP
+        self.global_mlp = nn.Sequential(
+            nn.Linear(units, 1)
+        )
+        
+    def forward(self, inputs, mask=None):
+        adj = inputs["adj"]
+        feat = inputs["feat"]
+
+        adj = normalize_adjacency(adj)
+
+        if self.layer_in == "linear":
+            x = F.relu(self.input_layer(feat))
+        elif self.layer_in == "gcn":
+            x = F.relu(self.input_layer(feat, adj))
+
+        for layer in self.layers:
+            if isinstance(layer, GCN):
+                x = F.relu(layer(x, adj))
+            else:
+                x = F.relu(layer(x))
+        
+        if mask is not None:
+            x = masked_average(x, mask)
+        else:
+            x = x.mean(axis=-2)
+            
+        return self.global_mlp(x)
+    
+    
+class CombinedModel_wGCN_variable(nn.Module):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        super().__init__()
+        self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
+        self.deep_set = DeepSet_GCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
+
+    def forward(self, inputs, mask=None):
+        pdg = inputs["pdg"]
+        feat = inputs["feat"]
+        emb = self.embedding(pdg)
+        x = torch.cat([feat, emb], -1)
+        return self.deep_set(dict(feat=x, adj=inputs["adj"]), mask=mask)
+
+
 def from_config(config):
     """
     Mapping of model_name to model (useful for streamlining studies)
@@ -243,8 +338,8 @@ def from_config(config):
         "gcn": GraphNetwork,
         "deepset_gcn": DeepSet_GCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
-        "transformer": TransformerModel
-
+        "transformer": TransformerModel,
+        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized,
     }
     config = config.copy()
     return models[config.pop("model_name")](**config)
