@@ -340,7 +340,7 @@ def from_config(config):
         "deepset_gcn": DeepSet_GCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
         "transformer": TransformerModel,
-        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized,
+        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized
     }
     config = config.copy()
     return models[config.pop("model_name")](**config)
