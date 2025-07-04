@@ -184,14 +184,14 @@ class CombinedModel_wGCN(nn.Module):
 
 
 class TransformerModel(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, num_heads=4, num_layers=2, dropout_rate=0.17):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, num_heads=4, num_layers=2, dropout_rate=0.17):
         super().__init__()
 
         # Particle type embedding
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
 
         # Linear projection of features + embeddings
-        self.input_proj = nn.Linear(num_feat + embed_dim, units)
+        self.input_proj = nn.Linear(num_features + embed_dim, units)
 
         # Transformer encoder
         encoder_layer = nn.TransformerEncoderLayer(
