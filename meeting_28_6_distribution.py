@@ -7,7 +7,7 @@
 
 # TODO 05: [@emanuele] Is it possible to use a standard MLP as well? How? -> this is done
 
-# TODO 06: [@emanuele] How important is the masking in this case?
+# TODO 06: [@emanuele] How important is the masking in this case?-> this is done
 
 # TODO 07: [@moritz] Likely your model will show signs of overfitting. How can this be avoided?
 
