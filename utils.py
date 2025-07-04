@@ -224,8 +224,8 @@ def transform_to_cylindrical(df):
         x, y = df["x"].to_numpy(), df["y"].to_numpy()
         px, py = df["px"].to_numpy(), df["py"].to_numpy()
 
-        df["r"] = np.sqrt(x*2 + y*2)
-        df["p_xy"] = np.sqrt(px*2 + py*2)
+        df["r"] = np.sqrt(x**2 + y**2)
+        df["p_xy"] = np.sqrt(px**2 + py**2)
 
         # Select and return processed features as a NumPy array or tensor
         feats = df[["r", "z", "p_xy", "pz", "prodTime", "energy"]]

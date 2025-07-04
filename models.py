@@ -2,6 +2,7 @@ import json
 import numpy as np
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 def normalize_adjacency(adj):
     """
@@ -193,9 +194,9 @@ class CombinedModel_wGCN_Normalized(nn.Module):
         return x
     
 # Todo 04
-class DeepSet_GCN_variable(nn.Module):
-    def _init_(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
-        super()._init_()
+class DeepSet_wGCN_variable(nn.Module):
+    def __init__(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
+        super().__init__()
 
         self.hidden_layers = hidden_layers
         self.gcn_layers = gcn_layers
@@ -248,8 +249,8 @@ class DeepSet_GCN_variable(nn.Module):
     
     
 class CombinedModel_wGCN_variable(nn.Module):
-    def _init_(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
-        super()._init_()
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        super().__init__()
         self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.deep_set = DeepSet_GCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
 
@@ -272,7 +273,7 @@ def from_config(config):
         "deepset_gcn": DeepSet_GCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
         "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized,
-        "deepset_wgcn_variable": DeepSet_GCN_variable,
+        "deepset_wgcn_variable": DeepSet_wGCN_variable,
         "deepset_combined_wgcn_variable": CombinedModel_wGCN_variable,
     }
     config = config.copy()

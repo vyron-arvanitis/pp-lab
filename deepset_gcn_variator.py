@@ -41,7 +41,7 @@ data["adj"] = [get_adj(index, mother) for index, mother in zip(data["index"], da
 
 
 config = {
-    "model_name": "deepset_gcn_variable",
+    "model_name": "deepset_wgcn_variable",
     "num_features": len(feature_columns),
     "units": 32,
     "hidden_layers": hidden_layers,
