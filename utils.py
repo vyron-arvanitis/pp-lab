@@ -150,9 +150,24 @@ def accuracy_fn(logits, y):
     return ((logits.squeeze().sigmoid() >= 0.5) == y).float().mean()
 
 
-def fit(model, dl_train, dl_val, epochs=10, device="cpu", history=None):
+def fit(model, dl_train, dl_val, epochs=50, device="cpu", history=None, patience=5, weight_decay=1e-5):
+    """
+    Train a model with optional early stopping.
+
+    Args:
+        model: PyTorch model to train
+        dl_train: DataLoader for training set
+        dl_val: DataLoader for validation set
+        epochs: Total number of epochs to train
+        device: Device to use ("cpu" or "cuda")
+        history: Existing history to continue training
+        patience: Number of epochs to wait for improvement before stopping
+    """
     model.to(device)
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=weight_decay) # Adam optimizer with weight decay as ahyperparameter
+
+    best_val_loss = float("inf")
+    patience_counter = 0
 
     def train_step(x, y, mask):
         model.train()
@@ -176,45 +191,60 @@ def fit(model, dl_train, dl_val, epochs=10, device="cpu", history=None):
             x = x.to(device)
         y = y.to(device)
         mask = mask.to(device)
-        return x, y , mask
+        return x, y, mask
 
     if history is None:
         history = []
+
     for epoch in range(epochs):
-        print(f"Epoch {epoch}")
+        print(f"Epoch {epoch + 1}/{epochs}")
+
+        # --- Training ---
         train_loss = []
         train_acc = []
-        val_loss = []
-        val_acc = []
         for i, (x, y, mask) in enumerate(dl_train):
             x, y, mask = to_device(x, y, mask)
             logits, loss = train_step(x, y, mask)
             train_loss.append(float(loss))
             train_acc.append(float(accuracy_fn(logits, y)))
-            print(
-                f"Batch {i:03d}/{len(dl_train)}, "
-                f"Train loss: {np.mean(train_loss):.3f}, "
-                f"Train accuracy: {np.mean(train_acc):.3f}",
-                end="\r" if i != len(dl_train) - 1 else ", ",
-                flush=True,
-            )
+
+        # --- Validation ---
+        val_loss = []
+        val_acc = []
         for x, y, mask in dl_val:
             x, y, mask = to_device(x, y, mask)
             logits, loss = test_step(x, y, mask)
             val_loss.append(float(loss))
             val_acc.append(float(accuracy_fn(logits, y)))
+
+        # --- Epoch summary ---
+        avg_train_loss = np.mean(train_loss)
+        avg_val_loss = np.mean(val_loss)
+        avg_train_acc = np.mean(train_acc)
+        avg_val_acc = np.mean(val_acc)
         print(
-            f"Validation loss: {np.mean(val_loss):.3f}, "
-            f"Validation accuracy: {np.mean(val_acc):.3f}"
+            f"Train loss: {avg_train_loss:.4f}, Train acc: {avg_train_acc:.4f} | "
+            f"Val loss: {avg_val_loss:.4f}, Val acc: {avg_val_acc:.4f}"
         )
-        history.append(
-            {
-                "loss": np.mean(train_loss),
-                "val_loss": np.mean(val_loss),
-                "acc": np.mean(train_acc),
-                "val_acc": np.mean(val_acc),
-            }
-        )
+
+        history.append({
+            "loss": avg_train_loss,
+            "val_loss": avg_val_loss,
+            "acc": avg_train_acc,
+            "val_acc": avg_val_acc,
+        })
+
+        # --- Early stopping logic ---
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            patience_counter = 0
+        else:
+            patience_counter += 1
+            print(f"Validation loss did not improve. Patience: {patience_counter}/{patience}")
+            if patience_counter >= patience:
+                print("Early stopping triggered.")
+                break
+
     return history
 
 def transform_to_cylindrical(df):
