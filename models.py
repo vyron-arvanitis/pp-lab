@@ -114,7 +114,7 @@ class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
     """
-    def __init__(self, num_features=8, units=32):
+    def __init__(self, num_features=7, units=32):
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.output_layer = OutputLayer(units)
@@ -168,6 +168,30 @@ class CombinedModel_wGCN(nn.Module):
         return x
 
 
+class CombinedModel_wGCN_Normalized(nn.Module):
+    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        super().__init__()
+        self.model = CombinedModel_wGCN(
+            num_feat=num_feat,
+            embed_dim=embed_dim,
+            num_pdg_ids=num_pdg_ids,
+            units=units
+        )
+
+    def normalize_inputs(self, inputs):
+        x = inputs["feat"]
+        # x.shape = (batch_size, num_particles, num_features)
+        mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
+        std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+        x_norm = (x - mean) / std
+        return {**inputs, "feat": x_norm}
+
+    def forward(self, inputs, mask=None):
+        inputs = self.normalize_inputs(inputs)
+        x = self.model(inputs, mask)
+        return x
+
+
 def from_config(config):
     """
     Mapping of model_name to model (useful for streamlining studies)
@@ -178,6 +202,7 @@ def from_config(config):
         "gcn": GraphNetwork,
         "deepset_gcn": DeepSet_GCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
+        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized
     }
     config = config.copy()
     return models[config.pop("model_name")](**config)
