@@ -319,7 +319,7 @@ class CombinedModel_wGCN_variable(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
         self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.deep_set = DeepSet_GCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
+        self.deep_set = DeepSet_wGCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
 
     def forward(self, inputs, mask=None):
         pdg = inputs["pdg"]
