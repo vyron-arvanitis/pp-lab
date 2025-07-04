@@ -180,6 +180,59 @@ class CombinedModel_wGCN(nn.Module):
         return x
 
 
+class TransformerModel(nn.Module):
+    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, num_heads=4, num_layers=2, dropout_rate=0.3):
+        super().__init__()
+
+        # Particle type embedding
+        self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
+
+        # Linear projection of features + embeddings
+        self.input_proj = nn.Linear(num_feat + embed_dim, units)
+
+        # Transformer encoder
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=units,
+            nhead=num_heads,
+            dim_feedforward=units * 2,
+            dropout=dropout_rate,
+            activation='relu'
+        )
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+
+        # Global pooling: mean over particle dimension
+        self.global_pool = nn.AdaptiveAvgPool1d(1)
+
+        # Output layer
+        self.output_layer = nn.Linear(units, 1)
+
+    def forward(self, inputs, mask=None):
+        pdg = inputs["pdg"]
+        feat = inputs["feat"]
+
+        # Embed particle types
+        emb = self.embedding_layer(pdg)
+
+        # Concatenate features and embeddings
+        x = torch.cat([feat, emb], dim=-1)
+
+        # Project to Transformer input size
+        x = self.input_proj(x)
+
+        # Apply Transformer encoder, batch first argument should be True
+        # Transformer expects [seq_len, batch, features], so we transpose
+        x = x.transpose(0, 1)
+        x = self.transformer_encoder(x)
+        x = x.transpose(0, 1)
+
+        # Global pooling (mean over particles)
+        x = x.mean(dim=1)
+
+        # Final classification
+        x = self.output_layer(x)
+        return x
+
+
 def from_config(config):
     """
     Mapping of model_name to model (useful for streamlining studies)
@@ -190,6 +243,8 @@ def from_config(config):
         "gcn": GraphNetwork,
         "deepset_gcn": DeepSet_GCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
+        "transformer": TransformerModel
+
     }
     config = config.copy()
     return models[config.pop("model_name")](**config)

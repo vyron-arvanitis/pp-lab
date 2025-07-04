@@ -20,7 +20,7 @@ from models import from_config
 
 def main():
     # --- Select Model ---
-    tag = "deepset_combined_wgcn"
+    tag = "transformer"
     print("Selected model: ", tag)
 
     # --- Configuration ---
@@ -66,9 +66,13 @@ def main():
 
     # --- Model config ---
     config = {
-        "model_name": "deepset_combined_wgcn",
-        "units": 32,
-    }
+    "model_name": "transformer",
+    "embed_dim": 6,          # add embedding size 8 was better
+    "dropout_rate": 0.17,     # add dropout     30 was better
+    "num_heads": 4,          # add number of heads
+    "num_layers": 2,         # add number of transformer layers
+    "units": 32
+    }   
     with open(model_path / "config.json", "w") as f:
         json.dump(config, f)
 
