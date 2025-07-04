@@ -181,7 +181,7 @@ class CombinedModel_wGCN(nn.Module):
 
 
 class TransformerModel(nn.Module):
-    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, num_heads=4, num_layers=2, dropout_rate=0.3):
+    def __init__(self, num_feat=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, num_heads=4, num_layers=2, dropout_rate=0.17):
         super().__init__()
 
         # Particle type embedding
@@ -201,7 +201,7 @@ class TransformerModel(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
         # Global pooling: mean over particle dimension
-        self.global_pool = nn.AdaptiveAvgPool1d(1)
+        #self.global_pool = nn.AdaptiveAvgPool1d(1)
 
         # Output layer
         self.output_layer = nn.Linear(units, 1)
