@@ -4,8 +4,8 @@ Your submitted code and your documentation both are part of your submission and 
 
 Below we list the requirements of what should be part of your lab report. When in doubt, please reach out to your advisor.
 
-- A basic introduction about the Belle II experiment and the problem you try to solve in this lab course.
-- A basic introduction about Deep Sets and Graph neural networks.
+- A basic introduction about the Belle II experiment and the problem you try to solve in this lab course.[@vyron]
+- A basic introduction about Deep Sets and Graph neural networks.[@paul]
 - A summary of the types of networks you were examining.
 - A summary describing how you approached the respective tasks.
 - A summary of the results and a discussion on possible issues with the approach taken in this lab course. In particular you should discuss a potential systematic bias that could be introduced by this method.
