@@ -34,10 +34,12 @@ class GCN(nn.Module):
     def forward(self, inputs, adjacency):
         return adjacency @ self.linear(inputs)
 
+
 def masked_average(batch, mask):
     batch = batch.masked_fill(mask[..., np.newaxis], 0)
     sizes = (~mask).sum(axis=1, keepdim=True)
     return batch.sum(axis=1) / sizes
+
 
 class OutputLayer(nn.Module):
     def __init__(self, num_inputs):
@@ -45,11 +47,12 @@ class OutputLayer(nn.Module):
         self.output_layer = nn.Sequential(
             nn.Linear(num_inputs, 1)
         )
-    
+
     def forward(self, x):
         x = self.output_layer(x)
         return x
-    
+
+
 class DeepSetLayer(nn.Module):
     def __init__(self, num_features=8, units=32):
         super().__init__()
@@ -80,6 +83,7 @@ class DeepSetLayer(nn.Module):
 with open("pdg_mapping.json") as f:
     PDG_MAPPING = json.load(f)
 
+
 # This works!
 class DeepSet(nn.Module):
     def __init__(self, num_features=8, units=32):
@@ -92,6 +96,7 @@ class DeepSet(nn.Module):
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
         return x
+
 
 # This works!
 class CombinedModel(nn.Module):
@@ -111,6 +116,7 @@ class CombinedModel(nn.Module):
         x = self.output_layer(x)
         return x
 
+
 # This does not work!
 class GraphNetwork(nn.Module):
     """
@@ -128,7 +134,8 @@ class GraphNetwork(nn.Module):
         x = self.gcn_layer(feat, adj)
         x = self.output_layer(x)
         return x
-        
+
+
 # This works!
 class DeepSet_wGCN(nn.Module):
     def __init__(self, num_features=8, units=32):
@@ -143,10 +150,11 @@ class DeepSet_wGCN(nn.Module):
         adj = normalize_adjacency(adj)
         x = self.gcn_layer(x, adj)
         x = self.deep_set_layer(x, mask)
-        
+
         x = self.output_layer(x)
         return x
-    
+
+
 # This works!
 class CombinedModel_wGCN(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3):
@@ -204,7 +212,7 @@ class TransformerModel(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
         # Global pooling: mean over particle dimension
-        #self.global_pool = nn.AdaptiveAvgPool1d(1)
+        # self.global_pool = nn.AdaptiveAvgPool1d(1)
 
         # Output layer
         self.output_layer = nn.Linear(units, 1)
@@ -260,7 +268,8 @@ class CombinedModel_wGCN_Normalized(nn.Module):
         inputs = self.normalize_inputs(inputs)
         x = self.model(inputs, mask)
         return x
-    
+
+
 # Todo 04
 class DeepSet_wGCN_variable(nn.Module):
     def __init__(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
@@ -290,7 +299,7 @@ class DeepSet_wGCN_variable(nn.Module):
         self.global_mlp = nn.Sequential(
             nn.Linear(units, 1)
         )
-        
+
     def forward(self, inputs, mask=None):
         adj = inputs["adj"]
         feat = inputs["feat"]
@@ -307,15 +316,15 @@ class DeepSet_wGCN_variable(nn.Module):
                 x = F.relu(layer(x, adj))
             else:
                 x = F.relu(layer(x))
-        
+
         if mask is not None:
             x = masked_average(x, mask)
         else:
             x = x.mean(axis=-2)
-            
+
         return self.global_mlp(x)
-    
-    
+
+
 class CombinedModel_wGCN_variable(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
@@ -338,10 +347,10 @@ def from_config(config):
         "deepset": DeepSet,
         "deepset_combined": CombinedModel,
         "gcn": GraphNetwork,
-        "deepset_gcn": DeepSet_GCN,
+        "deepset_gcn": DeepSet_wGCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
         "transformer": TransformerModel,
-        "deepset_combined_wgcn_normalized" :  CombinedModel_wGCN_Normalized
+        "deepset_combined_wgcn_normalized": CombinedModel_wGCN_Normalized
     }
     config = config.copy()
     return models[config.pop("model_name")](**config)
