@@ -236,6 +236,14 @@ class TransformerModel(nn.Module):
         return x
 
 
+def normalize_inputs(self, inputs):
+    x = inputs["feat"]
+    # x.shape = (batch_size, num_particles, num_features)
+    mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
+    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+    x_norm = (x - mean) / std
+    return {**inputs, "feat": x_norm}
+
 # Todo 09
 class CombinedModel_wGCN_Normalized(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
@@ -247,13 +255,6 @@ class CombinedModel_wGCN_Normalized(nn.Module):
             units=units
         )
 
-    def normalize_inputs(self, inputs):
-        x = inputs["feat"]
-        # x.shape = (batch_size, num_particles, num_features)
-        mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
-        std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
-        x_norm = (x - mean) / std
-        return {**inputs, "feat": x_norm}
 
     def forward(self, inputs, mask=None):
         inputs = self.normalize_inputs(inputs)
