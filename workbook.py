@@ -19,15 +19,26 @@ from utils import (
 from models import from_config
 
 def main():
+    feature_columns = ["prodTime","x","y","z","energy","px", "py", "pz"]
+
+    config = {
+    "model_name": "deepset_combined_wgcn_normalized",
+    "embed_dim": 6,          # add embedding size
+    "dropout_rate": 0.17,     # add dropout     30 was better
+    "num_heads": 4,          # add number of heads
+    "num_layers": 2,         # add number of transformer layers
+    "units": 32,
+    "num_features": len(feature_columns)
+    }   
+
     # --- Select Model ---
-    tag = "transformer"
+    tag = config["model_name"]
     print("Selected model: ", tag)
 
     # --- Configuration ---
-    feature_columns = ["prodTime","x","y","z","energy","px", "py", "pz"]
     dataset_path = "smartbkg_dataset_4k.parquet"
     pdg_map_path = "pdg_mapping.json"
-    save_path = Path("saved_models")
+    save_path = Path("saved_models_to_be_deleted")
     save_path.mkdir(exist_ok=True)
     model_path = save_path / tag
     model_path.mkdir(exist_ok=True)
@@ -66,15 +77,6 @@ def main():
 
     # --- Model config ---
 
-    config = {
-    "model_name": "transformer",
-    "embed_dim": 6,          # add embedding size
-    "dropout_rate": 0.17,     # add dropout     30 was better
-    "num_heads": 4,          # add number of heads
-    "num_layers": 2,         # add number of transformer layers
-    "units": 32,
-    "num_features": len(feature_columns)
-    }   
     with open(model_path / "config.json", "w") as f:
         json.dump(config, f)
 

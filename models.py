@@ -86,7 +86,7 @@ with open("pdg_mapping.json") as f:
 
 # This works!
 class DeepSet(nn.Module):
-    def __init__(self, num_features=8, units=32):
+    def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
         super().__init__()
         self.deep_set_layer = DeepSetLayer(num_features, units)
         self.output_layer = OutputLayer(units)
@@ -100,7 +100,7 @@ class DeepSet(nn.Module):
 
 # This works!
 class CombinedModel(nn.Module):
-    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32,  dropout_rate=0.3, num_heads=4, num_layers=2):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.deep_set_layer = DeepSetLayer(num_features=num_features+ embed_dim, units=units)
@@ -122,7 +122,7 @@ class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
     """
-    def __init__(self, num_features=7, units=32):
+    def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.output_layer = OutputLayer(units)
@@ -138,7 +138,7 @@ class GraphNetwork(nn.Module):
 
 # This works!
 class DeepSet_wGCN(nn.Module):
-    def __init__(self, num_features=8, units=32):
+    def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.deep_set_layer = DeepSetLayer(units, units)
@@ -157,7 +157,7 @@ class DeepSet_wGCN(nn.Module):
 
 # This works!
 class CombinedModel_wGCN(nn.Module):
-    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.gcn_layer = GCN(num_features + embed_dim, units)
@@ -244,7 +244,7 @@ class TransformerModel(nn.Module):
         return x
 
 
-def normalize_inputs(self, inputs):
+def normalize_inputs(inputs):
     x = inputs["feat"]
     # x.shape = (batch_size, num_particles, num_features)
     mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
@@ -254,7 +254,7 @@ def normalize_inputs(self, inputs):
 
 # Todo 09
 class CombinedModel_wGCN_Normalized(nn.Module):
-    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
         super().__init__()
         self.model = CombinedModel_wGCN(
             num_features=num_features,
@@ -265,7 +265,7 @@ class CombinedModel_wGCN_Normalized(nn.Module):
 
 
     def forward(self, inputs, mask=None):
-        inputs = self.normalize_inputs(inputs)
+        inputs = normalize_inputs(inputs)
         x = self.model(inputs, mask)
         return x
 
@@ -346,7 +346,6 @@ def from_config(config):
     models = {
         "deepset": DeepSet,
         "deepset_combined": CombinedModel,
-        "gcn": GraphNetwork,
         "deepset_gcn": DeepSet_wGCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
         "transformer": TransformerModel,
