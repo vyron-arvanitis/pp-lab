@@ -1,0 +1,22 @@
+\section{Theory}
+\subsection{Deep Sets}
+In many physical systems, such as collections of particles or events in high-energy physics, the data can be naturally represented as unordered sets. Traditional neural networks, however, are not inherently permutation-invariant. This means that they assume an order in their input. To address this, Deep Sets provide a principled way to process such set-structured data while maintaining invariance to the order of elements. Figure \ref{fig:deepset} visualizes the structure of a Deep Set model. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{chapters/theory/deep_set.png}
+    \caption{Schematic illustration of a Deep Set model.}
+    \label{fig:deepset}
+\end{figure}
+
+A Deep Set model operates by applying a shared function $\phi$ independently to each element in the set. This produces a new set of embeddings, which are then aggregated using a permutation-invariant operation such as sum, mean, or max. The aggregated result is passed through a second function $\rho$, typically implemented as a multilayer perceptron (MLP), to produce the final output:
+
+\begin{equation}
+    f(X) = \rho\left( \sum_{x \in X} \phi(x) \right)
+\end{equation}
+
+This structure ensures that the model respects the symmetry of sets. The theoretical foundation of Deep Sets is discussed in Zaheer et al., 2017, where it is shown that any function on a set that is invariant to permutations can be decomposed in this form.
+
+In our project, we use this architecture to model collections of particles, where the order of particles is physically irrelevant. The Deep Set model thus provides a natural and efficient baseline for learning from such data.
+
+\subsection{Graph Neural Networks}

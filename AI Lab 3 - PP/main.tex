@@ -1,0 +1,86 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry} % Reasonable margins
+\usepackage{lmodern} % Modern font
+\usepackage{graphicx} % For including images
+\usepackage{amsmath} % For math equations
+\usepackage{amsfonts} % Math fonts
+\usepackage{amssymb} % Math symbols
+\usepackage{booktabs} % Better tables
+\usepackage{lineno} % For line numbers if needed
+\usepackage{setspace} % For line spacing
+\usepackage{parskip} % Better paragraph spacing
+\usepackage{physics}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref} % For hyperlinks
+
+% Set line spacing to 1.5
+\onehalfspacing
+
+% Title information
+%\title{\textbf{Quantum Reservoir Computing}}\\
+%\author{Angelos Aslanidis}
+\date{\today}
+
+\begin{document}
+
+
+\begin{titlepage}
+    \centering
+    
+    % University and department
+    {\Large\scshape Ludwig-Maximilians-Universität München} \\[0.3cm]
+    {\large Faculty of Physics \\ 
+    AI in Physics Research Group} \\[1.5cm]
+    
+    % Horizontal rule with spacing
+    \vspace{0.4cm}
+    \rule{\textwidth}{1pt} \\[0.4cm]
+    
+    % Main title (two lines)
+    {\fontsize{22}{26}\selectfont\bfseries PP} \\[0.4cm]
+    
+    \rule{\textwidth}{1pt} \\[1.5cm]
+    
+    % Authors
+    \textbf{Group A} \\[0.3cm]
+    \begin{tabular}{c}
+        Vyron Arvanitis \\ 
+        Emanuele Poggi \\ 
+        Paul Hofmann \\ 
+        Moritz Heidtmann \\ 
+        Angelos Aslanidis
+    \end{tabular} \\[2cm]
+    
+    % Supervisor
+    \textbf{Supervisor} \\[0.3cm]
+    Nikolai Krug \\[1.5cm]
+    
+    % Date
+    {\large \today}
+    
+\end{titlepage}
+
+
+
+
+\tableofcontents
+\newpage
+\input{chapters/introduction/introduction}
+\input{chapters/theory/theory}
+\input{chapters/methodology/methodology}
+\input{chapters/Results/results}
+\input{chapters/conclusion/conclusion}
+%here we do \input{file.tex} 
+%here we do \input{file2.tex} 
+%here we do \input{file3.tex} 
+
+
+\newpage
+\appendix
+
+
+\bibliographystyle{plain}
+\bibliography{mybib}
+\end{document}
