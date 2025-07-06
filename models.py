@@ -5,6 +5,15 @@ from torch import nn
 import torch.nn.functional as F
 
 
+
+def normalize_inputs(inputs):
+    x = inputs["feat"]
+    # x.shape = (batch_size, num_particles, num_features)
+    mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
+    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+    x_norm = (x - mean) / std
+    return {**inputs, "feat": x_norm}
+
 def normalize_adjacency(adj):
     """
     Normalizes an adjacency matrix as proposed in Kipf & Welling (https://arxiv.org/abs/1609.02907)
@@ -21,6 +30,13 @@ def normalize_adjacency(adj):
     return adj.float() * coeffs
 
 
+
+def masked_average(batch, mask):
+    batch = batch.masked_fill(mask[..., np.newaxis], 0)
+    sizes = (~mask).sum(axis=1, keepdim=True)
+    return batch.sum(axis=1) / sizes
+
+
 class GCN(nn.Module):
     """
     Simple graph convolution. Equivalent to GCN from Kipf & Welling (https://arxiv.org/abs/1609.02907)
@@ -33,12 +49,6 @@ class GCN(nn.Module):
 
     def forward(self, inputs, adjacency):
         return adjacency @ self.linear(inputs)
-
-
-def masked_average(batch, mask):
-    batch = batch.masked_fill(mask[..., np.newaxis], 0)
-    sizes = (~mask).sum(axis=1, keepdim=True)
-    return batch.sum(axis=1) / sizes
 
 
 class OutputLayer(nn.Module):
@@ -84,7 +94,6 @@ with open("pdg_mapping.json") as f:
     PDG_MAPPING = json.load(f)
 
 
-# This works!
 class DeepSet(nn.Module):
     def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
         super().__init__()
@@ -98,7 +107,6 @@ class DeepSet(nn.Module):
         return x
 
 
-# This works!
 class CombinedModel(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32,  dropout_rate=0.3, num_heads=4, num_layers=2):
         super().__init__()
@@ -117,7 +125,6 @@ class CombinedModel(nn.Module):
         return x
 
 
-# This does not work!
 class GraphNetwork(nn.Module):
     """
     GCN based model with adjacency matrices and features as input
@@ -136,7 +143,6 @@ class GraphNetwork(nn.Module):
         return x
 
 
-# This works!
 class DeepSet_wGCN(nn.Module):
     def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
         super().__init__()
@@ -155,7 +161,6 @@ class DeepSet_wGCN(nn.Module):
         return x
 
 
-# This works!
 class CombinedModel_wGCN(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
         super().__init__()
@@ -215,7 +220,7 @@ class TransformerModel(nn.Module):
         # self.global_pool = nn.AdaptiveAvgPool1d(1)
 
         # Output layer
-        self.output_layer = nn.Linear(units, 1)
+        self.output_layer = OutputLayer(units)
 
     def forward(self, inputs, mask=None):
         pdg = inputs["pdg"]
@@ -243,16 +248,6 @@ class TransformerModel(nn.Module):
         x = self.output_layer(x)
         return x
 
-
-def normalize_inputs(inputs):
-    x = inputs["feat"]
-    # x.shape = (batch_size, num_particles, num_features)
-    mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
-    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
-    x_norm = (x - mean) / std
-    return {**inputs, "feat": x_norm}
-
-# Todo 09
 class CombinedModel_wGCN_Normalized(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
         super().__init__()
@@ -270,7 +265,6 @@ class CombinedModel_wGCN_Normalized(nn.Module):
         return x
 
 
-# Todo 04
 class DeepSet_wGCN_variable(nn.Module):
     def __init__(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
         super().__init__()

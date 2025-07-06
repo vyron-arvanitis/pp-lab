@@ -22,7 +22,7 @@ def main():
     feature_columns = ["prodTime","x","y","z","energy","px", "py", "pz"]
 
     config = {
-    "model_name": "deepset_combined_wgcn_normalized",
+    "model_name": "transformer",
     "embed_dim": 6,          # add embedding size
     "dropout_rate": 0.17,     # add dropout     30 was better
     "num_heads": 4,          # add number of heads
@@ -38,7 +38,7 @@ def main():
     # --- Configuration ---
     dataset_path = "smartbkg_dataset_4k.parquet"
     pdg_map_path = "pdg_mapping.json"
-    save_path = Path("saved_models_to_be_deleted")
+    save_path = Path("saved_models")
     save_path.mkdir(exist_ok=True)
     model_path = save_path / tag
     model_path.mkdir(exist_ok=True)
