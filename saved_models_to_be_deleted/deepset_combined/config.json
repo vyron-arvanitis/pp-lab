@@ -1,0 +1,1 @@
+{"model_name": "deepset_combined", "embed_dim": 6, "dropout_rate": 0.17, "num_heads": 4, "num_layers": 2, "units": 32, "num_features": 8}
