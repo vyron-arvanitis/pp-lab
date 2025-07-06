@@ -13,13 +13,7 @@ Below we list the requirements of what should be part of your lab report. When i
 - 1. --mlp[@emanuele: make it work] **norm**
 - 1. --Transformer **norm** [@vyron: evaluate transformer]
 - 1. --optimal[@avenger model] **norm**[@moritz,aggelos: evaluate it]
-- 1. [TODO:@vyron] include a { "embed_dim": 6,     **THIS IS DONE**
-- 1.     "dropout_rate": 0.17,     
-- 1.     "num_heads": 4,          
-- 1.     "num_layers": 2,         
-- 1.     "units": 32,
-- 1.     "num_features"
-- 1. }
+- 1. [TODO:@vyron] include a { "embed_dim": 6,"dropout_rate": 0.17,"num_heads": 4,"num_layers": 2,"units": 32,"num_features"} **THIS IS DONE**
 
 
 
