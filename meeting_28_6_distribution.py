@@ -19,7 +19,7 @@
 
 # TODO 11: [@all] Could one make use of some (approximate) symmetries in the data? (this one is nice)-> this is done
 
-# TODO 12: [@all] Both the aggregation over neighbors in the graph and over all items in the set are done with a sum — weighting all contributions equally. Could this be improved? (this one is nice)
+# TODO 12: [@NOT DONE] Both the aggregation over neighbors in the graph and over all items in the set are done with a sum — weighting all contributions equally. Could this be improved? (this one is nice)
 
 # TODO 13: [@emanuele] Can you inspect the embedding layer for the PDG IDs? E.g. are similar particles embedded to similar vectors? (this one is nice)
 
