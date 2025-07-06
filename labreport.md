@@ -11,7 +11,7 @@ Below we list the requirements of what should be part of your lab report. When i
 - 1. --deepset GCN **norm**[@paul]
 - 1. --deepset combined w GCN **norm** [@paul: fix bug]
 - 1. --mlp[@emanuele: make it work] **norm**
-- 1. --Transformer **norm** [@vyron: evaluate transformer]
+- 1. --Transformer **norm** [@vyron: evaluate transformer]  **THIS IS DONE**
 - 1. --optimal[@avenger model] **norm**[@moritz,aggelos: evaluate it]
 - 1. [TODO:@vyron] include a { "embed_dim": 6,"dropout_rate": 0.17,"num_heads": 4,"num_layers": 2,"units": 32,"num_features"} **THIS IS DONE**
 
