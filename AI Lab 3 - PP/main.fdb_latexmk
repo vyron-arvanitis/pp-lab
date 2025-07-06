@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1751815018.23211 "main.aux" "main.bbl" "main" 1751815019.31161 0
+["bibtex main"] 0 "main.aux" "main.bbl" "main" 1751816961.30914 -1
   "./mybib.bib" 1751814984.40277 432 08b3f98c22ac0d3131c150854fbb3ce4 ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1751815018.98628 1211 4aa80c25d09fafa6ca2eb957500c60e4 "pdflatex"
+  "main.aux" 1751816960.96098 1656 e586aa80fbbb3334c6d7013f4f291586 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1751815018.35152 "/Users/paulhofmann/Desktop/UNI/AI Lab/pp-lab-group-a/AI Lab 3 - PP/main.tex" "main.pdf" "main" 1751815019.31182 0
+["pdflatex"] 1751816960.12968 "/Users/paulhofmann/Desktop/UNI/AI Lab/pp-lab-group-a/AI Lab 3 - PP/main.tex" "main.pdf" "main" 1751816961.30927 0
   "/Users/paulhofmann/Desktop/UNI/AI Lab/pp-lab-group-a/AI Lab 3 - PP/main.tex" 1751814984.40089 2036 f3ae2679a1773e6bcbf542b1320b827c ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
@@ -124,13 +124,14 @@
   "chapters/conclusion/conclusion.tex" 1751814984.39685 21 5263826852d7c88eadf74b948137ff83 ""
   "chapters/introduction/introduction.tex" 1751814984.39756 23 0724ce7a131568ad239c1aac91dfb03b ""
   "chapters/methodology/methodology.tex" 1751814984.39815 21 c61facd64f227b5b6dcfd253c4dd39ad ""
+  "chapters/theory/cnn_vs_gcn.jpg" 1751815987.91281 28851 ab7738a4c0c343c20bf2dd541fe84a19 ""
   "chapters/theory/deep_set.png" 1751814984.39907 22081 b99cf6931a6a519d173db95b20a8edda ""
-  "chapters/theory/theory.tex" 1751815015.74014 1735 7226ebef47e4f7934f4d69647a092f5d ""
-  "main.aux" 1751815018.98628 1211 4aa80c25d09fafa6ca2eb957500c60e4 "pdflatex"
+  "chapters/theory/theory.tex" 1751816959.88189 3313 c5f0d32b1998afd7e5cae54b00856b05 ""
+  "main.aux" 1751816960.96098 1656 e586aa80fbbb3334c6d7013f4f291586 "pdflatex"
   "main.bbl" 1751815018.34855 49 0eba253fc001332e731e8aba3f23127b "bibtex main"
-  "main.out" 1751815018.9867 718 c00e89c64d3ac164806b5fa302a34121 "pdflatex"
+  "main.out" 1751816960.96182 718 c00e89c64d3ac164806b5fa302a34121 "pdflatex"
   "main.tex" 1751814984.40089 2036 f3ae2679a1773e6bcbf542b1320b827c ""
-  "main.toc" 1751815018.9869 488 da64d5f04343f8301726999032e016e8 "pdflatex"
+  "main.toc" 1751816960.96213 488 da64d5f04343f8301726999032e016e8 "pdflatex"
   (generated)
   "main.aux"
   "main.log"

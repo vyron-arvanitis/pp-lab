@@ -20,3 +20,19 @@ This structure ensures that the model respects the symmetry of sets. The theoret
 In our project, we use this architecture to model collections of particles, where the order of particles is physically irrelevant. The Deep Set model thus provides a natural and efficient baseline for learning from such data.
 
 \subsection{Graph Neural Networks}
+In contrast to Deep Set models, which treat the input as an unordered collection, Graph Neural Networks (GNNs) explicitly leverage relational information between data points. This is particularly important in our context, where particles are connected through a decay tree structure that naturally forms a graph. Each node in the graph represents a particle, and edges represent physical relationships (e.g., parent-child connections in the decay chain).
+
+In terms of Deep Sets, graph convolutions can be seen as permutation-equivariant operations. As long as the aggregation function (e.g., sum, mean, or max) is symmetric, the update remains invariant to the ordering of neighbors.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{chapters/theory/cnn_vs_gcn.jpg}
+	\caption{Analogy between CNNs and GCNs. In CNNs, pixels are updated based on spatial neighborhoods; in GCNs, nodes are updated based on graph neighborhoods.}
+	\label{fig:gcn}
+\end{figure}
+
+Figure \ref{fig:gcn} illustrates the analogy between Convolutional Neural Networks (CNNs) and Graph Convolutional Networks (GCNs). In CNNs, pixels are updated based on their spatial neighborhoods, while in GCNs, nodes are updated based on their graph neighborhoods. This allows GNNs to capture complex relationships and dependencies in the data, making them particularly suitable for tasks involving structured data like particle decays.
+
+% TODO add references:
+% See [arXiv:1703.06114](https://arxiv.org/abs/1703.06114) for a detailed discussion.
+% (figure from https://zhuanlan.zhihu.com/p/51990489)

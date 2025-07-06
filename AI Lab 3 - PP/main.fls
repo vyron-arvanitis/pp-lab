@@ -220,6 +220,15 @@ INPUT ./chapters/theory/deep_set.png
 INPUT ./chapters/theory/deep_set.png
 INPUT ./chapters/theory/deep_set.png
 INPUT ./chapters/theory/deep_set.png
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc
+INPUT ./chapters/theory/cnn_vs_gcn.jpg
+INPUT ./chapters/theory/cnn_vs_gcn.jpg
+INPUT ./chapters/theory/cnn_vs_gcn.jpg
+INPUT ./chapters/theory/cnn_vs_gcn.jpg
+INPUT ./chapters/theory/cnn_vs_gcn.jpg
 INPUT ./chapters/methodology/methodology.tex
 INPUT ./chapters/methodology/methodology.tex
 INPUT ./chapters/methodology/methodology.tex
@@ -235,10 +244,6 @@ INPUT ./chapters/conclusion/conclusion.tex
 INPUT ./chapters/conclusion/conclusion.tex
 INPUT ./chapters/conclusion/conclusion.tex
 INPUT chapters/conclusion/conclusion.tex
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc
 INPUT ./main.bbl
 INPUT ./main.bbl
 INPUT main.bbl
