@@ -1,3 +1,11 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{ai-lab-repo}
+Nikolai Krug.
+\newblock Preparation materials for particle physics lab group a.
+\newblock
+  \url{https://gitlab.physik.uni-muenchen.de/ai-lab/ss25/pp-lab-group-a/-/blob/main/preparation.md},
+  2025.
+\newblock Accessed: July 8, 2025.
 
 \end{thebibliography}
