@@ -1,7 +1,0 @@
-\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
-\contentsline {section}{\numberline {2}Theory}{2}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Deep Sets}{2}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Graph Neural Networks}{3}{subsection.2.2}%
-\contentsline {section}{\numberline {3}Methodology}{3}{section.3}%
-\contentsline {section}{\numberline {4}Results}{3}{section.4}%
-\contentsline {section}{\numberline {5}Conclusion}{3}{section.5}%
