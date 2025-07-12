@@ -1,0 +1,142 @@
+\section{The Belle experiment}
+
+The Belle experiment is a so-called \emph{B-Factory}, 
+a type of particle accelerator specifically designed to 
+produce large numbers of \emph{B mesons}. 
+These facilities operate with a center-of-mass energy tuned 
+to the \emph{$\Upsilon(4S)$ resonance}, 
+a state that decays almost exclusively 
+into pairs of $B$ and $\bar{B}$ mesons. 
+This selective production mechanism enables detailed studies 
+of $B$ meson decays, allowing physicists to investigate 
+phenomena such as \emph{CP violation}, rare decays, 
+and physics beyond the Standard Model. 
+The Belle~II experiment, located at the \emph{SuperKEKB collider in 
+Tsukuba, Japan}, is the successor to the original 
+Belle experiment and significantly improves on its 
+precision and data collection capabilities.
+
+Unlike proton-proton colliders (such as the LHC), Belle~II uses 
+electron-positron ($e^+e^-$) collisions. Electrons and positrons 
+are elementary particles with no internal structure, which offers 
+several advantages. First, their interactions are much cleaner, and 
+the background is easier to interpret—there is a notable absence of 
+complex hadronic activity such as jets. Moreover, the absence of 
+internal substructure allows us to precisely know the initial momenta 
+of the colliding particles, enabling accurate reconstruction of the 
+event kinematics. This precision is crucial for tuning the  
+aforementioned center-of-mass energy to specific resonances, 
+such as the $\Upsilon(4S)$.
+
+$B$ mesons are unstable particles that decay via the 
+weak interaction, and their decays can be classified into 
+three categories: hadronic, semileptonic, and rare  decays. 
+In \emph{hadronic decays}, the $B$ meson decays into only 
+hadrons, such as combinations of kaons ($K$), pions ($\pi$), 
+and other mesons. \emph{Semileptonic decays} involve 
+both hadrons and leptons, typically resulting in a final 
+state containing a charged lepton ($e^\pm$ or $\mu^\pm$), 
+a neutrino, and hadrons. \emph{Rare decays} may involve photons,
+multiple leptons, or other suppressed processes that are 
+especially sensitive to effects beyond the Standard Model.
+These decay modes provide a rich ground for studying CP 
+violation, flavor physics, and potential new physics.
+
+The Belle~II detector is structured as a layered system of 
+subdetectors (like an onion) built around the interaction point.
+These subdetectors are designed to detect and identify 
+the various particles produced in the collisions. 
+Closest to the interaction region is the Vertex Detector (VXD), 
+composed of the PiXel Detector (PXD) and Silicon 
+Vertex Detector (SVD), which provide precise tracking 
+information for reconstructing decay vertices. 
+Surrounding the VXD is the Central Drift Chamber (CDC), 
+responsible for tracking charged particles and measuring 
+their momenta and energy loss. 
+Particle identification is handled by the Time Of 
+Propagation (TOP) detector in the barrel region and the 
+Aerogel Ring Imaging Cherenkov (ARICH) detector in the 
+forward region.Photons and electrons are measured in the 
+Electromagnetic Calorimeter (ECL) via the production of showers,
+while muons and long-lived neutral kaons ($K_L^0$) are 
+identified in the outermost KLong and Muon (KLM) detector. 
+The entire setup is enclosed in a $1.5~T$ magnetic field provided 
+by a superconducting solenoid, which not only alligns the beams
+but also enables accurate momentum measurements. An overview 
+of the collider (figure~\ref{fig:belle-detector-overview} ) and the particles that can be identified in each 
+subdetector can be seen in table~\ref{table:belle-subdetectors}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{chapters/Belle_experiment/Overview_collider}
+    \caption{Closeup of the Belle~II detector indicating 
+    all the different subdetectors~\cite{belle2-image}.}
+    \label{fig:belle-detector-overview}
+\end{figure}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Subdetector} & \textbf{Main Purpose} \\
+\midrule
+PXD + SVD (VXD) & Track reconstruction near the IP, measures short-lived particles \\
+CDC             & Tracking of charged particles \\
+TOP / ARICH     & Particle identification (e.g. distinguish $\pi$, $K$, $p$) via Cherenkov radiation \\
+ECL             & Detection of electrons and photons (electromagnetic showers) \\
+KLM             & $\mu$ identification and detection of $K_L^0$ \\
+\bottomrule
+\end{tabular}
+\caption{Belle~II subdetectors and the particles they primarily detect.}
+\label{table:belle-subdetectors}
+\end{table}
+
+
+\subsection{Problem Description}
+
+The Belle~II experiment collects an enormous amount of data,
+with its center-of-mass energy tuned to the $\Upsilon(4S)$ resonance 
+\emph{corresponding to a center-of-mass energy of $\sqrt{s} = 10.58$~GeV}. 
+While these "resonant" events are the primary source 
+for $B$ physics, Belle~II also records other types 
+of data.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{chapters/Belle_experiment/Belle_resonances.png}
+    \caption{Cross section of $e^+e^-$ with respect to the center-of-mass energy [GeV] \cite{belle2-Y-resonances}.}
+    \label{fig:upsilon-resonances}
+\end{figure}
+
+To reduce the data volume and focus on interesting events, 
+Belle~II employs a two-level filtering system: 
+the Level-1 hardware trigger (TRG) and the High Level Trigger (HLT), 
+which together reduce the event rate before data is stored. 
+Even after this, the number of events retained is still too large 
+for direct analysis, so further selection — known as skimming — is 
+performed to extract smaller datasets.
+
+In parallel, Monte Carlo (MC) simulations are used to model the 
+detector response and to train and validate analysis strategies.
+These simulated events must pass through all stages of detector 
+simulation, digitization, reconstruction, and selection, mirroring 
+the real data processing pipeline. However,this process is 
+computationally expensive, especially when simulating large 
+background samples, most of which are eventually discarded by skims.
+
+To address this issue, the goal of this lab course is to
+explore a technique known as \emph{Smart Background Simulation}. 
+Instead of fully simulating every event, we aim to train a neural 
+network that can predict early on whether a given event will survive a 
+later skim. This skim selects events in which at least one $B^0$ meson 
+can be reconstructed through hadronic decays. 
+After building several neural networks we evaluate their performance
+on an independent test set and calculate the speedup offered by each network.
+
+
+
+
+
+
