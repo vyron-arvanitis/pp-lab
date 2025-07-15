@@ -1,1 +1,105 @@
 \section{Methodology}
+
+To identify the optimal model architecture, each group member conducted 
+small-scale investigations targeting specific aspects of the model design. 
+These investigations included the following:
+
+\begin{itemize}
+    \item Does it help to increase the number of linear layes?
+    \item Which sequence of GCN and Linear layers works best?
+    \item Is it possible to use a standard MLP as well? If yes how?
+    \item How important is the masking in this case?
+    \item Methods to combat overfitting
+    \item Do we need to transform the values for the particle features?
+    \item Are there any redundant features in the dataset that could be removed?
+    \item Could one make use of some (approximate) symmetries in the data? 
+    \item Ideas for different model architectures
+\end{itemize}
+
+
+\subsection{The Dataset}
+
+The dataset we are working with consists of simulated particle collision events, with 
+each event containing multiple particles. Each particle is described by a fixed number of features.
+These features are:
+
+\begin{itemize}
+    \item \texttt{prodTime} — the production time of the particle,
+    \item \texttt{energy} — the energy of the particle,
+    \item \texttt{x}, \texttt{y}, \texttt{z} — the spatial coordinates of the particle at production,
+    \item \texttt{px}, \texttt{py}, \texttt{pz} — the momentum components of the particle,
+    \item \texttt{pdg} — the PDG identifier of the particle, indicating its type,
+    \item \texttt{index}, \texttt{mother\_index} — the particle’s index and the index of its mother particle (if any).
+    \item \texttt{label} — this indicates weather or not the particle has passed the downstream event selection or not, it takes binary values 0 or 1
+\end{itemize}
+
+Each event is represented as as a tensor of shape \texttt{(num\_particles, num\_features)}. 
+Since the number of particles can vary between events, padding is applied to ensure consistent input dimensions across batches. 
+These padded values are properly masked during training to prevent them from affecting the model.
+
+
+
+\subsection{Transforming the feature values}
+
+For this investigation, we used our best model obtained after the first 
+lab day — that is \textbf{CombinedModel with GCN} model — and focused on normalizing
+the inputs. The normalization was done according to the following function
+
+
+\begin{lstlisting}
+def normalize_inputs(inputs):
+    x = inputs["feat"] # with "feat" we mean the position, momentum vectors, the production time and the Energy
+    # x.shape = (batch_size, num_particles, num_features)
+    mean = x.mean(dim=(0,1), keepdim=True)  # Collapse batch and particle dimensions; end up with (num_features) -> one mean per feature!
+    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+    x_norm = (x - mean) / std
+    return {**inputs, "feat": x_norm}
+\end{lstlisting}
+
+Essentially, we subtracted the mean and divided by the standard deviation of each feature, calculated across 
+both the batch and particle dimensions. 
+
+\subsection{Unecessary Features}
+
+To investigate whether or not some features are unnecessary in our analysis,
+we used again the same model (\textbf{CombinedModel with GCN}) and evaluated it,
+subtracting features via physical arguments. We performed six tests. 
+
+First of all, we removed the momentum vector ($\vec{p}$). The argument for this was that 
+the energy and momenta of a particle are associated with the well-known relationship:
+\[
+E^2 = p^2 + m^2
+\]
+so, in principle, the model could reconstruct the momenta from the energy (or vice versa), assuming the mass is constant or implicitly learned.
+
+For the same reason mentioned above, we explored removing the energy of the particles.
+
+Afterwards, we removed the position vectors $x$, $y$, and $z$. 
+This started as a simple test, however the following argument was made: 
+in our problem, there exists a cylindrical symmetry — the $x$ and $y$ axes can be arbitrarily chosen (as the beams are considered to be colliding along the $z$ axis). Therefore, we considered removing only the $x$ and $y$ coordinates. 
+
+However, after consideration we came to the conclusion that this is 
+physically wrong because removing both $x$ and $y$ would eliminate any 
+information about the transverse plane. Therefore, we opted to remove only the 
+$x$ position coordinate, as a compromise to test sensitivity to symmetry 
+arguments.
+
+In the end, we removed the \texttt{prodTime} feature just for further 
+analysis, since its physical importance was unclear and we wanted to check 
+if it had any significant impact on performance.
+
+\begin{figure}[h]
+ \centering
+    \includegraphics[width=0.75\textwidth]{chapters/methodology/feature_importance_comparison.png}
+    \caption{Validation accuracy and loss for different experiments. The horizontal dashed lines indicate the best performance achieved with the baseline model.}
+    \label{fig:Feature_importance}
+\end{figure}
+ 
+From figure \ref{fig:Feature_importance} it is evident that no significant 
+improvement in model performance was observed when removing features. In all 
+cases, the validation accuracy and loss remained close to the baseline values. The only 
+slight performance gain was observed when applying normalization to the input 
+features, confirming its importance as a preprocessing step.
+    
+
+
