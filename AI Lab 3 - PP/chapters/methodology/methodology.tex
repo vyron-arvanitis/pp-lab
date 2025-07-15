@@ -88,13 +88,17 @@ In the end, we removed the \texttt{prodTime} feature just for further
 analysis, since its physical importance was unclear and we wanted to check 
 if it had any significant impact on performance.
 
-\begin{figure}[h]
+\begin{figure}[H]
  \centering
     \includegraphics[width=0.75\textwidth]{chapters/methodology/feature_importance_comparison.png}
-    \caption{Validation accuracy and loss for different experiments. The horizontal dashed lines indicate the best performance achieved with the baseline model.}
+    \caption{Validation accuracy and loss for different experiments. 
+    The horizontal dashed lines indicate the best performance 
+    achieved with the baseline model. Note: the \textbf{reversed} 
+    model refers to the configuration where the GCN 
+    and DeepSet layers were swapped.}
     \label{fig:Feature_importance}
 \end{figure}
- 
+
 From figure \ref{fig:Feature_importance} it is evident that no significant 
 improvement in model performance was observed when removing features. In all 
 cases, the validation accuracy and loss remained close to the baseline values. The only 
