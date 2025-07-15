@@ -3,7 +3,7 @@
 
 # TODO 03: [@paul] Does it help to increase the number of layers — both Linear and GCN?
 
-# TODO 04: [@aggelos] Which sequence of GCN and Linear layers works best? -> this is done
+# TODO 04: [@aggelos,Vyron] Which sequence of GCN and Linear layers works best? -> this is done
 
 # TODO 05: [@emanuele] Is it possible to use a standard MLP as well? How? -> this is done
 
