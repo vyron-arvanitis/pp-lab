@@ -6,7 +6,7 @@
   (generated)
   "main.bbl"
   "main.blg"
-["pdflatex"] 1752598858 "/home/vyron/Desktop/LMU/AI_LAB/ParticlePhysicsLab/pp-lab-group-a/AI Lab 3 - PP/main.tex" "main.pdf" "main" 1752598858
+["pdflatex"] 1752916261 "/home/vyron/Desktop/LMU/AI_LAB/ParticlePhysicsLab/pp-lab-group-a/AI Lab 3 - PP/main.tex" "main.pdf" "main" 1752916261
   "/etc/texmf/web2c/texmf.cnf" 1751971154 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/vyron/.texlive2021/texmf-var/web2c/pdftex/pdflatex.fmt" 1751972433 1405639 f216e2060252cf66b6c09e3a8f98a74b ""
   "/home/vyron/Desktop/LMU/AI_LAB/ParticlePhysicsLab/pp-lab-group-a/AI Lab 3 - PP/main.tex" 1752596743 2384 91425ecc98ea7ba911c85cda148fa7af ""
@@ -150,9 +150,9 @@
   "chapters/methodology/methodology.tex" 1752598857 5471 838340e9170abc096bca71050f2360af ""
   "chapters/theory/cnn_vs_gcn.jpg" 1751968323 28851 ab7738a4c0c343c20bf2dd541fe84a19 ""
   "chapters/theory/deep_set.png" 1751968323 22081 b99cf6931a6a519d173db95b20a8edda ""
-  "chapters/theory/theory.tex" 1752598436 3377 86a878d2354069c2702d46f9f4dde66d ""
-  "main.aux" 1752598858 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "main.bbl" 1752598850 750 bcfaa549c3983574f48d6f7da418a2d9 "bibtex main"
+  "chapters/theory/theory.tex" 1752916260 3451 90f1e8166b43d44b392a9758d0a17324 ""
+  "main.aux" 1752916261 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "main.bbl" 1752916260 750 bcfaa549c3983574f48d6f7da418a2d9 "bibtex main"
   "main.out" 0 -1 0 "pdflatex"
   "main.tex" 1752596743 2384 91425ecc98ea7ba911c85cda148fa7af ""
   (generated)

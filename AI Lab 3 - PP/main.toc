@@ -4,7 +4,8 @@
 \contentsline {section}{\numberline {3}Theory}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Deep Sets}{5}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Graph Neural Networks}{6}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Transformer}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.3}Multi Layer Perceptron}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Transformer}{6}{subsection.3.4}%
 \contentsline {section}{\numberline {4}Methodology}{6}{section.4}%
 \contentsline {subsection}{\numberline {4.1}The Dataset}{7}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Transforming the feature values}{7}{subsection.4.2}%
