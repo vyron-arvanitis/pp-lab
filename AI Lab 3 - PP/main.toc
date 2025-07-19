@@ -11,6 +11,6 @@
 \contentsline {subsection}{\numberline {4.2}Transforming the feature values}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Unecessary Features}{8}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}Speedup}{9}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Cummulative Results}{9}{subsection.4.5}%
-\contentsline {section}{\numberline {5}Results}{9}{section.5}%
-\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}%
+\contentsline {subsection}{\numberline {4.5}Cumulative Results}{10}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Results}{10}{section.5}%
+\contentsline {section}{\numberline {6}Conclusion}{10}{section.6}%

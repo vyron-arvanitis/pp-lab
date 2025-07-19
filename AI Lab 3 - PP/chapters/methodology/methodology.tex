@@ -112,9 +112,42 @@ features, confirming its importance as a preprocessing step.
     
 
 \subsection{Speedup}
-How we got the speedup
 
-\subsection{Cummulative Results}
+To evaluate the efficiency of using a NN as a filter before detector simulation, we define the speedup as the ratio of time needed to process events \emph{without} and \emph{with} the NN, for the same number of positively selected (skimmed) events.
+
+Let:
+\begin{itemize}
+    \item \( t_g \): time for event generation
+    \item \( t_s \): time for detector simulation and reconstruction
+    \item \( r = 0.05 \): fraction of events passing the original skim (without NN)
+    \item \( f_1 \): true positive rate (TPR)
+    \item \( f_0 \): false positive rate (FPR)
+\end{itemize}
+
+Further, we define:
+\begin{align*}
+    X_i &= r \cdot X \quad \text{(number of events passing skim)} \\
+    X_i &= f_1 \cdot X' \quad \text{(true positives from NN)} \\
+    \Rightarrow X' &= \frac{r}{f_1} \cdot X \quad \text{(number of events to generate with NN)} \\
+    P &= f_1 \cdot X' + f_0 \cdot (1 - r) \cdot X \quad \text{(events passing NN)} \\
+\end{align*}
+
+The speedup is the ratio of total time without and with NN:
+\[
+\text{Speedup} = \frac{X \cdot (t_g + t_s)}{X' \cdot t_g + P \cdot t_s}
+\]
+
+Substituting \( X' \) and \( P \) into the equation:
+\[
+\text{Speedup} = \frac{f_1 \cdot (t_g + t_s)}{t_g + t_s \cdot \left( f_1 + f_0 \cdot \frac{1 - r}{r} \right)}
+\]
+
+Finally, assuming \( t_s = 100 \cdot t_g \), we simplify to:
+\[
+\text{Speedup} = \frac{101 \cdot f_1}{1 + 100 \cdot \left( f_1 + f_0 \cdot \left( \frac{1 - r}{r} \right) \right)}
+\]
+
+\subsection{Cumulative Results}
 
 In the end we combined...
 
