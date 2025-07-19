@@ -51,7 +51,7 @@ This document summarizes the contributions of each team member in the lab projec
 
 ## Aggelos
 
-- Investigated **spherical symmetry** in the input data and its modeling implications.  
+- Investigated **cylindrical symmetry** in the input data and its modeling implications.  
 - Collaborated with Moritz on evaluating the **Avenger (optimal)** model.  
 - Tested various sequences of **GCN** and **Linear layers**, identifying the most effective combinations.  
 - Contributed to **architectural improvements** based on approximate symmetries in the dataset.
