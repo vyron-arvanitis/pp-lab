@@ -22,7 +22,6 @@ This document summarizes the contributions of each team member in the lab projec
 - Wrote the introduction to **Deep Sets** and **Graph Neural Networks**.  
 - Implemented and evaluated:  
   - **DeepSet model** 
-  - **DeepSet + GCN model**   
   - **DeepSet + GCN model**
 - Refactored:  
   - All models to use a unified `OutputLayer` class  
