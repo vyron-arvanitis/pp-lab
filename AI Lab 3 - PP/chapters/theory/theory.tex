@@ -15,14 +15,14 @@ A Deep Set model operates by applying a shared function $\phi$ independently to 
     f(X) = \rho\left( \sum_{x \in X} \phi(x) \right)
 \end{equation}
 
-This structure ensures that the model respects the symmetry of sets. The theoretical foundation of Deep Sets is discussed in Zaheer et al., 2017, where it is shown that any function on a set that is invariant to permutations can be decomposed in this form.
+This structure ensures that the model respects the symmetry of sets. The theoretical foundation of Deep Sets is discussed in \cite{zaheer2017deep}, where it is shown that any function on a set that is invariant to permutations can be decomposed in this form.
 
 In our project, we use this architecture to model collections of particles, where the order of particles is physically irrelevant. The Deep Set model thus provides a natural and efficient baseline for learning from such data.
 
 \subsection{Graph Neural Networks}
 In contrast to Deep Set models, which treat the input as an unordered collection, Graph Neural Networks (GNNs) explicitly leverage relational information between data points. This is particularly important in our context, where particles are connected through a decay tree structure that naturally forms a graph. Each node in the graph represents a particle, and edges represent physical relationships (e.g., parent-child connections in the decay chain).
 
-In terms of Deep Sets, graph convolutions can be seen as permutation-equivariant operations. As long as the aggregation function (e.g., sum, mean, or max) is symmetric, the update remains invariant to the ordering of neighbors.
+In terms of Deep Sets, graph convolutions can be seen as permutation equivariant operations. As long as the aggregation function (e.g., sum, mean, or max) is symmetric, the update remains invariant to the ordering of neighbors.
 
 \begin{figure}[h]
 	\centering

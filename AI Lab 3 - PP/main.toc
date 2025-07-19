@@ -8,9 +8,9 @@
 \contentsline {subsection}{\numberline {3.4}Transformer}{6}{subsection.3.4}%
 \contentsline {section}{\numberline {4}Methodology}{6}{section.4}%
 \contentsline {subsection}{\numberline {4.1}The Dataset}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Transforming the feature values}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.2}Transforming the feature values}{8}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Unecessary Features}{8}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Speedup}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.4}Speedup}{9}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Cummulative Results}{9}{subsection.4.5}%
 \contentsline {section}{\numberline {5}Results}{9}{section.5}%
 \contentsline {section}{\numberline {6}Conclusion}{9}{section.6}%

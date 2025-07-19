@@ -19,9 +19,17 @@ These investigations included the following:
 
 \subsection{The Dataset}
 
-The dataset we are working with consists of simulated particle collision events, with 
-each event containing multiple particles. Each particle is described by a fixed number of features.
-These features are:
+The dataset of the experiment consists of simulated particle collision events, with 
+each event containing multiple decay particles. These events contain a variable number of final state and intermediate particles. Hence, they can be structured as a graph, where each particle is a node and the edges represent the relationships between particles (e.g., parent-child relationships in decays). The graph can be seen in figure \ref{fig:graph_example}.
+
+\begin{figure}
+ \centering
+    \includegraphics[width=0.75\textwidth]{chapters/methodology/particle_graph.png}
+    \caption{Example of a particle decay graph. The nodes represent particles, and the edges represent the decay relationships between them.}
+    \label{fig:graph_example}
+\end{figure}
+
+Each particle is described by a fixed number of features, which include:
 
 \begin{itemize}
     \item \texttt{prodTime} — the production time of the particle,
@@ -33,11 +41,8 @@ These features are:
     \item \texttt{label} — this indicates weather or not the particle has passed the downstream event selection or not, it takes binary values 0 or 1
 \end{itemize}
 
-Each event is represented as as a tensor of shape \texttt{(num\_particles, num\_features)}. 
-Since the number of particles can vary between events, padding is applied to ensure consistent input dimensions across batches. 
-These padded values are properly masked during training to prevent them from affecting the model.
-
-
+Each event is represented as a tensor of shape \texttt{(num\_particles, num\_features)}. 
+Since the number of particles can vary between events, padding is applied to ensure consistent input dimensions across batches. These padded values are properly masked during training to prevent them from affecting the model.
 
 \subsection{Transforming the feature values}
 
