@@ -7,6 +7,7 @@ This document summarizes the contributions of each team member in the lab projec
 ## Vyron
 
 - Wrote the introduction to the **Belle II experiment** and the problem tackled in this lab.  
+- Methodology-> The dataset, transforming feature values, Unecessary features, Model architectures
 - Evaluated the **Transformer model**.  
 - Investigated:  
   - Feature **normalization**  
