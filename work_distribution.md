@@ -14,6 +14,7 @@ This document summarizes the contributions of each team member in the lab projec
   - **Redundant features** in the dataset  
   - The effect of **reversing GCN with DeepSet Layers**  
 - Implemented and included final **configuration parameters**.
+- Speedup model comparison and evaluation
 - Code cleanup
 
 ---
@@ -28,6 +29,7 @@ This document summarizes the contributions of each team member in the lab projec
   - All models to use a unified `OutputLayer` class  
   - The main notebook into a standalone Python script (`workbook.py`)  
 - Investigated the impact of increasing the number of **GCN** and **Linear layers**.
+- Speedup model comparison and evaluation
 - Code cleanup
 
 ---
