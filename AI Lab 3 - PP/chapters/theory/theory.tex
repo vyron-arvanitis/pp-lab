@@ -1,5 +1,5 @@
 \section{Theory}
-\subsection{Deep Sets}
+\subsection{Deep Sets} \label{sec:DeepSet}
 In many physical systems, such as collections of particles or events in high-energy physics, the data can be naturally represented as unordered sets. Traditional neural networks, however, are not inherently permutation-invariant. This means that they assume an order in their input. To address this, Deep Sets provide a principled way to process such set-structured data while maintaining invariance to the order of elements. Figure \ref{fig:deepset} visualizes the structure of a Deep Set model. 
 
 \begin{figure}[h]
@@ -19,7 +19,7 @@ This structure ensures that the model respects the symmetry of sets. The theoret
 
 In our project, we use this architecture to model collections of particles, where the order of particles is physically irrelevant. The Deep Set model thus provides a natural and efficient baseline for learning from such data.
 
-\subsection{Graph Neural Networks}
+\subsection{Graph Convolutional Neural  Networks} \label{sec:GCN}
 In contrast to Deep Set models, which treat the input as an unordered collection, Graph Neural Networks (GNNs) explicitly leverage relational information between data points. This is particularly important in our context, where particles are connected through a decay tree structure that naturally forms a graph. Each node in the graph represents a particle, and edges represent physical relationships (e.g., parent-child connections in the decay chain).
 
 In terms of Deep Sets, graph convolutions can be seen as permutation equivariant operations. As long as the aggregation function (e.g., sum, mean, or max) is symmetric, the update remains invariant to the ordering of neighbors.

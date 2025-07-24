@@ -3,23 +3,30 @@
 \bibitem{belle2-image}
 Belle~II Collaboration.
 \newblock Belle ii detector overview.
-\newblock \url{https://software.belle2.org/development/sphinx/_images/detector_labeled.jpg}, 2023.
+\newblock
+  \url{https://software.belle2.org/development/sphinx/_images/detector_labeled.jpg},
+  2023.
 \newblock Accessed: 2025-07-12.
 
 \bibitem{belle2-Y-resonances}
 Belle~II Collaboration.
 \newblock Belle ii detector overview.
-\newblock \url{https://software.belle2.org/development/sphinx/_images/Uresonances.svg}, 2023.
+\newblock
+  \url{https://software.belle2.org/development/sphinx/_images/Uresonances.svg},
+  2023.
 \newblock Accessed: 2025-07-12.
 
 \bibitem{ai-lab-repo}
 Nikolai Krug.
 \newblock Preparation materials for particle physics lab group a.
-\newblock \url{https://gitlab.physik.uni-muenchen.de/ai-lab/ss25/pp-lab-group-a/-/blob/main/preparation.md}, 2025.
+\newblock
+  \url{https://gitlab.physik.uni-muenchen.de/ai-lab/ss25/pp-lab-group-a/-/blob/main/preparation.md},
+  2025.
 \newblock Accessed: July 8, 2025.
 
 \bibitem{zaheer2017deep}
-Manzil Zaheer, Satwik Kottur, Siamak Ravanbakhsh, Barnabas Poczos, Ruslan Salakhutdinov, and Alexander Smola.
+Manzil Zaheer, Satwik Kottur, Siamak Ravanbakhsh, Barnabas Poczos, Ruslan
+  Salakhutdinov, and Alexander Smola.
 \newblock Deep sets.
 \newblock {\em Advances in neural information processing systems}, 30, 2017.
 

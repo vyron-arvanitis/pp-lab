@@ -166,7 +166,6 @@ class CombinedModel_wGCN(nn.Module):
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.gcn_layer = GCN(num_features + embed_dim, units)
-        self.gcn_layer = GCN(num_features + embed_dim, units)
 
         #  Add BatchNorm
         self.batch_norm = nn.BatchNorm1d(units)
