@@ -19,14 +19,11 @@ from utils import (
 from models import from_config
 
 # Set up the data
-df, labels = load_data("smartbkg_dataset_4k.parquet", row_groups=[0])
+df, labels = load_data("smartbkg_dataset_4k_testing.parquet", row_groups=[0,1,2,3])
 with open("pdg_mapping.json") as f:
     pdg_mapping = dict(json.load(f))
 
 #give variables
-hidden_layers = 6
-gcn_layers = [0,1,2,3,4,5]
-input_layer = "linear"
 coordinates = "cylindrical"
 
 feature_columns_map = {
@@ -39,23 +36,15 @@ feature_columns = feature_columns_map.get(coordinates)
 data = preprocess(df, pdg_mapping=pdg_mapping, feature_columns=feature_columns, coordinates = coordinates)
 data["adj"] = [get_adj(index, mother) for index, mother in zip(data["index"], data["mother"])]
 
-
 config = {
-    "model_name": "deepset_wgcn_variable",
+    "model_name": "OptimalModel",
     "num_features": len(feature_columns),
     "units": 32,
-    "hidden_layers": hidden_layers,
-    "gcn_layers": gcn_layers,
-    "layer_in": input_layer,
+    "dropout_rate": 0.17,
+    "negative_slope": 0.01,
 }
 
-total_layers = hidden_layers + 2
-gcn_indices = [i + 2 for i in gcn_layers]
-if input_layer == "gcn":
-    gcn_indices.insert(0, 1)  
-
-gcn_str = ''.join(str(i) for i in gcn_indices) if gcn_indices else "none"
-tag = f"DS_{total_layers}_GCN_{gcn_str}_{coordinates}"
+tag = "OptimalModel"
 
 # Create save path
 save_path = Path("saved_models")

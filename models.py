@@ -193,6 +193,75 @@ class CombinedModel_wGCN(nn.Module):
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
         return x
+    
+
+        
+class OptimalModel(nn.Module):
+    def __init__(self, num_features, units=32, dropout_rate=0.1, negative_slope=0.01, embed_dim=8, num_pdg_ids=len(PDG_MAPPING),):
+        super().__init__()
+
+        self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
+
+        self.input_layer = nn.Linear(num_features + embed_dim, units)
+        self.batch_norm = nn.BatchNorm1d(units)
+        self.dropout = nn.Dropout(dropout_rate)
+        self.activation = nn.LeakyReLU(negative_slope)
+
+        self.gcn_layer = GCN(units, units)
+        
+        self.layers = nn.ModuleList()
+
+        for _ in range(6):
+            self.layers.append(nn.BatchNorm1d(units))
+            self.layers.append(GCN(units, units))
+            self.layers.append(nn.Dropout(dropout_rate))
+        
+        # Global MLP
+        self.global_mlp = nn.Sequential(
+            nn.Linear(units, 1)
+        )
+
+    def normalize_inputs(self, inputs):
+        x = inputs["feat"]
+        mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
+        std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+        x_norm = (x - mean) / std
+        return {**inputs, "feat": x_norm}
+
+    def forward(self, inputs, mask=None):
+        inputs = self.normalize_inputs(inputs)
+        pdg = inputs["pdg"]
+        adj = normalize_adjacency(inputs["adj"])
+        feat = inputs["feat"]
+
+        emb = self.embedding_layer(pdg)
+        emb = self.dropout(emb)
+        x = torch.cat([feat, emb], dim=-1)
+
+        x = self.input_layer(x)
+        x = x.transpose(1, 2)
+        x = self.batch_norm(x)
+        x = x.transpose(1, 2)
+        x = self.activation(x)
+        x = self.dropout(x)
+
+        for i in range(0, len(self.layers), 3):
+            bn = self.layers[i]
+            gcn = self.layers[i + 1]
+            do = self.layers[i + 2]
+
+            x = x.transpose(1, 2)
+            x = bn(x)
+            x = x.transpose(1, 2)
+            x = self.activation(gcn(x, adj))
+            x = do(x)
+        
+        if mask is not None:
+            x = masked_average(x, mask)
+        else:
+            x = x.mean(axis=-2)
+            
+        return self.global_mlp(x)
 
 
 class TransformerModel(nn.Module):
