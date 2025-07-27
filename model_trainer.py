@@ -7,6 +7,8 @@ import numpy as np
 import torch
 from sklearn.model_selection import train_test_split
 
+from models import from_config
+
 from utils import (
     load_data,
     get_adj,
@@ -16,10 +18,8 @@ from utils import (
     fit,
 )
 
-from models import from_config
-
 # Set up the data
-df, labels = load_data("smartbkg_dataset_4k_testing.parquet", row_groups=[0,1,2,3])
+df, labels = load_data("smartbkg_dataset_4k.parquet", row_groups=[0,1,2,3])
 with open("pdg_mapping.json") as f:
     pdg_mapping = dict(json.load(f))
 
