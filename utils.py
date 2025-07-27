@@ -32,8 +32,12 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
     Preprocess data from pandas DataFrame and return dictionary of flat numpy arrays per event.
 
     Args:
+        df (pd.DataFrame): Input data containing particle features and metadata
         pdg_maping (dict): Mapping from pdg ids to token ids
-        feature_columns (list): columns to use as input features
+        feature_columns (list): Columns to use as input features
+        coordinates (str): Coordinate system to use for features 
+                Must be either "cartesian" (default), or "cylindrical".
+                "cylindrical" assumes cylindrical symmetry, excluding angular coordinates
     """
     df = df.assign(pdg_mapped=map_np(df.pdg, pdg_mapping, fallback=len(pdg_mapping) + 1))
     if coordinates == "cartesian":
@@ -248,6 +252,20 @@ def fit(model, dl_train, dl_val, epochs=50, device="cpu", history=None, patience
     return history
 
 def transform_to_cylindrical(df):
+        '''
+        Transform Cartesian coordinates and momenta in a DataFrame to cylindrical form.
+
+        Args: 
+            df (pd.DataFrame): A pandas Dataframe containing at least the columns 
+                'x', 'y', 'z', 'px', 'py', 'pz', 'prodTime', and 'energy'
+
+        Returns:
+            pd.Dataframe: A DataFrame with cylindrical features:
+                 'r', 'z', 'p_xy', 'pz', 'prodTime', and 'energy'
+
+        Note: 
+            The angular coordinate is not included, assuming cylindrical symmetry of the system
+        '''
         df = df.copy()
 
         # Compute radial position and transverse momentum
