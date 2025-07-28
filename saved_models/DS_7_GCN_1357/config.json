@@ -1,1 +1,0 @@
-{"model_name": "deepset_gcn_variable", "num_features": 8, "units": 32, "hidden_layers": 5, "gcn_layers": [1, 3, 5], "layer_in": "gcn"}

@@ -19,7 +19,7 @@ from utils import (
 )
 
 # Set up the data
-df, labels = load_data("smartbkg_dataset_4k.parquet", row_groups=[0,1,2,3])
+df, labels = load_data("smartbkg_dataset_4k_training.parquet", row_groups=[0,1,2,3])
 with open("pdg_mapping.json") as f:
     pdg_mapping = dict(json.load(f))
 
@@ -37,7 +37,7 @@ data = preprocess(df, pdg_mapping=pdg_mapping, feature_columns=feature_columns, 
 data["adj"] = [get_adj(index, mother) for index, mother in zip(data["index"], data["mother"])]
 
 config = {
-    "model_name": "OptimalModel",
+    "model_name": "optimal_model",
     "num_features": len(feature_columns),
     "units": 32,
     "dropout_rate": 0.17,
@@ -71,7 +71,7 @@ data_val = {}
 dl_train, dl_val = [
     torch.utils.data.DataLoader(
         GraphDataset(feat=x["features"], pdg=x["pdg_mapped"], adj=x["adj"], y=y),
-        batch_size=256,
+        batch_size=32,
         collate_fn=collate_fn
     )
     for x, y in [(data_train, y_train), (data_val, y_val)]

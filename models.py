@@ -195,7 +195,7 @@ class CombinedModel_wGCN(nn.Module):
         return x
     
 
-        
+
 class OptimalModel(nn.Module):
     def __init__(self, num_features, units=32, dropout_rate=0.1, negative_slope=0.01, embed_dim=8, num_pdg_ids=len(PDG_MAPPING),):
         super().__init__()
@@ -211,12 +211,16 @@ class OptimalModel(nn.Module):
         
         self.layers = nn.ModuleList()
 
-        for _ in range(6):
+        for i in range(7):
+            if i == 1 or i == 4:
+                self.layers.append(GCN(units, units))
+            else:
+                self.layers.append(nn.Linear(units, units))
+            
             self.layers.append(nn.BatchNorm1d(units))
-            self.layers.append(GCN(units, units))
+            self.layers.append(nn.LeakyReLU(negative_slope))
             self.layers.append(nn.Dropout(dropout_rate))
         
-        # Global MLP
         self.global_mlp = nn.Sequential(
             nn.Linear(units, 1)
         )
@@ -237,7 +241,6 @@ class OptimalModel(nn.Module):
         emb = self.embedding_layer(pdg)
         emb = self.dropout(emb)
         x = torch.cat([feat, emb], dim=-1)
-
         x = self.input_layer(x)
         x = x.transpose(1, 2)
         x = self.batch_norm(x)
@@ -245,17 +248,24 @@ class OptimalModel(nn.Module):
         x = self.activation(x)
         x = self.dropout(x)
 
-        for i in range(0, len(self.layers), 3):
-            bn = self.layers[i]
-            gcn = self.layers[i + 1]
-            do = self.layers[i + 2]
+        for i in range(0, len(self.layers), 4):
+            layer = self.layers[i]
+            bn = self.layers[i + 1]
+            act = self.layers[i + 2]
+            do = self.layers[i + 3]
 
             x = x.transpose(1, 2)
             x = bn(x)
             x = x.transpose(1, 2)
-            x = self.activation(gcn(x, adj))
-            x = do(x)
+
+            if isinstance(layer, GCN):
+                x = act(layer(x, adj))
+            else:
+                x = act(layer(x))
         
+            x = do(x)
+
+
         if mask is not None:
             x = masked_average(x, mask)
         else:
@@ -334,25 +344,22 @@ class CombinedModel_wGCN_Normalized(nn.Module):
 
 
 class DeepSet_wGCN_variable(nn.Module):
-    def __init__(self, hidden_layers, gcn_layers, layer_in, num_features, units=32):
+    def __init__(self, hidden_layers, gcn_layers, num_features, units=32):
         super().__init__()
 
         self.hidden_layers = hidden_layers
         self.gcn_layers = gcn_layers
-        self.layer_in = layer_in
 
         # Input layer
-        if layer_in == "linear":
-            self.input_layer = nn.Linear(num_features, units)
-        elif layer_in == "gcn":
+        if gcn_layers and gcn_layers[0] == 1:
             self.input_layer = GCN(num_features, units)
         else:
-            print("Error input layer")
+            self.input_layer = nn.Linear(num_features, units)
 
         # Hidden layers
         self.layers = nn.ModuleList()
         for i in range(hidden_layers):
-            if i in gcn_layers:
+            if (i+2) in gcn_layers:
                 self.layers.append(GCN(units, units))
             else:
                 self.layers.append(nn.Linear(units, units))
@@ -368,10 +375,10 @@ class DeepSet_wGCN_variable(nn.Module):
 
         adj = normalize_adjacency(adj)
 
-        if self.layer_in == "linear":
+        if self.gcn_layers and self.gcn_layers[0] == 1:
+            x = F.relu(self.input_layer(feat,adj))
+        else:
             x = F.relu(self.input_layer(feat))
-        elif self.layer_in == "gcn":
-            x = F.relu(self.input_layer(feat, adj))
 
         for layer in self.layers:
             if isinstance(layer, GCN):
@@ -410,6 +417,8 @@ def from_config(config):
         "deepset_combined": CombinedModel,
         "deepset_gcn": DeepSet_wGCN,
         "deepset_combined_wgcn": CombinedModel_wGCN,
+        "optimal_model": OptimalModel,
+        "deepset_wgcn_variable": DeepSet_wGCN_variable,
         "transformer": TransformerModel,
         "deepset_combined_wgcn_normalized": CombinedModel_wGCN_Normalized
     }
