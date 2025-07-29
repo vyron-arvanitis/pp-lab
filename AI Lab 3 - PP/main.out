@@ -1,0 +1,18 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{The Belle experiment}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Problem Description}{section.2}% 3
+\BOOKMARK [1][-]{section.3}{Theory}{}% 4
+\BOOKMARK [2][-]{subsection.3.1}{Deep Sets}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.2}{Graph Convolutional Neural Networks}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.3}{Multi Layer Perceptron}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.4}{Transformer}{section.3}% 8
+\BOOKMARK [1][-]{section.4}{Methodology}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{The Dataset}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{Transforming the feature values}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.3}{Unecessary Features}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.4}{Speedup}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.5}{Models architecture}{section.4}% 14
+\BOOKMARK [1][-]{section.5}{Results}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{Model Evaluation}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{Optimal Model}{section.5}% 17
+\BOOKMARK [1][-]{section.6}{Conclusion}{}% 18

@@ -236,8 +236,27 @@ by introducing a normalization of the inputs according to section \ref{sec:Nomra
 The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
 with an additional normalization layer.
 
+\subsection*{DeepSet with GCN variable}
 
+The architecture was designed to investigate the optimal number and arrangement of 
+GCN and linear layers. To support this, an additional script (deepset\_gcn\_variator.py) was introduced, enabling dynamic naming based on layer configuration. The naming convention follows the pattern: \texttt{DS\_\{TotalLayers\}\_GCN\_\{GCNIndices\}}.
+For example, the model "\texttt{DS\_6\_GCN\_135}" consists of six layers in total, which are by default linear, with the 1st, 3rd, and 5th layer replaced by GCNs.
+
+The model takes four arguments: 
+\begin{itemize}
+    \item \textbf{hidden\_layers (int)}: Gives the number of hidden layers. The total number of layers is then determined by the number of hidden layers + 2 (in- and output). 
+    \item \textbf{gcn\_layers (list)}: A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers = [2,4]} replaces the 2nd and 4th layers with GCNs. 
+    \item \textbf{num\_features (int)}: Defines the number of input features and determines the shape of the input layer.
+    \item \textbf{units}: Sets the dimensionality of hidden layers.
+\end{itemize}
+
+If \texttt{gcn\_layers} includes the index $1$, the input layer is implemented as a GCN, otherwise a linear input layer is used by default. 
+In both cases, the input layer has shape $\texttt{num\_features} \times \texttt{units}$. 
+
+Hidden layers not specified in \texttt{gcn\_layers} are implemented as linear layers. All hidden layers, whether linear or GCN, have shape $\texttt{units} \times \texttt{units}$. The final output layer is always a linear pooling layer of shape $\texttt{units} \times 1$.
 
 \subsubsection*{Transformer} \label{model:Transformer}
+
+
 
 
