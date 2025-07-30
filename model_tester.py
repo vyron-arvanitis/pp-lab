@@ -17,7 +17,7 @@ from utils import (
     collate_fn,
 )
 
-tag = "OptimalModel"
+tag = "deepset"
 model_path = Path("saved_models") / tag
 
 with open(model_path / "config.json") as f:
@@ -31,7 +31,7 @@ df, labels = load_data("smartbkg_dataset_4k_testing.parquet", row_groups=[0,1,2,
 with open("pdg_mapping.json") as f:
     pdg_mapping = dict(json.load(f))
 
-coordinates = "cylindrical"
+coordinates = "cartesian"
 
 feature_columns_map = {
     "cartesian": ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"],
@@ -56,31 +56,36 @@ dl_test = torch.utils.data.DataLoader(
     collate_fn=collate_fn,
     shuffle=False
 )
-
 all_preds = []
 all_labels = []
+all_losses = []
+
+criterion = torch.nn.BCEWithLogitsLoss()
 
 with torch.no_grad():
     for batch in dl_test:
         inputs, targets, mask = batch
         logits = model(inputs, mask=mask).squeeze(-1)
+        loss = criterion(logits, targets.float())
         preds = torch.sigmoid(logits)
 
+        all_losses.append(loss.item())
         all_preds.append(preds.cpu().numpy())
         all_labels.append(targets.cpu().numpy())
 
+# Final test metrics
 preds_np = np.concatenate(all_preds)
 labels_np = np.concatenate(all_labels)
 
 pred_classes = (preds_np > 0.5).astype(int)
 true_classes = labels_np.astype(int)
 
-df_results = pd.DataFrame({
-    "prediction": pred_classes,
-    "target": labels_np
-})
-
-df_results.to_csv(model_path / "test_results.csv", index=False)
-
 acc = accuracy_score(true_classes, pred_classes)
-print(f"Accuracy on test set: {acc:.4f}")
+avg_loss = np.mean(all_losses)
+
+df_test_metrics = pd.DataFrame([{
+    "test_loss": avg_loss,
+    "test_accuracy": acc
+}])
+
+df_test_metrics.to_csv(model_path / "test_metrics.csv", index=False)

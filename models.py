@@ -50,7 +50,6 @@ class GCN(nn.Module):
     def forward(self, inputs, adjacency):
         return adjacency @ self.linear(inputs)
 
-
 class OutputLayer(nn.Module):
     def __init__(self, num_inputs):
         super().__init__()
@@ -61,7 +60,6 @@ class OutputLayer(nn.Module):
     def forward(self, x):
         x = self.output_layer(x)
         return x
-
 
 class DeepSetLayer(nn.Module):
     def __init__(self, num_features=8, units=32):
@@ -95,7 +93,7 @@ with open("pdg_mapping.json") as f:
 
 
 class DeepSet(nn.Module):
-    def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
+    def __init__(self, num_features=8, units=32):
         super().__init__()
         self.deep_set_layer = DeepSetLayer(num_features, units)
         self.output_layer = OutputLayer(units)
@@ -105,7 +103,6 @@ class DeepSet(nn.Module):
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
         return x
-
 
 class CombinedModel(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32,  dropout_rate=0.3, num_heads=4, num_layers=2):
@@ -227,8 +224,8 @@ class OptimalModel(nn.Module):
 
     def normalize_inputs(self, inputs):
         x = inputs["feat"]
-        mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
-        std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+        mean = x.mean(dim=(0,1), keepdim=True)
+        std = x.std(dim=(0,1), keepdim=True) + 1e-8
         x_norm = (x - mean) / std
         return {**inputs, "feat": x_norm}
 
@@ -264,8 +261,7 @@ class OptimalModel(nn.Module):
                 x = act(layer(x))
         
             x = do(x)
-
-
+        
         if mask is not None:
             x = masked_average(x, mask)
         else:
@@ -393,7 +389,6 @@ class DeepSet_wGCN_variable(nn.Module):
 
         return self.global_mlp(x)
 
-
 class CombinedModel_wGCN_variable(nn.Module):
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
         super().__init__()
@@ -406,7 +401,6 @@ class CombinedModel_wGCN_variable(nn.Module):
         emb = self.embedding(pdg)
         x = torch.cat([feat, emb], -1)
         return self.deep_set(dict(feat=x, adj=inputs["adj"]), mask=mask)
-
 
 def from_config(config):
     """

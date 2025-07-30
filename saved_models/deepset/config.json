@@ -1,1 +1,1 @@
-{"model_name": "deepset", "units": 32}
+{"model_name": "deepset", "num_features": 8, "units": 32}
