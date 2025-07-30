@@ -1,11 +1,11 @@
 \section{Models}
-Based on our comulative research, we dentified the following models as the most promising. We also include simpler baseline architectures, as they help illustrate the impact of additional layers and regularization techniques on model performace. 
+Based on our comulative research, we identified the following models as the most promising. We also include simpler baseline architectures, as they help illustrate the impact of additional layers and regularization techniques on model performace. 
 
 \subsection{General setup}
 All models described below take at least the following arguments:
 \begin{itemize}
-    \item \texttt{num\_features}: Number of input features
-    \item \texttt{units}: Number of hidden units
+    \item \texttt{num\_features} (int): Number of input features
+    \item \texttt{units} (int): Number of hidden units
 \end{itemize}
 
 To describe the shapes of the model layers, we adopt the following notation:
@@ -16,14 +16,15 @@ To describe the shapes of the model layers, we adopt the following notation:
     \item $u$: Number of hidden units
 \end{itemize}
 
+The input to every model is given by $B$ batches, each containing $N$ particles, each having $f$ features. The input shape is therefore $[B,N,f]$.
+Any deviation will be further specified for each model individually.
+
 \subsection{DeepSet Model} \label{model:DeepSet}
 
 This model follows the Deep Sets framework (as introduced in Section \ref{sec:DeepSet}), 
 in which the same transformation is applied independently to each element of the input set, followed by a permutation-invariant aggregation. All other models are built upon this base architecture. 
 
-This model solely uses the feature vector of each particle and the specified arguments as input for its configuration.
-
-The architecture of the model is given by table \ref{tab:deepset_arc}.
+The architecture of the model is summarized in table \ref{tab:deepset_arc}.
 \begin{table}[h]
     \caption{DeepSet Model Architecture}
     \label{tab:deepset_arc}
@@ -42,7 +43,7 @@ The architecture of the model is given by table \ref{tab:deepset_arc}.
 
 \subsection{Combined Model} \label{model:CombinedModel}
 
-This model extends the DeepSet architecture by introducing a PDG code for each particle,
+This model extends the DeepSet architecture by introducing an eight dimensional PDG code for each particle,
 which is then mapped to an embedding vector. The resulting embeddings are concatenated with the original particle features before being processed by the rest of the network
 
 The input to this model includes both the feature vector of each particle and the corresponding PDG ID vector.
@@ -78,12 +79,10 @@ The architecture of the model is summarized in table \ref{tab:deepset_combined_a
 This model combines a Graph Convolutional Network (GCN) layer with the Deep Set architecture.
 The GCN captures local structure between particles as defined by an adjacency matrix (typically based on mother-daughter relations).
 
-The input consists of a set of particles (each with a feature vector) and a corresponding adjacency matrix encoding connections between particles. 
-
-This model takes as input the feature vectors of all particles along with an adjacency matrix that encodes their pairwise relationships. 
-The adjacency matrix used a input to the model is constructed form mother-daughter relations. It is a symmetric binary matrix that encodes
+The additional input this model takes is an adjacency matrix that encodes the particles pairwise relationships. 
+The adjacency matrix is a symmetric binary matrix that encodes
 \begin{itemize}
-\item mother-daugther and daughter-mother rleationships between particles,
+\item mother-daughter and daughter-mother relationships between particles,
 \item as well as self-connections (i.e., diagonal entries are 1).
 \end{itemize}
 
@@ -102,16 +101,16 @@ The models architecture is summarized in \ref{tab:deepset_wgcn_arc}
         2& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
         3& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
         4& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
-        5& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\ & \\
+        5& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\ 
         \hline
     \end{tabular}
 \end{table}
 
 \subsection{Combined Deepset with GCN} \label{model:CombinedModel_wGCN}
-This model extends the DeepSet with GCN architecture by introducing a PDG code to each 
-particles afterwards mapped to an embedding vector.
+This model combines the architectures of the "DeepSet with GCN" (section \ref{model:DeepSet_wGCN}) and the "Combined Model" (section \ref{model:CombinedModel}): 
+The PDG ID of each particle is mapped to an embedding vector and concatenated with its feature vector. The resulting enriched representation is then processes by the DeepSet-GCN architecture.
 
-The input consists of particle features, PDG codes, and an adjacency matrix. 
+Additionally the input requires the PDG codes, and the adjacency matrix as meantioned in section \ref{model:DeepSet_wGCN}. 
 The architecture of the model is summarized in table \ref{tab:deepset_gcn_combined_arc}
 
 \begin{table}[h]
@@ -127,8 +126,8 @@ The architecture of the model is summarized in table \ref{tab:deepset_gcn_combin
         3& Graph Convolution (GCN) & $[B,N,u]$ & $u \times (e+f) + u$ \\
         4& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
         5& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
-        4& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
-        5& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\ & \\
+        6& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        7& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
         \hline
     \end{tabular}
 \end{table}
@@ -143,21 +142,46 @@ with an additional normalization layer.
 
 \subsection{DeepSet with GCN variable}
 
-The architecture was designed to investigate the optimal number and arrangement of 
-GCN and linear layers. To support this, an additional script (deepset\_gcn\_variator.py) was introduced, enabling dynamic naming based on layer configuration. The naming convention follows the pattern: \texttt{DS\_\{TotalLayers\}\_GCN\_\{GCNIndices\}}.
-For example, the model "\texttt{DS\_6\_GCN\_135}" consists of six layers in total, which are by default linear, with the 1st, 3rd, and 5th layer replaced by GCNs.
+The architecture was developed to explore the optimal number and arrangement of 
+GCN and linear layers. To support this flexibility, an additional script (deepset\_gcn\_variator.py) was introduced. This script allows dynamic model contruction and naming based on the layer configuration. 
 
-The model takes four arguments: 
+The naming convention follows the pattern: 
+\begin{center}
+\texttt{DS\_\{TotalLayers\}\_GCN\_\{GCNIndices\}}.
+\end{center}
+For example, the model \texttt{DS\_6\_GCN\_135} consists of six layers (including input and output), with the 1st, 3rd, and 5th layers implemented as GCN layers. All other layers default to linear.
+
+This models introduces two additional configuration arguments:
 \begin{itemize}
-    \item \textbf{hidden\_layers (int)}: Gives the number of hidden layers. The total number of layers is then determined by the number of hidden layers + 2 (in- and output). 
-    \item \textbf{gcn\_layers (list)}: A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers = [2,4]} replaces the 2nd and 4th layers with GCNs. 
-    \item \textbf{num\_features (int)}: Defines the number of input features and determines the shape of the input layer.
-    \item \textbf{units}: Sets the dimensionality of hidden layers.
+    \item \texttt{hidden\_layers}  (int): Number of hidden layers. The total number of layers is \texttt{hidden\_layers} + 3 (one input and two output layers)
+    \item \texttt{gcn\_layers} (list): A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers} = [2,4] replaces the 2nd and 4th layers with GCNs. 
 \end{itemize}
 
-If \texttt{gcn\_layers} includes the index $1$, the input layer is implemented as a GCN, otherwise a linear input layer is used by default. 
-In both cases, the input layer has shape $\texttt{num\_features} \times \texttt{units}$. 
+Layer behaviour is defined as follows:
+\begin{itemize}
+\item If index 1 is included in \texttt{gcn\_layers}, the input layer is implemented as a GCN; otherwise, it is a linear layer. 
+\item Hidden layers not specified in \texttt{gcn\_layers} are standard linear layers. 
+\item After all hidden layers, aggregation is performed using masked mean pooling (or mean over $N$ if no mask is provided).
+\item  The final output module consits of two linear layers speparated by a ReLU activation (i.e., a small MLP).
+\end{itemize}
 
-Hidden layers not specified in \texttt{gcn\_layers} are implemented as linear layers. All hidden layers, whether linear or GCN, have shape $\texttt{units} \times \texttt{units}$. The final output layer is always a linear pooling layer of shape $\texttt{units} \times 1$.
+The complete architecture is summarized in table \ref{tab:deepset_gcn_variable_arc}.
+
+\begin{table}[h]
+    \caption{Architecture of the variable DeepSet model with configurable GCN and Linear layers}
+    \label{tab:deepset_gcn_variable_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1& Input layer (GCN or Linear with ReLU) & $[B,N,u]$ & $u \times f + u$ \\
+        2 - (h+1)& Hidden layers (GCN or Linear with ReLU)& $[B,N,u]$&$u \times u + u$ (per layer) \\
+        h+2& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        h+3& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        h+4& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
 
 \subsection{Transformer} \label{model:Transformer}

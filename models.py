@@ -361,6 +361,8 @@ class DeepSet_wGCN_variable(nn.Module):
 
         # Global MLP
         self.global_mlp = nn.Sequential(
+            nn.Linear(units, units),
+            nn.ReLU(),
             nn.Linear(units, 1)
         )
 
