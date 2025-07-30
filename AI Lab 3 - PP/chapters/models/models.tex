@@ -1,0 +1,126 @@
+\section{Models}
+Based on our comulative research, we dentified the following models as the most promising. We also include simpler baseline architectures, as they help illustrate the impact of additional layers and regularization techniques on model performace. 
+
+\subsection{General setup}
+All models described below take at least the following arguments:
+\begin{itemize}
+    \item \texttt{num\_features}: Number of input features
+    \item \texttt{units}: Number of hidden units
+\end{itemize}
+
+To describe the shapes of the model layers, we adopt the following notation:
+\begin{itemize}
+    \item $B$: Batch size
+    \item $N$: Number of particles per event
+    \item $f$: Number of input features
+    \item $u$: Number of hidden units
+\end{itemize}
+
+All models were trained using all four row groups from \texttt{"smartbkg\_dataset\_4k\_training.parquet"}, with a 75\%-25\% train-validation split. 
+Evaluation was performed on all four row groups from \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}.
+Each model was trained for 10 epochs with a batch size of 256 and 32 hidden units. 
+
+\subsection{DeepSet Model} \label{model:DeepSet}
+
+This model follows the Deep Sets framework (as introduced in Section \ref{sec:DeepSet}), 
+in which the same transformation is applied independently to each element of the input set, followed by a permutation-invariant aggregation.
+
+The architecture of the model is given by table \ref{tab:deepset_arc}
+\begin{table}[h]
+    \caption{DeepSet Model Architecture}
+    \label{tab:deepset_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1 & Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times f + u$ \\
+        2 & Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
+        3 & Linear + ReLU (global MLP)& $[B,u]$ & $u \times u + u$ \\
+        4 & Linear (Output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\subsection{Combined Model} \label{model:CombinedModel}
+
+This model extends the deepset architecture by introducing PDG code to each particles
+afterwards mapped to an embedding vector. The embedding vectors are added to the original 
+particle feature before being processed by the rest of the network
+
+\paragraph{Architecture}
+The model processes a batch of events, where each particle is represented by both a feature vector and a PDG code. 
+The architecture consists of the following components:
+
+\begin{itemize}
+    \item Embedding layer that maps each PDG code to a vector.
+    \item Concatenation of the PDG embedding with the original particle features.
+    \item Linear layer with ReLU activation function.
+    \item A masking layer with averaging over the masked events or simple averaging if no mask is used.
+    \item Linear layer with ReLU activation function.
+    \item Output layer (a single neuron).
+\end{itemize}
+
+\subsection{DeepSet with GCN} \label{model:DeepSet_wGCN}
+
+This model combines a Graph Convolutional Network (GCN) layer with the Deep Set architecture.
+The GCN captures local structure between particles as defined by an adjacency matrix (typically based on mother-daughter relations), 
+
+\paragraph{Architecture}
+The input consists of a set of particles (each with a feature vector) and a corresponding adjacency matrix encoding  connections between particles. 
+The architecture includes the following components:
+
+\begin{itemize}
+    \item A GCN layer that applies a linear transformation to each particle this is done by multiplying the normalized adjacency matrix with a linear layer
+    \item A DeepSet layer that aggregates the GCN output using a masked mean over particles, followed by a linear transformation with ReLU activation.
+    \item An output layer (a single neuron) that produces the final prediction.
+\end{itemize}
+
+\subsection{Combined Deepset with GCN} \label{model:CombinedModel_wGCN}
+This model extends the DeepSet with GCN architecture by introducing a  PDG code to each 
+particles afterwards mapped to an embedding vector
+
+\paragraph{Architecture}
+The input consists of particle features, PDG codes, and an adjacency matrix. 
+The architecture includes the following components:
+
+\begin{itemize}
+    \item An embedding layer that maps each PDG code to a vector.
+    \item A droupout layer with a droupout rate of $0.3$.
+    \item Concatenation of the PDG embedding with the original particle features and the normalized adjacency matrix.
+    \item A GCN layer applied to the concatenated inputs.
+    \item A batch normalization layer 
+    \item A dropout layer with a droupout rate of $0.3$
+    \item A Deep Set layer.
+    \item An output layer (a single neuron) that produces the final prediction.
+\end{itemize}
+
+\subsection{Combined Deepset with GCN Normalized} \label{model:CombinedModel_wGCN_Normalized}
+This model extends the Combined Deepset with GCN architecture (model \ref{model:CombinedModel_wGCN})
+by introducing a normalization of the inputs according to section \ref{sec:Nomralize features}.
+
+\paragraph{Architecture}
+The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
+with an additional normalization layer.
+
+\subsection{DeepSet with GCN variable}
+
+The architecture was designed to investigate the optimal number and arrangement of 
+GCN and linear layers. To support this, an additional script (deepset\_gcn\_variator.py) was introduced, enabling dynamic naming based on layer configuration. The naming convention follows the pattern: \texttt{DS\_\{TotalLayers\}\_GCN\_\{GCNIndices\}}.
+For example, the model "\texttt{DS\_6\_GCN\_135}" consists of six layers in total, which are by default linear, with the 1st, 3rd, and 5th layer replaced by GCNs.
+
+The model takes four arguments: 
+\begin{itemize}
+    \item \textbf{hidden\_layers (int)}: Gives the number of hidden layers. The total number of layers is then determined by the number of hidden layers + 2 (in- and output). 
+    \item \textbf{gcn\_layers (list)}: A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers = [2,4]} replaces the 2nd and 4th layers with GCNs. 
+    \item \textbf{num\_features (int)}: Defines the number of input features and determines the shape of the input layer.
+    \item \textbf{units}: Sets the dimensionality of hidden layers.
+\end{itemize}
+
+If \texttt{gcn\_layers} includes the index $1$, the input layer is implemented as a GCN, otherwise a linear input layer is used by default. 
+In both cases, the input layer has shape $\texttt{num\_features} \times \texttt{units}$. 
+
+Hidden layers not specified in \texttt{gcn\_layers} are implemented as linear layers. All hidden layers, whether linear or GCN, have shape $\texttt{units} \times \texttt{units}$. The final output layer is always a linear pooling layer of shape $\texttt{units} \times 1$.
+
+\subsection{Transformer} \label{model:Transformer}
