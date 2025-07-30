@@ -17,7 +17,7 @@ from utils import (
     collate_fn,
 )
 
-tag = "deepset"
+tag = "deepset_combined"
 model_path = Path("saved_models") / tag
 
 with open(model_path / "config.json") as f:
@@ -58,18 +58,14 @@ dl_test = torch.utils.data.DataLoader(
 )
 all_preds = []
 all_labels = []
-all_losses = []
 
-criterion = torch.nn.BCEWithLogitsLoss()
 
 with torch.no_grad():
     for batch in dl_test:
         inputs, targets, mask = batch
         logits = model(inputs, mask=mask).squeeze(-1)
-        loss = criterion(logits, targets.float())
         preds = torch.sigmoid(logits)
 
-        all_losses.append(loss.item())
         all_preds.append(preds.cpu().numpy())
         all_labels.append(targets.cpu().numpy())
 
@@ -81,10 +77,8 @@ pred_classes = (preds_np > 0.5).astype(int)
 true_classes = labels_np.astype(int)
 
 acc = accuracy_score(true_classes, pred_classes)
-avg_loss = np.mean(all_losses)
 
 df_test_metrics = pd.DataFrame([{
-    "test_loss": avg_loss,
     "test_accuracy": acc
 }])
 

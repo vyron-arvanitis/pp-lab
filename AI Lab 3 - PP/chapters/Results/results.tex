@@ -1,8 +1,8 @@
 \section{Results}
 
-For the final results we evaluated our models on a new test dataset (i.e.
-a dataset not used throught the training process) and used the following
-models:
+All models were trained using all four row groups from \texttt{"smartbkg\_dataset\_4k\_training.parquet"}, with a 75\%-25\% train-validation split. 
+Evaluation was performed on all four row groups from \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}.
+Each model was trained for 10 epochs with a batch size of 256 and 32 hidden units. 
 
 \begin{itemize}
     \item deepset \ref{model:DeepSet}

@@ -332,7 +332,6 @@ class CombinedModel_wGCN_Normalized(nn.Module):
             units=units
         )
 
-
     def forward(self, inputs, mask=None):
         inputs = normalize_inputs(inputs)
         x = self.model(inputs, mask)
