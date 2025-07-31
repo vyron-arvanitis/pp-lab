@@ -1,12 +1,13 @@
 **Programming**
 
 1. Transformer
-2. Paul: GCN - Linear layer investigation?
+2. *Paul*: GCN - Linear layer investigation?
 3. Make sure all the plots have labels
 4. Clean up the save models
 5. dataset_and_models notebook from main branch
-6. Make loading_and_evaluation.ipynb work - Issues with transformer
-7. Evaluate ROC and speedup of optimal model 
+6. *Vyron*: Make loading_and_evaluation.ipynb work - Issues with transformer
+7. *Vyron*: Evaluate ROC and speedup of optimal model 
+8. *Angelos*: Finish optimal model investigation, Delete class function normalize_inputs from optimal model
 
 Every result should be reproducable!
 
