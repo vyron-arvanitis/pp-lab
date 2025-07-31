@@ -22,7 +22,7 @@ model_path = Path("saved_models") / tag
 
 with open(model_path / "config.json") as f:
     config = json.load(f)
-    
+
 
 model = from_config(config)
 model.load_state_dict(torch.load(model_path / "state.pt", map_location="cpu"))

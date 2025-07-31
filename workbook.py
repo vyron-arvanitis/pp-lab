@@ -19,7 +19,14 @@ from utils import (
 from models import from_config
 
 def main():
-    feature_columns = ["prodTime","x","y","z","energy","px", "py", "pz"]
+    coordinates = "cartesian"
+
+    feature_columns_map = {
+        "cartesian": ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"],
+        "cylindrical": ["r", "z", "p_xy", "pz", "prodTime", "energy"]
+    }
+
+    feature_columns = feature_columns_map.get(coordinates)
 
     config = {
     "model_name": "transformer",
@@ -51,7 +58,7 @@ def main():
         pdg_mapping = dict(json.load(f))
 
     print("Preprocessing...")
-    data = preprocess(df, pdg_mapping=pdg_mapping, feature_columns=feature_columns)
+    data = preprocess(df, pdg_mapping=pdg_mapping, feature_columns=feature_columns, coordinates=coordinates)
     data["adj"] = [get_adj(index, mother) for index, mother in zip(data["index"], data["mother"])]
 
     # --- Split data ---
