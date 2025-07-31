@@ -194,22 +194,25 @@ class CombinedModel_wGCN(nn.Module):
 
 
 class OptimalModel(nn.Module):
-    def __init__(self, num_features, units=32, dropout_rate=0.1, negative_slope=0.01, embed_dim=8, num_pdg_ids=len(PDG_MAPPING),):
+    def __init__(self, num_features, units=32, dropout_rate=0.17, negative_slope=0.01, embed_dim=8, num_pdg_ids=len(PDG_MAPPING),):
         super().__init__()
 
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
 
-        self.input_layer = nn.Linear(num_features + embed_dim, units)
+        self.input_layer = GCN(num_features + embed_dim, units)
         self.batch_norm = nn.BatchNorm1d(units)
         self.dropout = nn.Dropout(dropout_rate)
         self.activation = nn.LeakyReLU(negative_slope)
-
-        self.gcn_layer = GCN(units, units)
         
         self.layers = nn.ModuleList()
+        self.layers.append(self.input_layer)
+        self.layers.append(nn.BatchNorm1d(num_features + embed_dim))
+        self.layers.append(nn.LeakyReLU(negative_slope))
+        self.layers.append(nn.Dropout(dropout_rate))
 
-        for i in range(7):
-            if i == 1 or i == 4:
+
+        for i in range(3):
+            if i == 0 or i == 1:
                 self.layers.append(GCN(units, units))
             else:
                 self.layers.append(nn.Linear(units, units))
@@ -219,8 +222,6 @@ class OptimalModel(nn.Module):
             self.layers.append(nn.Dropout(dropout_rate))
         
         self.global_mlp = nn.Sequential(
-            nn.Linear(units, units),
-            nn.ReLU(),
             nn.Linear(units, 1)
         )
 
@@ -240,12 +241,6 @@ class OptimalModel(nn.Module):
         emb = self.embedding_layer(pdg)
         emb = self.dropout(emb)
         x = torch.cat([feat, emb], dim=-1)
-        x = self.input_layer(x)
-        x = x.transpose(1, 2)
-        x = self.batch_norm(x)
-        x = x.transpose(1, 2)
-        x = self.activation(x)
-        x = self.dropout(x)
 
         for i in range(0, len(self.layers), 4):
             layer = self.layers[i]

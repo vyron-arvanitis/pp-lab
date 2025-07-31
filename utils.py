@@ -47,6 +47,7 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
         "index": df["index"].to_numpy(),
         "mother": df["mother_index"].to_numpy(),
         }
+        
     elif coordinates == "cylindrical":
         flat = {
         "features": transform_to_cylindrical(df)[feature_columns].to_numpy(),

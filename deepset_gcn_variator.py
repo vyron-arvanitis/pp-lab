@@ -26,8 +26,8 @@ with open("pdg_mapping.json") as f:
 
 #give variables
 
-hidden_layers = 6
-gcn_layers = [1,7]
+hidden_layers = 4
+gcn_layers = [1,2,3]
 
 coordinates = "cartesian"
 
