@@ -6,7 +6,20 @@ import torch.nn.functional as F
 
 
 
-def normalize_inputs(inputs):
+def normalize_inputs(inputs: dict) -> dict:
+    """
+    Normalize per-feature values across all particles and batches
+
+    Parameters
+    ----------
+    inputs : dict
+        A dictionary containing the inputs to be normalized
+
+    Returns
+    -------
+    dict
+        A copy of the input dictionary with the inputs tensor normalized.
+    """
     x = inputs["feat"]
     # x.shape = (batch_size, num_particles, num_features)
     mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
@@ -31,7 +44,24 @@ def normalize_adjacency(adj):
 
 
 
-def masked_average(batch, mask):
+def masked_average(batch: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    """
+    Compute the average over a masked batch of sequences.
+
+    Parameters
+    ----------
+    batch : torch.Tensor
+        A tensor of shape (batch_size, num_particles, num_features) containing the data.
+    mask : torch.Tensor
+        A boolean tensor of shape (batch_size, num_particles) where `True` indicates
+        elements to ignore (mask out) and `False` indicates valid entries.
+
+    Returns
+    -------
+    torch.Tensor
+        A tensor of shape (batch_size, num_features) containing the mean of the unmasked
+        entries for each sample in the batch.
+    """
     batch = batch.masked_fill(mask[..., np.newaxis], 0)
     sizes = (~mask).sum(axis=1, keepdim=True)
     return batch.sum(axis=1) / sizes
@@ -41,28 +71,110 @@ class GCN(nn.Module):
     """
     Simple graph convolution. Equivalent to GCN from Kipf & Welling (https://arxiv.org/abs/1609.02907)
     when fed a normalized adjacency matrix.
+
+    Attributes
+    ----------
+    linear : nn.Linear
+        Linear transformation applied to node features.
     """
 
-    def __init__(self, num_features, units):
+    def __init__(self, num_features: int, units: int):
+        """
+        Initialize the GCN layer.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per node.
+        units : int
+            Number of output units (hidden features) per node.
+        """
+
         super().__init__()
         self.linear = nn.Linear(num_features, units)
 
-    def forward(self, inputs, adjacency):
+    def forward(self, inputs: torch.Tensor, adjacency: torch.Tensor) -> torch.Tensor:
+        """
+        Apply the GCN layer to a batch of node features and adjacency matrices.
+
+        Parameters
+        ----------
+        inputs : torch.Tensor
+            Node feature matrix of shape (batch_size, num_particles, num_features).
+        adjacency : torch.Tensor
+            Normalized adjacency matrix of shape (batch_size, num_particles, num_nodes).
+
+        Returns
+        -------
+        torch.Tensor
+            Output node features of shape (batch_size, num_particles, units).
+        """
         return adjacency @ self.linear(inputs)
 
 class OutputLayer(nn.Module):
-    def __init__(self, num_inputs):
+    """
+    Output layer.
+
+    Attributes
+    ----------
+    output_layer : nn.Sequential
+        A sequential container with a single `nn.Linear` layer that maps input
+        features to a single output value.
+    """
+    def __init__(self, num_inputs: int):
+        """
+        Initialize the output layer.
+
+        Parameters
+        ----------
+        num_inputs : int
+            Number of input features per example.
+        """
         super().__init__()
         self.output_layer = nn.Sequential(
             nn.Linear(num_inputs, 1)
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
+        """
+        Forward pass through the output layer.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            Input tensor of shape (batch_size, num_inputs).
+
+        Returns
+        -------
+        torch.Tensor
+            Output tensor of shape (batch_size, 1), representing scalar predictions.
+        """
         x = self.output_layer(x)
         return x
 
 class DeepSetLayer(nn.Module):
-    def __init__(self, num_features=8, units=32):
+    """
+    Deep Set layer.
+
+    Attributes
+    ----------
+    per_item_mlp : nn.Sequential
+        MLP applied independently to each item in the input set.
+    global_mlp : nn.Sequential
+        MLP applied to the aggregated representation of the input set.
+    """
+
+    def __init__(self, num_features: int=8, units: int=32):
+        """
+        Initialize the DeepSetLayer.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per element in the set (default is 8).
+        units : int
+            Number of hidden units in both the per-item and global MLPs (default is 32).
+        """
         super().__init__()
         self.per_item_mlp = nn.Sequential(
             nn.Linear(num_features, units),
@@ -73,7 +185,24 @@ class DeepSetLayer(nn.Module):
             nn.ReLU()
         )
 
-    def forward(self, x, mask=None):
+    def forward(self, x:torch.Tensor, mask: torch.Tensor=None) -> torch.Tensor:
+        """
+        Forward pass of the DeepSetLayer.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            Input tensor of shape (batch_size, num_particles, num_features).
+        mask : torch.Tensor
+            Boolean mask tensor of shape (batch_size, num_particles) where `True`
+            indicates particles to ignore in the aggregation.
+
+        Returns
+        -------
+        torch.Tensor
+            Output tensor of shape (batch_size, units), representing the
+            permutation-invariant representation of each input set.
+        """
         x = self.per_item_mlp(x)
         if mask is not None:
             x = masked_average(x, mask)
@@ -93,25 +222,127 @@ with open("pdg_mapping.json") as f:
 
 
 class DeepSet(nn.Module):
-    def __init__(self, num_features=8, units=32):
+    """
+    Deep Set model 
+
+    Attributes
+    ----------
+    deep_set_layer : DeepSetLayer
+        Implementation of the DeepSetLayer
+    output_layer : OutputLayer
+        Implementation of the OutputLayer
+    """
+
+    def __init__(self, num_features: int=8, units: int=32):
+        """
+        Initialize the DeepSet model.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per element in the set (default is 8).
+        units : int
+            Number of hidden units used in both the DeepSetLayer and OutputLayer (default is 32).
+        """
+
         super().__init__()
         self.deep_set_layer = DeepSetLayer(num_features, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask: torch.Tensor=None) -> torch.Tensor:
+        """
+        Forward pass of the DeepSetLayer.
+
+        Parameters
+        ----------
+        inputs : dict
+            Input tensor of shape (batch_size, num_particles, num_features).
+        mask : torch.Tensor
+            Boolean mask tensor of shape (batch_size, num_particles) where `True`
+            indicates particles to ignore in the aggregation.
+
+        Returns
+        -------
+        torch.Tensor
+            Output tensor of shape (batch_size, units), representing the
+            permutation-invariant representation of each input set.
+        """
+
         x = inputs["feat"]
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
         return x
 
 class CombinedModel(nn.Module):
-    def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32,  dropout_rate=0.3, num_heads=4, num_layers=2):
+    """
+    CombinedModel model 
+
+    Attributes
+    ----------
+    embedding_layer : nn.Embedding
+        Implementation of an embedding layer for particle type identifiers (PDG codes).
+    deep_set_layer : DeepSetLayer
+        Implementation of the DeepSetLayer
+    output_layer : OutputLayer
+        Implementation of the OutputLayer
+    """
+
+    def __init__(self, 
+        num_features=8,
+        embed_dim=8, 
+        num_pdg_ids=len(PDG_MAPPING), 
+        units=32,  
+        dropout_rate=0.3, 
+        num_heads=4, 
+        num_layers=2):
+
+        """
+        Initialize the CombinedModel.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of continuous input features per particle (default is 8).
+        embed_dim : int
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
+        num_pdg_ids : int
+            Number of distinct PDG IDs (excluding padding or unknown class).
+        units : int
+            Number of hidden units in the DeepSetLayer and OutputLayer (default is 32).
+        dropout_rate : float
+            Dropout rate (not currently used but reserved for future use).
+        num_heads : int
+            Number of attention heads (not used in this model; reserved for extensions).
+        num_layers : int
+            Number of layers (not used in this model; reserved for extensions).
+        """
+
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.deep_set_layer = DeepSetLayer(num_features=num_features+ embed_dim, units=units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask: torch.Tensor=None):
+        """
+        Forward pass of the CombinedModel.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  containing continuous per-particle features.
+                - "pdg": tensor of shape (batch_size, num_particles), containing integer
+                  PDG codes used for categorical embedding.
+        mask : torch.Tensor
+            Boolean tensor of shape (batch_size, num_particles), indicating which particles
+            to ignore in the aggregation step.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
         pdg = inputs["pdg"]
         feat = inputs["feat"]
         emb = self.embedding_layer(pdg)
