@@ -441,7 +441,6 @@ class OptimalModel(nn.Module):
         self.layers.append(nn.LeakyReLU(negative_slope))
         self.layers.append(nn.Dropout(dropout_rate))
 
-
         for i in range(3):
             if i == 0 or i == 1:
                 self.layers.append(GCN(units, units))
