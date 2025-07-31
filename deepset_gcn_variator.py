@@ -26,13 +26,13 @@ with open("pdg_mapping.json") as f:
 
 #give variables
 
-hidden_layers = 8
-gcn_layers = [2,5]
+hidden_layers = 6
+gcn_layers = [1,7]
 
 coordinates = "cartesian"
 
 # create save path
-total_layers = hidden_layers + 2
+total_layers = hidden_layers + 3
 gcn_indices = [i for i in gcn_layers]
 
 gcn_str = ''.join(str(i) for i in gcn_indices) if gcn_indices else "none"
