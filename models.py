@@ -395,6 +395,10 @@ class OptimalModel(nn.Module):
             self.layers.append(nn.Dropout(dropout_rate))
         
         self.global_mlp = nn.Sequential(
+            nn.Linear(units, units),
+            nn.BatchNorm1d(units),
+            nn.LeakyReLU(negative_slope),
+            nn.Dropout(dropout_rate),
             nn.Linear(units, 1)
         )
 
