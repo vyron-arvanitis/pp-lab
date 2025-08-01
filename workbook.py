@@ -26,7 +26,7 @@ def main():
         "cylindrical": ["r", "z", "p_xy", "pz", "prodTime", "energy"]
     }
 
-    # --- Device to use ---
+    # --- Device to use ---ç
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device="cpu"
     print("Using device:", device)
@@ -34,9 +34,9 @@ def main():
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
-    "model_name": "optimal_model",
+    "model_name": "deepset_combined",
     #"embed_dim": 6,          # add embedding size
-    "dropout_rate": 0.17,     # add dropout     30 was better
+    #"dropout_rate": 0.17,     # add dropout     30 was better
     # "num_heads": 4,          # add number of heads
     # "num_layers": 2,         # add number of transformer layers
     "units": 32,
@@ -44,7 +44,8 @@ def main():
     }   
 
     # --- Select Model ---
-    tag = config["model_name"]
+    tag = f'{config["model_name"]}_{coordinates}'
+
     print("Selected model: ", tag)
 
     # --- Configuration ---
