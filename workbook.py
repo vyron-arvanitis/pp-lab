@@ -19,7 +19,7 @@ from utils import (
 from models import from_config
 
 def main():
-    coordinates = "cartesian"
+    coordinates = "cylindrical"
 
     feature_columns_map = {
         "cartesian": ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"],
@@ -31,12 +31,11 @@ def main():
     device="cpu"
     print("Using device:", device)
 
-
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
     "model_name": "optimal_model",
-    "embed_dim": 6,          # add embedding size
+    #"embed_dim": 6,          # add embedding size
     "dropout_rate": 0.17,     # add dropout     30 was better
     # "num_heads": 4,          # add number of heads
     # "num_layers": 2,         # add number of transformer layers
@@ -49,7 +48,7 @@ def main():
     print("Selected model: ", tag)
 
     # --- Configuration ---
-    dataset_path = "smartbkg_dataset_4k.parquet"
+    dataset_path = "smartbkg_dataset_4k_training.parquet"
     pdg_map_path = "pdg_mapping.json"
     save_path = Path("saved_models")
     save_path.mkdir(exist_ok=True)
@@ -94,7 +93,6 @@ def main():
         json.dump(config, f)
 
     model = from_config(config)
-
 
     # --- Train model ---
     print("Training...")

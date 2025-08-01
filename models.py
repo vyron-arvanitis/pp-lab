@@ -377,7 +377,6 @@ class OptimalModel(nn.Module):
         self.activation = nn.LeakyReLU(negative_slope)
         self.dropout = nn.Dropout(dropout_rate)
         
-        
         self.layers = nn.ModuleList()
         self.layers.append(self.input_layer)
         self.layers.append(nn.BatchNorm1d(num_features + embed_dim))
@@ -528,8 +527,6 @@ class DeepSet_wGCN_variable(nn.Module):
 
         # Global MLP
         self.global_mlp = nn.Sequential(
-            nn.Linear(units, units),
-            nn.ReLU(),
             nn.Linear(units, 1)
         )
 

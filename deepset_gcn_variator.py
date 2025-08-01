@@ -26,17 +26,17 @@ with open("pdg_mapping.json") as f:
 
 #give variables
 
-hidden_layers = 4
-gcn_layers = [1,2,3]
+hidden_layers = 6
+gcn_layers = [1,2,3,4]
 
 coordinates = "cartesian"
 
 # create save path
-total_layers = hidden_layers + 3
+total_layers = hidden_layers + 2
 gcn_indices = [i for i in gcn_layers]
 
 gcn_str = ''.join(str(i) for i in gcn_indices) if gcn_indices else "none"
-tag = f"DS_{total_layers}_GCN_{gcn_str}"
+tag = f"DS_{total_layers}_GCN_{gcn_str}_gmlp1"
 
 feature_columns_map = {
     "cartesian": ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"],
