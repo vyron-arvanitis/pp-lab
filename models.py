@@ -350,7 +350,7 @@ class CombinedModel_wGCN(nn.Module):
         feat = inputs["feat"]
         adj = inputs["adj"]
         adj = normalize_adjacency(adj)
-
+       
         emb = self.embedding_layer(pdg)
         emb = self.dropout(emb)  # Apply dropout after the embeddings
         x = torch.cat([feat, emb], -1)
