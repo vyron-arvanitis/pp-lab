@@ -68,7 +68,6 @@ def map_np(array, mapping, fallback):
     np_mapping = np.array([mapping.get(x, fallback) for x in unique])
     return np_mapping[inv]
 
-
 def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
     """
     Preprocess data from pandas DataFrame and return dictionary of flat numpy arrays per event.
@@ -82,17 +81,12 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
                 "cylindrical" assumes cylindrical symmetry, excluding angular coordinates
     """
     df = df.assign(pdg_mapped=map_np(df.pdg, pdg_mapping, fallback=len(pdg_mapping) + 1))
-    if coordinates == "cartesian":
-        flat = {
+    
+    if coordinates == "cylindrical":
+        transform_to_cylindrical(df)
+
+    flat = {
         "features": df[feature_columns].to_numpy(),
-        "pdg_mapped": df["pdg_mapped"].to_numpy(),
-        "index": df["index"].to_numpy(),
-        "mother": df["mother_index"].to_numpy(),
-        }
-        
-    elif coordinates == "cylindrical":
-        flat = {
-        "features": transform_to_cylindrical(df)[feature_columns].to_numpy(),
         "pdg_mapped": df["pdg_mapped"].to_numpy(),
         "index": df["index"].to_numpy(),
         "mother": df["mother_index"].to_numpy(),
@@ -103,6 +97,7 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
         for k, array in flat.items():
             data.setdefault(k, [])
             data[k].append(array[idx])
+
     return data
 
 
@@ -314,24 +309,24 @@ def transform_to_cylindrical(df):
 
         Args: 
             df (pd.DataFrame): A pandas Dataframe containing at least the columns 
-                'x', 'y', 'z', 'px', 'py', 'pz', 'prodTime', and 'energy'
+                'x', 'y', and 'px', 'py'.
 
         Returns:
             pd.Dataframe: A DataFrame with cylindrical features:
-                 'r', 'z', 'p_xy', 'pz', 'prodTime', and 'energy'
+                 'r', 'p_xy', replacing 'x', 'y', and 'px', 'py'
 
         Note: 
-            The angular coordinate is not included, assuming cylindrical symmetry of the system
+            The angular coordinate is not included, assuming rotational symmetry of the system
         '''
         df = df.copy()
+        
+        if 'x' in df.columns and 'y' in df.columns and 'px' in df.columns and 'py' in df.columns:
+            df['r'] = np.sqrt(df['x']**2 + df['y']**2)
+            df['p_xy'] = np.sqrt(df['px']**2 + df['py']**2)
+            df.drop(['px','py'], axis = 1, inplace=True)
+            df.drop(['x','y'], axis = 1, inplace=True)
 
-        # Compute radial position and transverse momentum
-        x, y = df["x"].to_numpy(), df["y"].to_numpy()
-        px, py = df["px"].to_numpy(), df["py"].to_numpy()
-
-        df["r"] = np.sqrt(x**2 + y**2)
-        df["p_xy"] = np.sqrt(px**2 + py**2)
-
-        # Select and return processed features as a NumPy array or tensor
-        feats = df[["r", "z", "p_xy", "pz", "prodTime", "energy"]]
-        return feats
+        else:
+            print("Missing 'x', 'y', 'px', or 'py' column")
+    
+        return df
