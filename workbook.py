@@ -26,6 +26,12 @@ def main():
         "cylindrical": ["r", "z", "p_xy", "pz", "prodTime", "energy"]
     }
 
+    # --- Device to use ---
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device="cpu"
+    print("Using device:", device)
+
+
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
@@ -89,10 +95,11 @@ def main():
 
     model = from_config(config)
 
+
     # --- Train model ---
     print("Training...")
     history = []
-    history = fit(model, dl_train, dl_val, epochs=10, history=history, weight_decay=1e-4)   # Adjusted weight decay so its a hyperparameters
+    history = fit(model, dl_train, dl_val, epochs=10, history=history, weight_decay=1e-4, device=device)   # Adjusted weight decay so its a hyperparameters
 
     # --- Save history ---
     df_history = pd.DataFrame(history)
@@ -103,7 +110,7 @@ def main():
     print("Model and training history saved to:", model_path)
 
     df_history.plot()
-    plt.title("Deepset Combined GCN no 'p'")
+    plt.title("Training History")
     plt.savefig(model_path / "history.png")
     print("History plot saved.")
 

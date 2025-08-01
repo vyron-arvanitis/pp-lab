@@ -267,7 +267,7 @@ def fit(model, dl_train, dl_val, epochs=50, device="cpu", history=None, patience
             x, y, mask = to_device(x, y, mask)
             logits, loss = train_step(x, y, mask)
             train_loss.append(float(loss))
-            train_acc.append(float(accuracy_fn(logits, y)))
+            train_acc.append(float(accuracy_fn(logits, y.to(device))))
 
         # --- Validation ---
         val_loss = []
@@ -276,7 +276,7 @@ def fit(model, dl_train, dl_val, epochs=50, device="cpu", history=None, patience
             x, y, mask = to_device(x, y, mask)
             logits, loss = test_step(x, y, mask)
             val_loss.append(float(loss))
-            val_acc.append(float(accuracy_fn(logits, y)))
+            val_acc.append(float(accuracy_fn(logits, y.to(device))))
 
         # --- Epoch summary ---
         avg_train_loss = np.mean(train_loss)
