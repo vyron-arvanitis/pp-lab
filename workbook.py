@@ -35,11 +35,11 @@ def main():
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
-    "model_name": "transformer",
+    "model_name": "optimal_model",
     "embed_dim": 6,          # add embedding size
     "dropout_rate": 0.17,     # add dropout     30 was better
-    "num_heads": 4,          # add number of heads
-    "num_layers": 2,         # add number of transformer layers
+    # "num_heads": 4,          # add number of heads
+    # "num_layers": 2,         # add number of transformer layers
     "units": 32,
     "num_features": len(feature_columns)
     }   
@@ -58,7 +58,7 @@ def main():
 
     # --- Load and preprocess data ---
     print("Loading data...")
-    df, labels = load_data(dataset_path, row_groups=[0])
+    df, labels = load_data(dataset_path, row_groups=[0,1,2,3])
 
     with open(pdg_map_path) as f:
         pdg_mapping = dict(json.load(f))

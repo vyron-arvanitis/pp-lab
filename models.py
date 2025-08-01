@@ -403,7 +403,7 @@ class OptimalModel(nn.Module):
         )
 
     def forward(self, inputs, mask=None):
-        inputs = self.normalize_inputs(inputs)
+        inputs = normalize_inputs(inputs)
         pdg = inputs["pdg"]
         adj = normalize_adjacency(inputs["adj"])
         feat = inputs["feat"]

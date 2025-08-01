@@ -83,7 +83,7 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
     df = df.assign(pdg_mapped=map_np(df.pdg, pdg_mapping, fallback=len(pdg_mapping) + 1))
     
     if coordinates == "cylindrical":
-        transform_to_cylindrical(df)
+        df = transform_to_cylindrical(df)
 
     flat = {
         "features": df[feature_columns].to_numpy(),
