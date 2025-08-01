@@ -3,69 +3,11 @@ import numpy as np
 import torch
 from torch import nn
 import torch.nn.functional as F
-
-
-
-def normalize_inputs(inputs: dict) -> dict:
-    """
-    Normalize per-feature values across all particles and batches
-
-    Parameters
-    ----------
-    inputs : dict
-        A dictionary containing the inputs to be normalized
-
-    Returns
-    -------
-    dict
-        A copy of the input dictionary with the inputs tensor normalized.
-    """
-    x = inputs["feat"]
-    # x.shape = (batch_size, num_particles, num_features)
-    mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
-    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
-    x_norm = (x - mean) / std
-    return {**inputs, "feat": x_norm}
-
-def normalize_adjacency(adj):
-    """
-    Normalizes an adjacency matrix as proposed in Kipf & Welling (https://arxiv.org/abs/1609.02907)
-
-    The scalefactor for each entry is given by 1 / c_ij
-    where c_ij = sqrt(N_i) * sqrt(N_j)
-    where N_i and N_j are the number of neighbors (Node degrees) of Node i and j.
-    """
-    deg_diag = adj.sum(axis=2)
-    deg12_diag = torch.where(deg_diag != 0, deg_diag**-0.5, 0)
-    # normalization coefficients are outer product of inverse square root of degree vector
-    # gives coeffs_ij = 1 / sqrt(N_i) / sqrt(N_j)
-    coeffs = deg12_diag[:, :, np.newaxis] @ deg12_diag[:, np.newaxis, :]
-    return adj.float() * coeffs
-
-
-
-def masked_average(batch: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-    """
-    Compute the average over a masked batch of sequences.
-
-    Parameters
-    ----------
-    batch : torch.Tensor
-        A tensor of shape (batch_size, num_particles, num_features) containing the data.
-    mask : torch.Tensor
-        A boolean tensor of shape (batch_size, num_particles) where `True` indicates
-        elements to ignore (mask out) and `False` indicates valid entries.
-
-    Returns
-    -------
-    torch.Tensor
-        A tensor of shape (batch_size, num_features) containing the mean of the unmasked
-        entries for each sample in the batch.
-    """
-    batch = batch.masked_fill(mask[..., np.newaxis], 0)
-    sizes = (~mask).sum(axis=1, keepdim=True)
-    return batch.sum(axis=1) / sizes
-
+from utils import (
+    normalize_inputs, 
+    normalize_adjacency, 
+    masked_average
+)
 
 class GCN(nn.Module):
     """
@@ -432,8 +374,9 @@ class OptimalModel(nn.Module):
 
         self.input_layer = GCN(num_features + embed_dim, units)
         self.batch_norm = nn.BatchNorm1d(units)
-        self.dropout = nn.Dropout(dropout_rate)
         self.activation = nn.LeakyReLU(negative_slope)
+        self.dropout = nn.Dropout(dropout_rate)
+        
         
         self.layers = nn.ModuleList()
         self.layers.append(self.input_layer)
@@ -454,13 +397,6 @@ class OptimalModel(nn.Module):
         self.global_mlp = nn.Sequential(
             nn.Linear(units, 1)
         )
-
-    def normalize_inputs(self, inputs):
-        x = inputs["feat"]
-        mean = x.mean(dim=(0,1), keepdim=True)
-        std = x.std(dim=(0,1), keepdim=True) + 1e-8
-        x_norm = (x - mean) / std
-        return {**inputs, "feat": x_norm}
 
     def forward(self, inputs, mask=None):
         inputs = self.normalize_inputs(inputs)
