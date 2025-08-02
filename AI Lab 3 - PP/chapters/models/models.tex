@@ -1,4 +1,4 @@
-\section{Models}
+\section{Models Used in the End}
 Based on our comulative research, we identified the following models as the most promising. We also include simpler baseline architectures, as they help illustrate the impact of additional layers and regularization techniques on model performace. 
 
 \subsection{General setup}
@@ -140,50 +140,6 @@ by introducing a normalization of the inputs according to section \ref{sec:Nomra
 The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
 with an additional normalization layer.
 
-\subsection{DeepSet with GCN variable}
-
-The architecture was developed to explore the optimal number and arrangement of 
-GCN and linear layers. To support this flexibility, an additional script (deepset\_gcn\_variator.py) was introduced. This script allows dynamic model contruction and naming based on the layer configuration. 
-
-The naming convention follows the pattern: 
-\begin{center}
-\texttt{DS\_\{TotalLayers\}\_GCN\_\{GCNIndices\}}.
-\end{center}
-For example, the model \texttt{DS\_6\_GCN\_135} consists of six layers (including input and output), with the 1st, 3rd, and 5th layers implemented as GCN layers. All other layers default to linear.
-
-This models introduces two additional configuration arguments:
-\begin{itemize}
-    \item \texttt{hidden\_layers}  (int): Number of hidden layers. The total number of layers is \texttt{hidden\_layers} + 3 (one input and two output layers)
-    \item \texttt{gcn\_layers} (list): A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers} = [2,4] replaces the 2nd and 4th layers with GCNs. 
-\end{itemize}
-
-Layer behaviour is defined as follows:
-\begin{itemize}
-\item If index 1 is included in \texttt{gcn\_layers}, the input layer is implemented as a GCN; otherwise, it is a linear layer. 
-\item Hidden layers not specified in \texttt{gcn\_layers} are standard linear layers. 
-\item After all hidden layers, aggregation is performed using masked mean pooling (or mean over $N$ if no mask is provided).
-\item  The final output module consits of two linear layers speparated by a ReLU activation (i.e., a small MLP).
-\end{itemize}
-
-The complete architecture is summarized in table \ref{tab:deepset_gcn_variable_arc}.
-
-\begin{table}[h]
-    \caption{Architecture of the variable DeepSet model with configurable GCN and Linear layers}
-    \label{tab:deepset_gcn_variable_arc}
-    \centering
-    \begin{tabular}{l|l|c|c}
-        \hline
-        Layer \# & Description & Output shape & Parameters \\
-        \hline 
-        1& Input layer (GCN or Linear with ReLU) & $[B,N,u]$ & $u \times f + u$ \\
-        2 - (h+1)& Hidden layers (GCN or Linear with ReLU)& $[B,N,u]$&$u \times u + u$ (per layer) \\
-        h+2& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
-        h+3& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
-        h+4& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
-        \hline
-    \end{tabular}
-\end{table}
-
 \subsection{Transformer Model} \label{model:Transformer}
 This architecture is quite different from the Graph Convolution 
 and Deep Set approaches explored earlier.  
@@ -225,3 +181,7 @@ The architecture of the Transformer model is summarized in Table~\ref{tab:transf
         \hline
     \end{tabular}
 \end{table}
+
+
+\subsection{Optimal Model}
+\textbf{This should probably be moved on the chapter above}

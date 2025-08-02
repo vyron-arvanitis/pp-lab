@@ -5,13 +5,13 @@ small-scale investigations targeting specific aspects of the model design.
 These investigations included the following:
 
 \begin{itemize}
-    \item Does it help to increase the number of linear layers? Which sequence of GCN and Linear layers works best?
+    \item Does it help to increase the number of linear layers? Which sequence of GCN and Linear layers works best? \ref{sec:Varying_layers_in_the_deepset_model}
     \item Is it possible to use a standard MLP as well? If yes how?
     \item How important is the masking in this case?
     \item Methods to combat overfitting
-    \item Do we need to transform the values for the particle features?
-    \item Are there any redundant features in the dataset that could be removed?
-    \item Could one make use of some (approximate) symmetries in the data? 
+    \item Do we need to transform the values for the particle features? \ref{sec:Nomralize features}
+    \item Are there any redundant features in the dataset that could be removed? \ref{sec:Unecessary Features}
+    \item Could one make use of some (approximate) symmetries in the data? \ref{sec:Exploiting Rotational Symmetry}
     \item Ideas for different model architectures
 \end{itemize}
 
@@ -44,7 +44,7 @@ Each particle is described by a fixed number of features, which include:
 Each event is represented as a tensor of shape \texttt{(num\_particles, num\_features)}. 
 Since the number of particles can vary between events, padding is applied to ensure consistent input dimensions across batches. These padded values are properly masked during training to prevent them from affecting the model.
 
-\subsection{Varying Layers in the DeepSet model}
+\subsection{Varying Layers in the DeepSet model} \label{sec:Varying_layers_in_the_deepset_model}
 
 The architecture was developed to explore the optimal number and arrangement of 
 GCN and linear layers. To support this flexibility, an additional script (deepset\_gcn\_variator.py) was introduced. This script allows dynamic model contruction and naming based on the layer configuration. 
@@ -88,7 +88,7 @@ The complete architecture is summarized in table \ref{tab:deepset_gcn_variable_a
     \end{tabular}
 \end{table}
 
-\subsection{Exploiting Rotational Symmetry}
+\subsection{Exploiting Rotational Symmetry} \label{sec:Exploiting Rotational Symmetry}
 
 Ideally, the collision of the electrons occurs parallel to the walls of the detector. This setup allows one to introduce
 cylindrical coordinates and exploit rotational symmetry around the $z$ axis. In this coordinate system, the angular component can be neglected, and the transformation is defined as
@@ -114,7 +114,7 @@ the inputs. The implementation details can be found in Appendix~\ref{app:normali
 Essentially, subtracting the mean and dividing by the standard deviation of each feature, 
 calculated across both the batch and particle dimensions. 
 
-\subsection{Unecessary Features}
+\subsection{Unecessary Features} \label{sec:Unecessary Features}
 
 To investigate whether or not some features are unnecessary in our analysis,
 we used again the same model (\textbf{CombinedModel with GCN}) and evaluated it,
