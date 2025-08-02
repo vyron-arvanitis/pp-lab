@@ -4,6 +4,7 @@
 4. Clean up the save models [not]
 Every result should be reproducable![?]
 5. this is never used GraphNetwork, should we delete it from models.py?
+6. Ensure we have docstrings everywhere
 
 **Report**
 

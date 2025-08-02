@@ -18,6 +18,7 @@ This document summarizes the contributions of each team member in the lab projec
 - Implemented and included final **configuration parameters**.
 - Speedup model comparison and evaluation of all models
 - Code cleanup
+- Docstrings
 
 ---
 
@@ -49,6 +50,7 @@ This document summarizes the contributions of each team member in the lab projec
 - Collaborated with Aggelos on creatubg the **Avenger (optimal)** and **Transformer** models.  
 - Investigated **overfitting symptoms** and proposed effective **regularization strategies**.  
 - Explored and tested **alternative model architectures**.  
+- Docstrings
 
 
 ---
