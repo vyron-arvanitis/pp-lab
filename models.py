@@ -342,7 +342,7 @@ class GraphNetwork(nn.Module):
         self.gcn_layer = GCN(num_features, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
+    def forward(self, inputs: dict, mask: torch.Tensor=None) -> torch.Tensor:
         """
         Forward pass of the GraphNetwork.
 
@@ -410,7 +410,7 @@ class DeepSet_wGCN(nn.Module):
         self.deep_set_layer = DeepSetLayer(units, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs: dict, mask=None) -> torch.Tensor:
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Forward pass of the GDeepSet with GCN network.
 
@@ -497,7 +497,7 @@ class CombinedModel_wGCN(nn.Module):
         self.deep_set_layer = DeepSetLayer(units, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs: dict, mask=None) -> torch.Tensor:
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Forward pass of the CombinedModel_wGCN.
 
@@ -622,7 +622,7 @@ class OptimalModel(nn.Module):
             nn.Linear(units, 1)
         )
 
-    def forward(self, inputs: dict, mask=None) -> torch.Tensor:
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Forward pass of the OptimalModel.
 
@@ -743,7 +743,7 @@ class TransformerModel(nn.Module):
         # Output layer
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs: dict, mask=None) -> troch.Tensor:
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Forward pass of the TransformerModel.
 
@@ -790,7 +790,37 @@ class TransformerModel(nn.Module):
         return x
 
 class CombinedModel_wGCN_Normalized(nn.Module):
+    """
+    Wrapper model for CombinedModel_wGCN with input normalization.
+
+    Attributes
+    ----------
+    model : CombinedModel_wGCN
+        Implementation of the CombinedModel_wGCN model
+    """
+
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
+                """
+        Initialize the CombinedModel_wGCN_Normalized.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per particle (default is 8).
+        embed_dim : int
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
+        num_pdg_ids : int
+            Number of distinct PDG IDs (excluding padding or unknown class).
+        units : int
+            Number of hidden units in the underlying model (default is 32).
+        dropout_rate : float
+            Dropout rate (default is 0.3).
+        num_heads : int
+            Number of attention heads (not used; reserved for extensions).
+        num_layers : int
+            Number of layers (not used; reserved for extensions).
+        """
+
         super().__init__()
         self.model = CombinedModel_wGCN(
             num_features=num_features,
@@ -799,14 +829,62 @@ class CombinedModel_wGCN_Normalized(nn.Module):
             units=units
         )
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
+        """
+        Forward pass of the CombinedModel_wGCN_Normalized.
+
+        Parameters
+        ----------
+        inputs : dict
+            Dictionary of model inputs (same as CombinedModel_wGCN).
+        mask : torch.Tensor, optional
+            Boolean tensor to indicate which particles to ignore during aggregation.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
+
         inputs = normalize_inputs(inputs)
         x = self.model(inputs, mask)
         return x
 
 
 class DeepSet_wGCN_variable(nn.Module):
+    """
+    Deep Set model with configurable GCN and linear layers.
+
+    Attributes
+    ----------
+    hidden_layers : int
+        Implementation of a variable number of hidden layers.
+    gcn_layers : list
+        Implementation of layer indices at which to use GCN layers.
+    input_layer : nn.Module
+        Implementation of the input layer, which can be either a GCN or a linear layer.
+    layers : nn.ModuleList
+        Implementation of a sequential container of GCN or linear hidden layers.
+    global_mlp : nn.Sequential
+        Implementation of the output MLP mapping pooled features to scalar predictions.
+    """
+
     def __init__(self, hidden_layers, gcn_layers, num_features, units=32):
+        """
+        Initialize the DeepSet_wGCN_variable model.
+
+        Parameters
+        ----------
+        hidden_layers : int
+            Number of hidden layers.
+        gcn_layers : list
+            Indices of hidden layers that should be GCN layers.
+        num_features : int
+            Number of input features per particle.
+        units : int
+            Number of hidden units for all hidden layers (default is 32).
+        """
+
         super().__init__()
 
         self.hidden_layers = hidden_layers
@@ -831,7 +909,27 @@ class DeepSet_wGCN_variable(nn.Module):
             nn.Linear(units, 1)
         )
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
+        """
+        Forward pass of the DeepSet_wGCN_variable model.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  continuous features per particle.
+                - "adj": tensor of shape (batch_size, num_particles, num_particles),
+                  adjacency matrices.
+        mask : torch.Tensor, optional
+            Boolean tensor for masking particles in the aggregation step.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
+
         adj = inputs["adj"]
         feat = inputs["feat"]
 
@@ -856,12 +954,57 @@ class DeepSet_wGCN_variable(nn.Module):
         return self.global_mlp(x)
 
 class CombinedModel_wGCN_variable(nn.Module):
+    """
+    Combined model with embedding and a DeepSet_wGCN_variable backend.
+
+    Attributes
+    ----------
+    embedding : nn.Embedding
+        Implementation of an embedding layer for particle type identifiers (PDG codes).
+    deep_set : DeepSet_wGCN_variable
+        Implementation of the DeepSet_wGCN_variable model which combines linear and GCN layers.
+    """
+
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32):
+        """
+        Initialize the CombinedModel_wGCN_variable.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per particle (default is 8).
+        embed_dim : int
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
+        num_pdg_ids : int
+            Number of distinct PDG IDs (excluding padding or unknown class).
+        units : int
+            Number of hidden units in the DeepSet_wGCN_variable model (default is 32).
+        """
+
         super().__init__()
         self.embedding = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.deep_set = DeepSet_wGCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
+        """
+        Forward pass of the CombinedModel_wGCN_variable.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "pdg": tensor of shape (batch_size, num_particles),
+                  integer PDG codes.
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  continuous features per particle.
+        mask : torch.Tensor, optional
+            Boolean tensor for masking particles in the aggregation step.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
         pdg = inputs["pdg"]
         feat = inputs["feat"]
         emb = self.embedding(pdg)
