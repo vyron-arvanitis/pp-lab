@@ -3,6 +3,7 @@
 2. *Paul*: GCN - Linear layer investigation? [not]
 4. Clean up the save models [not]
 Every result should be reproducable![?]
+5. this is never used GraphNetwork, should we delete it from models.py?
 
 **Report**
 

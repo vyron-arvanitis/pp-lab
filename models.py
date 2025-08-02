@@ -27,7 +27,7 @@ class GCN(nn.Module):
         Parameters
         ----------
         num_features : int
-            Number of input features per node.
+            Number of input features per particle (default is 8).
         units : int
             Number of output units (hidden features) per node.
         """
@@ -335,7 +335,7 @@ class GraphNetwork(nn.Module):
         num_layers : int
             Number of layers (not used in this model; reserved for extensions).
         embed_dim : int
-            Dimensionality of the learned embeddings if categorical features are later added
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
             (not used in this version of the model).
         """
         super().__init__()
@@ -402,7 +402,7 @@ class DeepSet_wGCN(nn.Module):
         num_layers : int
             Number of layers (not used in this model; reserved for extensions).
         embed_dim : int
-            Dimensionality of the learned embeddings if categorical features are later added
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
             (not used in this version of the model).
         """
         super().__init__()
@@ -442,7 +442,49 @@ class DeepSet_wGCN(nn.Module):
 
 
 class CombinedModel_wGCN(nn.Module):
+    """
+    Combined Deep Set and Graph Convolutional Network (GCN) model.
+
+    Attributes
+    ----------
+    embedding_layer : nn.Embedding
+        Implementation of an embedding layer for particle type identifiers (PDG codes).
+    gcn_layer : GCN
+        Implementation of the Graph Convolutional Network layer.
+    batch_norm : nn.BatchNorm1d
+        Implementation of a batch normalization layer applied after GCN to stabilize
+        and accelerate training.
+    dropout : nn.Dropout
+        Implementation of a dropout layer for regularization, applied after embeddings
+        and GCN.
+    deep_set_layer : DeepSetLayer
+        Implementation of the DeepSetLayer
+    output_layer : OutputLayer
+        Implementation of the OutputLayer
+    """
+
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
+        """
+        Initialize the CombinedModel_wGCN.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per particle (default is 8).
+        embed_dim : int
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
+        num_pdg_ids : int
+            Number of distinct PDG IDs (excluding padding or unknown class).
+        units : int
+            Number of hidden units in the GCN, DeepSetLayer, and OutputLayer (default is 32).
+        dropout_rate : float
+            Dropout rate applied after embeddings and GCN (default is 0.3).
+        num_heads : int
+            Number of attention heads (not used in this model; reserved for extensions).
+        num_layers : int
+            Number of layers (not used in this model; reserved for extensions).
+        """
+
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
         self.gcn_layer = GCN(num_features + embed_dim, units)
@@ -455,7 +497,30 @@ class CombinedModel_wGCN(nn.Module):
         self.deep_set_layer = DeepSetLayer(units, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask=None) -> torch.Tensor:
+        """
+        Forward pass of the CombinedModel_wGCN.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  containing continuous per-particle features.
+                - "pdg": tensor of shape (batch_size, num_particles),
+                  containing integer PDG codes for embedding lookup.
+                - "adj": tensor of shape (batch_size, num_particles, num_particles),
+                  containing adjacency matrices describing particle relationships.
+        mask : torch.Tensor, optional
+            Boolean tensor of shape (batch_size, num_particles), indicating which particles
+            to ignore during the aggregation step.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
+
         pdg = inputs["pdg"]
         feat = inputs["feat"]
         adj = inputs["adj"]
@@ -477,7 +542,53 @@ class CombinedModel_wGCN(nn.Module):
 
 
 class OptimalModel(nn.Module):
-    def __init__(self, num_features, units=32, dropout_rate=0.17, negative_slope=0.01, embed_dim=8, num_pdg_ids=len(PDG_MAPPING),):
+    """
+    OptimalModel a multi-layer Graph Convolutional Network (GCN) with learned embeddings,
+    batch normalization, activation, and dropout for particle-based input data.
+
+    Attributes
+    ----------
+    embedding_layer : nn.Embedding
+        Implementation of an embedding layer for particle type identifiers (PDG codes).
+    input_layer : GCN
+        Implementation of the initial Graph Convolutional Network layer that combines
+        continuous features and embeddings.
+    batch_norm : nn.BatchNorm1d
+        Implementation of a batch normalization layer applied after the input GCN layer.
+    activation : nn.LeakyReLU
+        Implementation of a LeakyReLU activation function with a configurable negative slope.
+    dropout : nn.Dropout
+        Implementation of a dropout layer for regularization applied after embeddings,
+        GCN layers, and fully connected layers.
+    layers : nn.ModuleList
+        Implementation of a sequential container storing multiple GCN and linear layers
+        with batch normalization, activation, and dropout in between.
+    global_mlp : nn.Sequential
+        Implementation of the final multilayer perceptron that maps aggregated features
+        to scalar predictions.
+    """
+
+    def __init__(self, num_features, units=32, dropout_rate=0.17, negative_slope=0.01, embed_dim=8, num_pdg_ids=len(PDG_MAPPING)):
+        """
+        Initialize the OptimalModel.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of continuous input features per particle.
+        units : int
+            Number of hidden units in the GCN and fully connected layers (default is 32).
+        dropout_rate : float
+            Dropout rate applied after embeddings, GCN layers, and fully connected layers
+            (default is 0.17).
+        negative_slope : float
+            Negative slope for the LeakyReLU activation function (default is 0.01).
+        embed_dim : int
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
+        num_pdg_ids : int
+            Number of distinct PDG IDs (excluding padding or unknown class).
+        """
+
         super().__init__()
 
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
@@ -511,7 +622,29 @@ class OptimalModel(nn.Module):
             nn.Linear(units, 1)
         )
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask=None) -> torch.Tensor:
+        """
+        Forward pass of the OptimalModel.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  containing continuous per-particle features.
+                - "pdg": tensor of shape (batch_size, num_particles),
+                  containing integer PDG codes for embedding lookup.
+                - "adj": tensor of shape (batch_size, num_particles, num_particles),
+                  containing adjacency matrices describing particle relationships.
+        mask : torch.Tensor, optional
+            Boolean tensor of shape (batch_size, num_particles), indicating which particles
+            to ignore during the aggregation step.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
         inputs = normalize_inputs(inputs)
         pdg = inputs["pdg"]
         adj = normalize_adjacency(inputs["adj"])
