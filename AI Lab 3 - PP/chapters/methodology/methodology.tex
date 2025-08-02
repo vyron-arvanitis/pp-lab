@@ -109,21 +109,10 @@ To enebale coordinate transformation, the function \texttt{preprocess} in \textt
 
 For this investigation, we used our best model obtained after the first 
 lab day — that is \textbf{CombinedModel with GCN} model — and focused on normalizing
-the inputs. The normalization was done according to the following function
+the inputs. The implementation details can be found in Appendix~\ref{app:normalization}.
 
-
-\begin{lstlisting}
-def normalize_inputs(inputs):
-    x = inputs["feat"] # with "feat" we mean the position, momentum vectors, the production time and the Energy
-    # x.shape = (batch_size, num_particles, num_features)
-    mean = x.mean(dim=(0,1), keepdim=True)  # Collapse batch and particle dimensions; end up with (num_features) -> one mean per feature!
-    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
-    x_norm = (x - mean) / std
-    return {**inputs, "feat": x_norm}
-\end{lstlisting}
-
-Essentially, we subtracted the mean and divided by the standard deviation of each feature, calculated across 
-both the batch and particle dimensions. 
+Essentially, subtracting the mean and dividing by the standard deviation of each feature, 
+calculated across both the batch and particle dimensions. 
 
 \subsection{Unecessary Features}
 
