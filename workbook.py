@@ -26,7 +26,7 @@ def main():
         "cylindrical": ["r", "z", "p_xy", "pz", "prodTime", "energy"]
     }
 
-    # --- Device to use ---ç
+    # --- Device to use ---
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device="cpu"
     print("Using device:", device)
