@@ -105,6 +105,29 @@ features are replaced by \texttt{'r'}, and \texttt{'p\_xy'}.
 To enebale coordinate transformation, the function \texttt{preprocess} in \texttt{utils.py} takes an additional argument, 
 \texttt{"coordinates"}, which can be set to \texttt{"cylindrical"}. If this argument is not specified, the data is processed using the original Cartesian coordinates. 
 
+Theoretically, one would expect improved performance by reducing the number of parameters by compressing essential information into a 
+more compact format using cylindrical coordinates, while discarding unnecessary information by neglecting the angular coordinate. To
+test this hypothesis, the models \texttt{deepset}, \texttt{deepset\_gcn}, and \texttt{deepset\_combined} were trained with cartesian and cylindrical coordinates.
+Training was done on all four row groups of the training set, 
+
+\begin{table}[h]
+    \caption{Validation metrics on cartesian vs cylindrical coordinates}
+    \label{tab:deepset_gcn_variable_arc}
+    \centering
+    \begin{tabular}{l|cc|cc}
+        \hline
+        Model & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
+        \hline 
+        & Loss & Accuracy / (\%) & Loss & Accuracy / (\%)\\
+        \hline
+        \texttt{deepset}& $0.6294$ & $63.88~\%$ &$64.69~\%$& $0.6219$ \\
+        \texttt{deepset\_gcn}&$0.6235$&$64.79~\%$&$66.21\%$&$0.6119$ \\
+        \texttt{deepset\_combined}&$0.4767$&$77.04~\%$&$0.4727$&$77.43~\%$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
 \subsection{Transforming the feature values} \label{sec:Nomralize features}
 
 For this investigation, we used our best model obtained after the first 
