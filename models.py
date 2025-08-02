@@ -63,7 +63,7 @@ class OutputLayer(nn.Module):
         A sequential container with a single `nn.Linear` layer that maps input
         features to a single output value.
     """
-
+    
     def __init__(self, num_inputs: int):
         """
         Initialize the output layer.
@@ -290,7 +290,6 @@ class CombinedModel(nn.Module):
         torch.Tensor
             Tensor of shape (batch_size, 1), containing scalar predictions per input set.
         """
-        
         pdg = inputs["pdg"]
         feat = inputs["feat"]
         emb = self.embedding_layer(pdg)
@@ -567,7 +566,7 @@ class CombinedModel_wGCN_variable(nn.Module):
         self.deep_set = DeepSet_wGCN_variable(num_features=num_features + embed_dim, units=units, layer_in="linear", hidden_layers=6, gcn_layers=[0,1,2,3,4,5])
 
     def forward(self, inputs, mask=None):
-        pdg = inputs["pdg"]mask=None
+        pdg = inputs["pdg"]
         feat = inputs["feat"]
         emb = self.embedding(pdg)
         x = torch.cat([feat, emb], -1)
