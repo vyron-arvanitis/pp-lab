@@ -249,7 +249,7 @@ class CombinedModel(nn.Module):
         Parameters
         ----------
         num_features : int
-            Number of continuous input features per particle (default is 8).
+            Number of input features per particle (default is 8).
         embed_dim : int
             Dimensionality of the learned embeddings for PDG IDs (default is 8).
         num_pdg_ids : int
@@ -269,7 +269,7 @@ class CombinedModel(nn.Module):
         self.deep_set_layer = DeepSetLayer(num_features=num_features+ embed_dim, units=units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs: dict, mask: torch.Tensor=None):
+    def forward(self, inputs: dict, mask: torch.Tensor=None) -> torch.Tensor:
         """
         Forward pass of the CombinedModel.
 
@@ -299,17 +299,70 @@ class CombinedModel(nn.Module):
         x = self.output_layer(x)
         return x
 
-
+#TODO: this is not used anywhere!!!!
 class GraphNetwork(nn.Module):
     """
-    GCN based model with adjacency matrices and features as input
+    GraphNetwork model
+
+    Attributes
+    ----------
+    gcn_layer : GCN
+        Implementation of the Graph Convolutional Network layer.
+    output_layer : OutputLayer
+        Implementation of the OutputLayer
     """
-    def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
+
+    def __init__(self,
+        num_features=8,
+        units=32,
+        dropout_rate=0.3,
+        num_heads=4,
+        num_layers=2,
+        embed_dim=8):
+        """
+        Initialize the GraphNetwork.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per particle (default is 8).
+        units : int
+            Number of hidden units in the GCN layer and OutputLayer (default is 32).
+        dropout_rate : float
+            Dropout rate (not currently used but reserved for future use).
+        num_heads : int
+            Number of attention heads (not used in this model; reserved for extensions).
+        num_layers : int
+            Number of layers (not used in this model; reserved for extensions).
+        embed_dim : int
+            Dimensionality of the learned embeddings if categorical features are later added
+            (not used in this version of the model).
+        """
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
+        """
+        Forward pass of the GraphNetwork.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  containing continuous per-particle features.
+                - "adj": tensor of shape (batch_size, num_particles, num_particles),
+                  containing adjacency matrices describing particle relationships.
+        mask : torch.Tensor, optional
+            Boolean tensor of shape (batch_size, num_particles), indicating which particles
+            to ignore during the aggregation step (currently unused).
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input graph.
+        """
         adj = inputs["adj"]
         feat = inputs["feat"]
         adj = normalize_adjacency(adj)
@@ -318,14 +371,66 @@ class GraphNetwork(nn.Module):
         return x
 
 
+
 class DeepSet_wGCN(nn.Module):
+    """
+    Deep Set model with Graph Convolutional Neural Network
+
+    Attributes
+    ----------
+    gcn_layer : GCN
+        Implementation of the Graph Convolutional Network layer.
+    deep_set_layer : DeepSetLayer
+        Implementation of the DeepSetLayer
+    output_layer : OutputLayer
+        Implementation of the OutputLayer
+    """
     def __init__(self, num_features=8, units=32,  dropout_rate=0.3, num_heads=4, num_layers=2, embed_dim=8):
+        """
+        Initialize the DeepSet with GCN network.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of input features per particle (default is 8).
+        units : int
+            Number of hidden units in the GCN layer and OutputLayer (default is 32).
+        dropout_rate : float
+            Dropout rate (not currently used but reserved for future use).
+        num_heads : int
+            Number of attention heads (not used in this model; reserved for extensions).
+        num_layers : int
+            Number of layers (not used in this model; reserved for extensions).
+        embed_dim : int
+            Dimensionality of the learned embeddings if categorical features are later added
+            (not used in this version of the model).
+        """
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
         self.deep_set_layer = DeepSetLayer(units, units)
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask=None) -> torch.Tensor:
+        """
+        Forward pass of the GDeepSet with GCN network.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  containing continuous per-particle features.
+                - "adj": tensor of shape (batch_size, num_particles, num_particles),
+                  containing adjacency matrices describing particle relationships.
+        mask : torch.Tensor, optional
+            Boolean tensor of shape (batch_size, num_particles), indicating which particles
+            to ignore during the aggregation step (currently unused).
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input graph.
+        """
         x = inputs["feat"]
         adj = inputs["adj"]
         adj = normalize_adjacency(adj)
