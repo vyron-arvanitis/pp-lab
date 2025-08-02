@@ -106,23 +106,23 @@ To enebale coordinate transformation, the function \texttt{preprocess} in \textt
 \texttt{"coordinates"}, which can be set to \texttt{"cylindrical"}. If this argument is not specified, the data is processed using the original Cartesian coordinates. 
 
 Theoretically, one would expect improved performance by reducing the number of parameters by compressing essential information into a 
-more compact format using cylindrical coordinates, while discarding unnecessary information by neglecting the angular coordinate. To
-test this hypothesis, the models \texttt{deepset}, \texttt{deepset\_gcn}, and \texttt{deepset\_combined} were trained with cartesian and cylindrical coordinates.
-Training was done on all four row groups of the training set, 
+more compact format using cylindrical coordinates, while discarding unnecessary information by neglecting the angular coordinate. To test this hypothesis, the models \texttt{deepset}, \texttt{deepset\_gcn}, and \texttt{deepset\_combined} were trained using both Cartesian and cylindrical coordinate represenatations. 
+
+Training was performed on all four row groups of the training set over 10 epochs, using a $75\%/25\%$ train-validation split, a batch size of 256, and early stopping with a patience of 5.
 
 \begin{table}[h]
-    \caption{Validation metrics on cartesian vs cylindrical coordinates}
-    \label{tab:deepset_gcn_variable_arc}
+    \caption{Validation metrics for Cartesian vs. cylindrical coordinates}
+    \label{tab:coordinates_investigation}
     \centering
     \begin{tabular}{l|cc|cc}
         \hline
         Model & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
         \hline 
-        & Loss & Accuracy / (\%) & Loss & Accuracy / (\%)\\
+        & Loss & Accuracy  & Loss & Accuracy\\
         \hline
-        \texttt{deepset}& $0.6294$ & $63.88~\%$ &$64.69~\%$& $0.6219$ \\
-        \texttt{deepset\_gcn}&$0.6235$&$64.79~\%$&$66.21\%$&$0.6119$ \\
-        \texttt{deepset\_combined}&$0.4767$&$77.04~\%$&$0.4727$&$77.43~\%$ \\
+        \texttt{deepset}& $0.6294$ & $63.88~\%$ & $0.6219$&$64.69~\%$ \\
+        \texttt{deepset\_gcn}&$0.6235$&$64.79~\%$&$0.6119$&$66.21~\%$ \\
+        \texttt{deepset\_combined}&$0.4767$&$77.04~\%$&$0.4727$ &$77.43~\%$\\
         \hline
     \end{tabular}
 \end{table}
@@ -217,6 +217,15 @@ then sampled values from these intervals and trained the network, storing
 the final validation loss. After multiple trials, the combination of hyperparameters that yielded the lowest validation loss was selected.
 Rather than a random search, Optuna uses a statistical method called the
 Tree-structured Parzen Estimator (TPE). TPE models the relationship between hyperparameters and the objective function (validation loss) and focuses on sampling hyperparameters that are more likely to perform well. This method helps guide the search toward promising areas in the hyperparameter space, improving both efficiency and accuracy.
+
+\begin{itemize}
+    \item Dropout rate: $0.179$
+    \item Embedding dimension: $25$
+    \item Weight decay: $2.18 \times 10^{-5}$
+\end{itemize}
+
+Rather than a random search, Optuna uses a statistical method called the Tree-structured Parzen Estimator (TPE). TPE models the relationship between hyperparameters and the objective function (validation loss) and focuses on sampling hyperparameters that are more likely to perform well. This method helps guide the search toward promising areas in the hyperparameter space, improving both efficiency and accuracy.
+
 
 \subsection{Speedup}  \label{sec:Speedup}
 

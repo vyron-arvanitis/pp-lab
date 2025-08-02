@@ -35,8 +35,8 @@ def main():
 
     config = {
     "model_name": "optimal_model",
-    "embed_dim": 6,          # add embedding size
-    "dropout_rate": 0.17,     # add dropout     30 was better
+    "embed_dim": 25,          # add embedding size
+    "dropout_rate": 0.179,     # add dropout     30 was better
     # "num_heads": 4,          # add number of heads
     # "num_layers": 2,         # add number of transformer layers
     "units": 32,
