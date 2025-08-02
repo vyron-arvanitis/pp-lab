@@ -172,6 +172,40 @@ slight performance gain was observed when applying normalization to the input
 features, confirming its importance as a preprocessing step.
     
 
+\subsection{Overfitting and Mitigation Techniques}
+
+Overfitting occurs when a model learns not only the underlying patterns in the training data but also noise or statistical fluctuations that do not generalize to new, unseen data. This results in low training loss but poor performance on validation or test sets. In high-energy physics tasks, overfitting can severely undermine the model's ability to detect meaningful physical signatures, especially in the presence of detector noise and variable event topologies.
+
+To combat overfitting, we employed several regularization strategies that improve generalization:
+
+\subsection*{Early Stopping}
+Early stopping halts training when the validation loss stops improving, even if the training loss continues to decrease~\cite{goodfellow2016dlbook}. This prevents the model from over-optimizing on the training data, offering a simple yet effective guard against overfitting.
+
+\subsection*{Batch Normalization}
+Batch normalization normalizes the activations within each mini-batch to have zero mean and unit variance~\cite{ioffe2015batchnorm}. This reduces internal covariate shift and stabilizes learning, which allows for higher learning rates and often acts as an implicit regularizer, discouraging overfitting.
+
+\subsection*{Dropout}
+Dropout randomly sets a subset of neurons to zero during training~\cite{srivastava2014dropout}, forcing the network to develop redundant representations. This reduces co-adaptation of neurons and enhances robustness, as the model cannot rely on any single pathway to make predictions.
+
+\subsection*{Regularization (L1/L2)}
+Regularization adds a penalty term to the loss function based on the magnitude of the model's weights. L2 regularization (weight decay) discourages overly large weights by penalizing their squared magnitude. This constrains model complexity and promotes simpler, more generalizable solutions~\cite{goodfellow2016dlbook}.
+
+\subsection*{Increased Training Data}
+Expanding the training set—either through real data or augmentation—exposes the model to a broader range of examples, making it harder to memorize specific samples. More diverse data reduces variance and improves the model's ability to generalize. In physics applications, techniques such as event reweighting or simulation-based augmentation can help increase effective training diversity.
+
+Collectively, these methods reduce model variance and promote generalization, which is essential for ensuring reliable performance on physical inference tasks.
+
+\subsection{Hyperparameter Optimization}
+
+Hyperparameter optimization involves empirically testing different combinations of parameters that regulate the learning behavior of the neural network.
+Key hyperparameters include the number of layers, neurons per layer, activation function, dropout rate, L2-regularization parameter $\lambda$, and learning
+rate.
+The Optuna library~\cite{akiba2019optuna} was used for this task. Intervals for the hyperparameters were defined based on typical values found in the literature. Optuna
+then sampled values from these intervals and trained the network, storing
+the final validation loss. After multiple trials, the combination of hyperparameters that yielded the lowest validation loss was selected.
+Rather than a random search, Optuna uses a statistical method called the
+Tree-structured Parzen Estimator (TPE). TPE models the relationship between hyperparameters and the objective function (validation loss) and focuses on sampling hyperparameters that are more likely to perform well. This method helps guide the search toward promising areas in the hyperparameter space, improving both efficiency and accuracy.
+
 \subsection{Speedup}  \label{sec:Speedup}
 
 To evaluate the efficiency of using a NN as a filter before detector simulation, we define the speedup as the ratio of time needed to process events \emph{without} and \emph{with} the NN, for the same number of positively selected (skimmed) events.
