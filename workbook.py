@@ -34,9 +34,9 @@ def main():
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
-    "model_name": "deepset_combined",
-    #"embed_dim": 6,          # add embedding size
-    #"dropout_rate": 0.17,     # add dropout     30 was better
+    "model_name": "optimal_model",
+    "embed_dim": 6,          # add embedding size
+    "dropout_rate": 0.17,     # add dropout     30 was better
     # "num_heads": 4,          # add number of heads
     # "num_layers": 2,         # add number of transformer layers
     "units": 32,
@@ -49,9 +49,9 @@ def main():
     print("Selected model: ", tag)
 
     # --- Configuration ---
-    dataset_path = "smartbkg_dataset_4k_training.parquet"
+    dataset_path = "smartbkg_dataset_4k.parquet"
     pdg_map_path = "pdg_mapping.json"
-    save_path = Path("saved_models")
+    save_path = Path("models_fulltrain")
     save_path.mkdir(exist_ok=True)
     model_path = save_path / tag
     model_path.mkdir(exist_ok=True)
