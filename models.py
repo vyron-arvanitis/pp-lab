@@ -680,7 +680,45 @@ class OptimalModel(nn.Module):
 
 
 class TransformerModel(nn.Module):
+    """
+    Transformer-based model for particle set data.
+
+    Attributes
+    ----------
+    embedding_layer : nn.Embedding
+        Implementation of an embedding layer for particle type identifiers (PDG codes).
+    input_proj : nn.Linear
+        Implementation of a linear projection layer to map concatenated features and embeddings
+        to the input dimension required by the Transformer encoder.
+    transformer_encoder : nn.TransformerEncoder
+        Implementation of a Transformer encoder module for permutation-aware set representation,
+        composed of stacked self-attention layers.
+    output_layer : OutputLayer
+        Implementation of the OutputLayer for producing scalar predictions from the pooled Transformer output.
+    """
+
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, num_heads=4, num_layers=2, dropout_rate=0.17):
+        """
+        Initialize the TransformerModel.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of continuous input features per particle (default is 8).
+        embed_dim : int
+            Dimensionality of the learned embeddings for PDG IDs (default is 8).
+        num_pdg_ids : int
+            Number of distinct PDG IDs (excluding padding or unknown class).
+        units : int
+            Number of hidden units for Transformer and linear layers (default is 32).
+        num_heads : int
+            Number of self-attention heads in each Transformer layer (default is 4).
+        num_layers : int
+            Number of stacked TransformerEncoder layers (default is 2).
+        dropout_rate : float
+            Dropout rate used in Transformer encoder and input projection (default is 0.17).
+        """
+
         super().__init__()
 
         # Particle type embedding
@@ -705,7 +743,27 @@ class TransformerModel(nn.Module):
         # Output layer
         self.output_layer = OutputLayer(units)
 
-    def forward(self, inputs, mask=None):
+    def forward(self, inputs: dict, mask=None) -> troch.Tensor:
+        """
+        Forward pass of the TransformerModel.
+
+        Parameters
+        ----------
+        inputs : dict
+            A dictionary with keys:
+                - "feat": tensor of shape (batch_size, num_particles, num_features),
+                  containing continuous per-particle features.
+                - "pdg": tensor of shape (batch_size, num_particles),
+                  containing integer PDG codes for embedding lookup.
+        mask : torch.Tensor, optional
+            Not used in this model but reserved for possible extensions.
+
+        Returns
+        -------
+        torch.Tensor
+            Tensor of shape (batch_size, 1), containing scalar predictions per input set.
+        """
+
         pdg = inputs["pdg"]
         feat = inputs["feat"]
 
