@@ -14,37 +14,9 @@ Each model was trained for 10 epochs with a batch size of 256 and 32 hidden unit
     \item deepset combined wwith gcn normalized~\ref{model:CombinedModel_wGCN_Normalized}
 \end{itemize}
 
-\subsection{Model Evaluation}
+\subsection{Optimal model}
 
-To evaluate the performance of each model, we use the Receiver Operating 
-Characteristic (ROC) curve, a widely adopted metric for binary 
-classification tasks. The ROC curve plots the \textbf{True Positive Rate (TPR)} 
-against the \textbf{False Positive Rate (FPR)}.
-
-\paragraph{Definitions.}
-\begin{itemize}
-    \item \textbf{True Positive Rate (TPR):} It measures the proportion of actual positives that are correctly identified: 
-    \[
-    \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}
-    \]
-    \item \textbf{False Positive Rate (FPR):} It measures the proportion of actual negatives that are incorrectly identified as positives:
-    \[
-    \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
-    \]
-\end{itemize}
-
-
-The ideal model achieves a high TPR while maintaining a low FPR. 
-The performance of a model can be quantified using the 
-\textbf{Area Under the Curve (AUC)}. 
-A higher AUC indicates better separability between the two classes.
-
-\paragraph{Interpretation.}
-\begin{itemize}
-    \item AUC = 1.0: Perfect classifier.
-    \item AUC = 0.5: Random guessing.
-    \item AUC < 0.5: Model performs worse than random (potentially inverted labels).
-\end{itemize}
+We obtained
 
 
 \subsection{ROC curves and speedup results}

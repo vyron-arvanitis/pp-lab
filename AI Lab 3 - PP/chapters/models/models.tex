@@ -175,7 +175,7 @@ The architecture of the Transformer model is summarized in Table~\ref{tab:transf
         1 & Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
         2 & Concatenation of features and embeddings & $[B,N,f+e]$ & -- \\
         3 & Linear projection to Transformer units & $[B,N,u]$ & $u \times (f+e) + u$ \\
-        4 & Transformer encoder stack & $[B,N,u]$ & per-layer: MHSA + FFN parameters \\
+        4 & Transformer encoder stack & $[B,N,u]$ & per-layer: MHSA + FFN  \\
         5 & Mean pooling over particle dimension & $[B,u]$ & -- \\
         6 & Linear output layer & $[B,1]$ & $1 \times u + 1$ \\
         \hline

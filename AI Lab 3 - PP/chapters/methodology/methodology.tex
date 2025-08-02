@@ -88,6 +88,9 @@ The complete architecture is summarized in table \ref{tab:deepset_gcn_variable_a
     \end{tabular}
 \end{table}
 
+After performing multiple calculations with this architecture (see folder saved\_models/Layers\_investigation), 
+the best model was \texttt{DS\_4\_GCN\_123}: 4 hidden layers, with GCNs at the input, second and third layer.
+
 \subsection{Exploiting Rotational Symmetry} \label{sec:Exploiting Rotational Symmetry}
 
 Ideally, the collision of the electrons occurs parallel to the walls of the detector. This setup allows one to introduce
@@ -190,42 +193,37 @@ Overfitting occurs when a model learns not only the underlying patterns in the t
 
 To combat overfitting, we employed several regularization strategies that improve generalization:
 
-\subsection*{Early Stopping}
+\subsubsection*{Early Stopping}
 Early stopping halts training when the validation loss stops improving, even if the training loss continues to decrease~\cite{goodfellow2016dlbook}. This prevents the model from over-optimizing on the training data, offering a simple yet effective guard against overfitting.
 
-\subsection*{Batch Normalization}
+\subsubsection*{Batch Normalization}
 Batch normalization normalizes the activations within each mini-batch to have zero mean and unit variance~\cite{ioffe2015batchnorm}. This reduces internal covariate shift and stabilizes learning, which allows for higher learning rates and often acts as an implicit regularizer, discouraging overfitting.
 
-\subsection*{Dropout}
+\subsubsection*{Dropout}
 Dropout randomly sets a subset of neurons to zero during training~\cite{srivastava2014dropout}, forcing the network to develop redundant representations. This reduces co-adaptation of neurons and enhances robustness, as the model cannot rely on any single pathway to make predictions.
 
-\subsection*{Regularization (L1/L2)}
+\subsubsection*{Regularization (L1/L2)}
 Regularization adds a penalty term to the loss function based on the magnitude of the model's weights. L2 regularization (weight decay) discourages overly large weights by penalizing their squared magnitude. This constrains model complexity and promotes simpler, more generalizable solutions~\cite{goodfellow2016dlbook}.
 
-\subsection*{Increased Training Data}
+\subsubsection*{Increased Training Data}
 Expanding the training set—either through real data or augmentation—exposes the model to a broader range of examples, making it harder to memorize specific samples. More diverse data reduces variance and improves the model's ability to generalize. In physics applications, techniques such as event reweighting or simulation-based augmentation can help increase effective training diversity.
 
 Collectively, these methods reduce model variance and promote generalization, which is essential for ensuring reliable performance on physical inference tasks.
 
-\subsection{Hyperparameter Optimization}
+\subsubsection{Hyperparameter Optimization}
+Hyperparameter optimization involves empirically testing different configurations that influence the learning behavior of a neural network. Key hyperparameters include the number of layers, neurons per layer, activation function, dropout rate, L2-regularization parameter ($\lambda$), and learning rate.
 
-Hyperparameter optimization involves empirically testing different combinations of parameters that regulate the learning behavior of the neural network.
-Key hyperparameters include the number of layers, neurons per layer, activation function, dropout rate, L2-regularization parameter $\lambda$, and learning
-rate.
-The Optuna library~\cite{akiba2019optuna} was used for this task. Intervals for the hyperparameters were defined based on typical values found in the literature. Optuna
-then sampled values from these intervals and trained the network, storing
-the final validation loss. After multiple trials, the combination of hyperparameters that yielded the lowest validation loss was selected.
-Rather than a random search, Optuna uses a statistical method called the
-Tree-structured Parzen Estimator (TPE). TPE models the relationship between hyperparameters and the objective function (validation loss) and focuses on sampling hyperparameters that are more likely to perform well. This method helps guide the search toward promising areas in the hyperparameter space, improving both efficiency and accuracy.
+For this task, we employed the Optuna library~\cite{akiba2019optuna}, which uses the Tree-structured Parzen Estimator (TPE)—a Bayesian optimization algorithm. Unlike random search, TPE models the relationship between hyperparameters and the objective function (in our case, validation loss), and strategically explores regions of the hyperparameter space that are more likely to yield better results.
+
+Search intervals were selected based on common literature values. After multiple trials, the following configuration produced the best performance:
 
 \begin{itemize}
-    \item Dropout rate: $0.179$
-    \item Embedding dimension: $25$
-    \item Weight decay: $2.18 \times 10^{-5}$
+\item Dropout rate: $0.179$
+\item Embedding dimension: $25$
+\item Weight decay: $2.18 \times 10^{-5}$
 \end{itemize}
 
-Rather than a random search, Optuna uses a statistical method called the Tree-structured Parzen Estimator (TPE). TPE models the relationship between hyperparameters and the objective function (validation loss) and focuses on sampling hyperparameters that are more likely to perform well. This method helps guide the search toward promising areas in the hyperparameter space, improving both efficiency and accuracy.
-
+This optimization process helped fine-tune the model's capacity and regularization, ultimately improving generalization and performance on the validation set.
 
 \subsection{Speedup}  \label{sec:Speedup}
 
@@ -263,6 +261,38 @@ Finally, assuming \( t_s = 100 \cdot t_g \), we simplify to:
 \[
 \text{Speedup} = \frac{101 \cdot f_1}{1 + 100 \cdot \left( f_1 + f_0 \cdot \left( \frac{1 - r}{r} \right) \right)}
 \]
+
+\subsection{ROC Curve and AUC Evaluation}
+
+To evaluate the performance of each model, we use the Receiver Operating 
+Characteristic (ROC) curve, a widely adopted metric for binary 
+classification tasks. The ROC curve plots the \textbf{True Positive Rate (TPR)} 
+against the \textbf{False Positive Rate (FPR)}.
+
+\paragraph{Definitions}
+\begin{itemize}
+    \item \textbf{True Positive Rate (TPR):} It measures the proportion of actual positives that are correctly identified: 
+    \[
+    \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+    \]
+    \item \textbf{False Positive Rate (FPR):} It measures the proportion of actual negatives that are incorrectly identified as positives:
+    \[
+    \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+    \]
+\end{itemize}
+
+
+The ideal model achieves a high TPR while maintaining a low FPR. 
+The performance of a model can be quantified using the 
+\textbf{Area Under the Curve (AUC)}. 
+A higher AUC indicates better separability between the two classes.
+
+\paragraph{Interpretation}
+\begin{itemize}
+    \item AUC = 1.0: Perfect classifier.
+    \item AUC = 0.5: Random guessing.
+    \item AUC < 0.5: Model performs worse than random (potentially inverted labels).
+\end{itemize}
 
 
 
