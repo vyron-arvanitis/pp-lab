@@ -24,6 +24,12 @@ Nikolai Krug.
   2025.
 \newblock Accessed: July 8, 2025.
 
+\bibitem{DBLP:journals/corr/VaswaniSPUJGKP17}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, Lukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock {\em CoRR}, abs/1706.03762, 2017.
+
 \bibitem{zaheer2017deep}
 Manzil Zaheer, Satwik Kottur, Siamak Ravanbakhsh, Barnabas Poczos, Ruslan
   Salakhutdinov, and Alexander Smola.

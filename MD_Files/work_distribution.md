@@ -8,6 +8,7 @@ This document summarizes the contributions of each team member in the lab projec
 
 - Wrote the introduction to the **Belle II experiment** and the problem tackled in this lab.  
 - Methodology-> The dataset, transforming feature values, Unecessary features, Model architectures
+- Models -> Transformer
 - Results ->ROC curves and speedup results
 - Evaluated the **Transformer model**.  
 - Investigated:  
