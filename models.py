@@ -1011,10 +1011,22 @@ class CombinedModel_wGCN_variable(nn.Module):
         x = torch.cat([feat, emb], -1)
         return self.deep_set(dict(feat=x, adj=inputs["adj"]), mask=mask)
 
-def from_config(config):
+def from_config(config: dict):
     """
     Mapping of model_name to model (useful for streamlining studies)
+
+    Parameters
+    ----------
+
+    config : dict
+        Configuration dictionary specifying the name of the model and values for the hyperparameters
+    
+    Returns
+    -------
+    nn.Module
+        PyTorch model based on the provided configuration.
     """
+
     models = {
         "deepset": DeepSet,
         "deepset_combined": CombinedModel,
