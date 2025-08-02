@@ -8,13 +8,14 @@ This document summarizes the contributions of each team member in the lab projec
 
 - Wrote the introduction to the **Belle II experiment** and the problem tackled in this lab.  
 - Methodology-> The dataset, transforming feature values, Unecessary features, Model architectures
+- Results ->ROC curves and speedup results
 - Evaluated the **Transformer model**.  
 - Investigated:  
   - Feature **normalization**  
   - **Redundant features** in the dataset  
   - The effect of **reversing GCN with DeepSet Layers**  
 - Implemented and included final **configuration parameters**.
-- Speedup model comparison and evaluation
+- Speedup model comparison and evaluation of all models
 - Code cleanup
 
 ---

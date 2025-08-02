@@ -1,16 +1,17 @@
 \section{Results}
 
-All models were trained using all four row groups from \texttt{"smartbkg\_dataset\_4k\_training.parquet"}, with a 75\%-25\% train-validation split. 
+All models were trained using all four row groups from 
+\texttt{"smartbkg\_dataset\_4k\_training.parquet"}, with a $75 \% $-$25\%$ train-validation split. 
 Evaluation was performed on all four row groups from \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}.
 Each model was trained for 10 epochs with a batch size of 256 and 32 hidden units. 
 
 \begin{itemize}
-    \item deepset \ref{model:DeepSet}
-    \item deepset combined \ref{model:CombinedModel}
-    \item deepset gcn \ref{model:DeepSet_wGCN}
-    \item deepset combined with gcn \ref{model:CombinedModel_wGCN}
-    \item transformer \ref{model:Transformer}
-    \item deepset combined wwith gcn normalized \ref{model:CombinedModel_wGCN_Normalized}
+    \item deepset~\ref{model:DeepSet}
+    \item deepset combined~\ref{model:CombinedModel}
+    \item deepset gcn~\ref{model:DeepSet_wGCN}
+    \item deepset combined with gcn~\ref{model:CombinedModel_wGCN}
+    \item transformer~\ref{model:Transformer}
+    \item deepset combined wwith gcn normalized~\ref{model:CombinedModel_wGCN_Normalized}
 \end{itemize}
 
 \subsection{Model Evaluation}
@@ -46,5 +47,77 @@ A higher AUC indicates better separability between the two classes.
 \end{itemize}
 
 \subsection{Optimal Model}
- 
+\textbf{This should probably be moved on the chapter above}
 
+
+\subsection{ROC curves and speedup results}
+
+Figures~\ref{fig:ROC_curves_results} and~\ref{fig:speedup} present the ROC curves and speedup plots for our most promising models.  
+We began with a simple Deep Set model (\ref{sec:DeepSet}) and, 
+through a series of investigations, developed more complex architectures such as the Deep Set Combined model and the Deep Set Combined with GCN model.  
+Our exploration culminated in a Transformer model and an ``Optimal Model'' configuration.
+
+
+\begin{figure}[H]
+ \centering
+    \includegraphics[width=0.75\textwidth]{chapters/Results/ROC_curves.png}
+    \caption{The resulting ROC curves of our different models}
+    \label{fig:ROC_curves_results}
+\end{figure}
+
+
+From Figure~\ref{fig:ROC_curves_results}, it is evident that all but 
+the simplest baseline models achieve strong results,  
+with most AUC scores exceeding $0.85$, indicating strong classification performance.  
+The Transformer and Optimal Model stand out with the highest AUC values.
+
+While ROC curves indicate classification quality, they do not reflect entirely the impact
+on computational efficiency. To address this, we also evaluate the \emph{speedup}—(\ref{sec:Speedup})
+if events are filtered using the model predictions.
+
+\begin{figure}[H]
+ \centering
+    \includegraphics[width=0.75\textwidth]{chapters/Results/Speedupt.png}
+    \caption{Speedup gained by our seperate models}
+    \label{fig:speedup}
+\end{figure}
+
+From figure  (fig \ref{fig:ROC_curves_results}), we observe that the
+more advanced models are indistinguishable as far as their ROC performance is concerned,
+however they diverge in the achievable speedup. 
+The Optimal Model attains the highest maximum speedup, 
+followed closely by the Transformer and Deep Set Combined with GCN variants.
+
+
+\begin{table}[ht]
+\centering
+\caption{Model evaluation metrics (rounded to 3 decimals)}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Model} & \textbf{Loss} & \textbf{Accuracy} & \textbf{AUC} & \textbf{Max. Speedup} & \textbf{Best Threshold} \\
+\hline
+DS & 0.633 & 0.636 & 0.699 & 2.485 & 0.618 \\
+DS\_combined & 0.476 & 0.775 & 0.852 & 4.758 & 1.757 \\
+DS\_gcn & 0.625 & 0.647 & 0.707 & 2.734 & 1.193 \\
+DS\_combined\_wgcn & 0.467 & 0.779 & 0.859 & 5.236 & 1.993 \\
+transformer & 0.441 & 0.795 & 0.872 & 5.301 & 1.774 \\
+DS\_combined\_wgcn\_normalized & 0.477 & 0.773 & 0.851 & 4.979 & 1.721 \\
+optimal\_model & 0.445 & 0.792 & 0.872 & 5.934 & 1.901 \\
+\hline
+\end{tabular}
+\end{table}
+
+
+The \emph{Best Threshold} column is obtained from the set 
+of decision thresholds returned by the \verb|roc_curve| function.  
+These thresholds correspond to decreasing cut values on 
+the model’s decision function that are used to compute 
+the true positive rate (TPR) and false positive rate (FPR) pairs.  
+The first threshold is always set to \verb|np.inf|, 
+which by definition yields zero predicted positives.  
+
+Among these thresholds, the one shown in the table is 
+the value at which the model 
+achieves its maximum estimated speedup.  
+For example, the Optimal Model reaches a 
+maximum speedup of $5.934$ at a decision threshold of $1.901$.

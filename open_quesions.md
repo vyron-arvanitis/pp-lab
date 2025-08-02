@@ -20,3 +20,4 @@ Every result should be reproducable!
 5. Results: Table with every model, where training, test, and validation acc and ROC and Speedup is summarized
 6. Conclusion: conclude
 7. Appendix for code snippets?
+8. Need to mention that for the results we used the whole dataset!
