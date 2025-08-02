@@ -800,6 +800,7 @@ class CombinedModel_wGCN_Normalized(nn.Module):
     """
 
     def __init__(self, num_features=8, embed_dim=8, num_pdg_ids=len(PDG_MAPPING), units=32, dropout_rate=0.3, num_heads=4, num_layers=2):
+                
                 """
         Initialize the CombinedModel_wGCN_Normalized.
 
@@ -821,13 +822,13 @@ class CombinedModel_wGCN_Normalized(nn.Module):
             Number of layers (not used; reserved for extensions).
         """
 
-        super().__init__()
-        self.model = CombinedModel_wGCN(
-            num_features=num_features,
-            embed_dim=embed_dim,
-            num_pdg_ids=num_pdg_ids,
-            units=units
-        )
+                super().__init__()
+                self.model = CombinedModel_wGCN(
+                    num_features=num_features,
+                    embed_dim=embed_dim,
+                    num_pdg_ids=num_pdg_ids,
+                    units=units
+                )
 
     def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
         """

@@ -44,12 +44,12 @@ def main():
     }   
 
     # --- Select Model ---
-    tag = f'{config["model_name"]}_{coordinates}'
+    tag = f'{config["model_name"]}_{coordinates}_test'
 
     print("Selected model: ", tag)
 
     # --- Configuration ---
-    dataset_path = "smartbkg_dataset_4k.parquet"
+    dataset_path = "smartbkg_dataset_4k_training.parquet"
     pdg_map_path = "pdg_mapping.json"
     save_path = Path("models_fulltrain")
     save_path.mkdir(exist_ok=True)

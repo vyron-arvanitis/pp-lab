@@ -1,1 +1,1 @@
-{"model_name": "optimal_model", "embed_dim": 6, "dropout_rate": 0.17, "units": 32, "num_features": 6}
+{"model_name": "optimal_model", "embed_dim": 25, "dropout_rate": 0.179, "units": 32, "num_features": 6}
