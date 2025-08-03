@@ -645,7 +645,7 @@ class OptimalModel(nn.Module):
         torch.Tensor
             Tensor of shape (batch_size, 1), containing scalar predictions per input set.
         """
-        inputs = normalize_inputs(inputs)
+        #inputs = normalize_inputs(inputs)
         pdg = inputs["pdg"]
         adj = normalize_adjacency(inputs["adj"])
         feat = inputs["feat"]

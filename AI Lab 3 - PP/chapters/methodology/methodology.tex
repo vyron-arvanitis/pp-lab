@@ -1,5 +1,5 @@
 \section{Methodology}
-
+\label{sec:methodology}
 To identify the optimal model architecture, each group member conducted 
 small-scale investigations targeting specific aspects of the model design. 
 These investigations included the following:
@@ -119,9 +119,9 @@ Training was performed on all four row groups of the training set over 10 epochs
     \centering
     \begin{tabular}{l|cc|cc}
         \hline
-        Model & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
+         & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
         \hline 
-        & Loss & Accuracy  & Loss & Accuracy\\
+        Model& Loss & Accuracy  & Loss & Accuracy\\
         \hline
         \texttt{deepset}& $0.6294$ & $63.88~\%$ & $0.6219$&$64.69~\%$ \\
         \texttt{deepset\_gcn}&$0.6235$&$64.79~\%$&$0.6119$&$66.21~\%$ \\
@@ -130,6 +130,10 @@ Training was performed on all four row groups of the training set over 10 epochs
     \end{tabular}
 \end{table}
 
+Table \ref{tab:coordinates_investigation} presents the validation loss and accuracy for each model trained using both
+Cartesian and cylindrical coordinates. Training on cylindrical coordinates consistently leads to improved performance across all models.
+Specifically, the validation accuracy increases by $0.81\%$ for \texttt{deepset}, $1.42\%$ for \texttt{deepset\_gcn}, and $0.39\%$. 
+for \texttt{deepset\_combined}.
 
 \subsection{Transforming the feature values} \label{sec:Nomralize features}
 
@@ -210,7 +214,7 @@ Expanding the training set—either through real data or augmentation—exposes 
 
 Collectively, these methods reduce model variance and promote generalization, which is essential for ensuring reliable performance on physical inference tasks.
 
-\subsubsection{Hyperparameter Optimization}
+\subsubsection*{Hyperparameter Optimization}
 Hyperparameter optimization involves empirically testing different configurations that influence the learning behavior of a neural network. Key hyperparameters include the number of layers, neurons per layer, activation function, dropout rate, L2-regularization parameter ($\lambda$), and learning rate.
 
 For this task, we employed the Optuna library~\cite{akiba2019optuna}, which uses the Tree-structured Parzen Estimator (TPE)—a Bayesian optimization algorithm. Unlike random search, TPE models the relationship between hyperparameters and the objective function (in our case, validation loss), and strategically explores regions of the hyperparameter space that are more likely to yield better results.

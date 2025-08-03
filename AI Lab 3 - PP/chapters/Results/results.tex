@@ -1,19 +1,53 @@
 \section{Results}
 
-All models were trained using all four row groups from 
-\texttt{"smartbkg\_dataset\_4k\_training.parquet"}, with a $75 \% $-$25\%$ train-validation split. 
-Evaluation was performed on all four row groups from \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}.
-Each model was trained for 10 epochs with a batch size of 256 and 32 hidden units. 
+All models were trained on the full training dataset contained in \texttt{"smartbkg\_dataset\_4k\_training.parquet"}, 
+using a $75 \% $-$25\%$ train-validation split. Training was conducted over 10 epochs using the Adam optimizer with a weight decay of $10^{-4}$. Furthermore, the models were trained on Cartesian coordinates with features \texttt{"prodTime", "x", "y", "z", "energy", "px", "py"}, and \texttt{"pz"}. 
 
-\begin{itemize}
-    \item deepset~\ref{model:DeepSet}
-    \item deepset combined~\ref{model:CombinedModel}
-    \item deepset gcn~\ref{model:DeepSet_wGCN}
-    \item deepset combined with gcn~\ref{model:CombinedModel_wGCN}
-    \item transformer~\ref{model:Transformer}
-    \item deepset combined wwith gcn normalized~\ref{model:CombinedModel_wGCN_Normalized}
-\end{itemize}
+Evaluation was performed on the full test dataset contained in \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}, using a batch size of 256.
 
+Table \ref{tab:validation_metrics} shows the validation loss and accuracy for every model presented in section \ref{sec:models}.
+Comparing the different models yields following conclusions: Using the PDG numbers on the 
+\begin{table}[h]
+    \centering
+    \caption{Validation metrics for every model}
+    \label{tab:validation_metrics}
+    \begin{tabular}{lcc}
+    \hline
+    \textbf{Model} & \textbf{Validation Loss} & \textbf{Validation Accuracy} / (\%) \\
+    \hline
+    \texttt{deepset}&$0.6330$&$63.56\%$ \\
+    \texttt{deepset\_combined}&$0.4778$&$77.50$ \\
+    \texttt{deepset\_gcn}&$0.6256$&$64.57$ \\
+    \texttt{deepset\_combined\_gcn}&$0.4696$&$77.70$ \\
+    \texttt{transformer}&$0.4425$&$79.39$ \\
+    \texttt{deepset\_combined\_gcn\_normalized}&$0.4772$&$77.31$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+\subsection{Optimal model}
+
+Section \ref{sec:methodology} aims to find the optimal regularization, feature processing, and model architecture.
+With all the finding, we merged everything into one model, expecting this to be the optimal model:
+\begin{table}[h]
+    \caption{Architecture of the Optimal Model}
+    \label{tab:transformer_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1 & Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
+        -- & Concatenation of features and embeddings & $[B,N,f+e]$ & -- \\
+        2 & GCN layer + BatchNorm, LeakyReLU, Dropout & $[B,N,u]$ & $u \times (f+e) + u$ \\
+        3-4 & GCN layer + BatchNorm, LeakyReLU, Dropout & $[B,N,u]$ & $u \times u + u$ \\
+        5 & Linear layer + BatchNorm, LeakyReLU, Dropout& $[B,N,u]$ & $u \times u + u$ \\
+        --& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        6& Linear + BatchNorm, LeakyReLU, Dropout & $[B,u]$ & $u \times u + u$ \\ 
+        7& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
 
 
 \subsection{ROC curves and speedup results}
@@ -26,11 +60,10 @@ Our exploration culminated in a Transformer model and an ``Optimal Model'' confi
 
 \begin{figure}[H]
  \centering
-    \includegraphics[width=0.75\textwidth]{chapters/Results/ROC_curves.png}
+    \includegraphics[width=0.75\textwidth]{chapters/Results/ROC_curves.pdf}
     \caption{The resulting ROC curves of our different models}
     \label{fig:ROC_curves_results}
 \end{figure}
-
 
 From Figure~\ref{fig:ROC_curves_results}, it is evident that all but 
 the simplest baseline models achieve strong results,  
@@ -43,7 +76,7 @@ if events are filtered using the model predictions.
 
 \begin{figure}[H]
  \centering
-    \includegraphics[width=0.75\textwidth]{chapters/Results/Speedupt.png}
+    \includegraphics[width=0.75\textwidth]{chapters/Results/Speedupt.pdf}
     \caption{Speedup gained by our seperate models}
     \label{fig:speedup}
 \end{figure}

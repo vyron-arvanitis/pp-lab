@@ -1,5 +1,10 @@
-\section{Models Used in the End}
-Based on our comulative research, we identified the following models as the most promising. We also include simpler baseline architectures, as they help illustrate the impact of additional layers and regularization techniques on model performace. 
+\section{Summary of Evaluated Architectures}
+\label{sec:models}
+Based on our cumulative research, we implemented and evaluated a variety of model architectures to better 
+understnad which components and design choices contribute most to performance. Rather than being pre-selected 
+as the most promising, these models served as investigative tools to explore the effects of 
+architectural elements such as embeddings, graph structure, and normalization. 
+Simpler baseline models were also included to isolate and quantify the impact of these additions. 
 
 \subsection{General setup}
 All models described below take at least the following arguments:
@@ -34,9 +39,9 @@ The architecture of the model is summarized in table \ref{tab:deepset_arc}.
         Layer \# & Description & Output shape & Parameters \\
         \hline 
         1 & Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times f + u$ \\
-        2 & Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
-        3 & Linear + ReLU (global MLP)& $[B,u]$ & $u \times u + u$ \\
-        4 & Linear (Output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        -- & Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
+        2 & Linear + ReLU (global MLP)& $[B,u]$ & $u \times u + u$ \\
+        3 & Linear (Output layer) & $[B,1]$ & $1 \times u + 1$ \\
         \hline
     \end{tabular}
 \end{table}
@@ -64,11 +69,11 @@ The architecture of the model is summarized in table \ref{tab:deepset_combined_a
         Layer \# & Description & Output shape & Parameters \\
         \hline 
         1& Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
-        2& Concatenation of features and embeddings & $[B,N,f+e]$& --\\
-        3& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times (f+e) + u$ \\
-        4& Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
-        5& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\
-        6& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        --& Concatenation of features and embeddings & $[B,N,f+e]$& --\\
+        2& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times (f+e) + u$ \\
+        --& Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
+        3& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\
+        4& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
         \hline
     \end{tabular}
 \end{table}
@@ -99,9 +104,9 @@ The models architecture is summarized in \ref{tab:deepset_wgcn_arc}
         \hline 
         1& Graph Convolution (GCN) & $[B,N,u]$ & $u \times f + u$ \\
         2& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
-        3& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
-        4& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
-        5& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\ 
+        --& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        3& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        4& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\ 
         \hline
     \end{tabular}
 \end{table}
@@ -122,12 +127,12 @@ The architecture of the model is summarized in table \ref{tab:deepset_gcn_combin
         Layer \# & Description & Output shape & Parameters \\
         \hline 
         1& Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
-        2& Concatenation of features and embeddings & $[B,N,f+e]$& --\\
-        3& Graph Convolution (GCN) & $[B,N,u]$ & $u \times (e+f) + u$ \\
-        4& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
-        5& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
-        6& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
-        7& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        --& Concatenation of features and embeddings & $[B,N,f+e]$& --\\
+        2& Graph Convolution (GCN) & $[B,N,u]$ & $u \times (e+f) + u$ \\
+        3& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
+        --& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        4& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        5& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
         \hline
     \end{tabular}
 \end{table}
@@ -173,15 +178,11 @@ The architecture of the Transformer model is summarized in Table~\ref{tab:transf
         Layer \# & Description & Output shape & Parameters \\
         \hline 
         1 & Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
-        2 & Concatenation of features and embeddings & $[B,N,f+e]$ & -- \\
-        3 & Linear projection to Transformer units & $[B,N,u]$ & $u \times (f+e) + u$ \\
-        4 & Transformer encoder stack & $[B,N,u]$ & per-layer: MHSA + FFN  \\
-        5 & Mean pooling over particle dimension & $[B,u]$ & -- \\
-        6 & Linear output layer & $[B,1]$ & $1 \times u + 1$ \\
+        -- & Concatenation of features and embeddings & $[B,N,f+e]$ & -- \\
+        2 & Linear projection to Transformer units & $[B,N,u]$ & $u \times (f+e) + u$ \\
+        3 & Transformer encoder stack & $[B,N,u]$ & per-layer: MHSA + FFN  \\
+        -- & Mean pooling over particle dimension & $[B,u]$ & -- \\
+        4 & Linear output layer & $[B,1]$ & $1 \times u + 1$ \\
         \hline
     \end{tabular}
 \end{table}
-
-
-\subsection{Optimal Model}
-\textbf{This should probably be moved on the chapter above}

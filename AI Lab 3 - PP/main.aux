@@ -49,6 +49,7 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Transformer-model architecture \cite  {DBLP:journals/corr/VaswaniSPUJGKP17}}}{7}{figure.6}\protected@file@percent }
 \newlabel{fig:Transformer_architecture}{{6}{7}{Transformer-model architecture \cite {DBLP:journals/corr/VaswaniSPUJGKP17}}{figure.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Methodology}{7}{section.4}\protected@file@percent }
+\newlabel{sec:methodology}{{4}{7}{Methodology}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}The Dataset}{8}{subsection.4.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Example of a particle decay graph. The nodes represent particles, and the edges represent the decay relationships between them.}}{8}{figure.7}\protected@file@percent }
 \newlabel{fig:graph_example}{{7}{8}{Example of a particle decay graph. The nodes represent particles, and the edges represent the decay relationships between them}{figure.7}{}}
@@ -64,57 +65,61 @@
 \newlabel{sec:Nomralize features}{{4.4}{10}{Transforming the feature values}{subsection.4.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Unecessary Features}{11}{subsection.4.5}\protected@file@percent }
 \newlabel{sec:Unecessary Features}{{4.5}{11}{Unecessary Features}{subsection.4.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Validation accuracy and loss for different experiments. The horizontal dashed lines indicate the best performance achieved with the baseline model. Note: the \textbf  {reversed} model refers to the configuration where the GCN and DeepSet layers were swapped.}}{11}{figure.8}\protected@file@percent }
-\newlabel{fig:Feature_importance}{{8}{11}{Validation accuracy and loss for different experiments. The horizontal dashed lines indicate the best performance achieved with the baseline model. Note: the \textbf {reversed} model refers to the configuration where the GCN and DeepSet layers were swapped}{figure.8}{}}
 \citation{goodfellow2016dlbook}
 \citation{ioffe2015batchnorm}
 \citation{srivastava2014dropout}
-\citation{goodfellow2016dlbook}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Validation accuracy and loss for different experiments. The horizontal dashed lines indicate the best performance achieved with the baseline model. Note: the \textbf  {reversed} model refers to the configuration where the GCN and DeepSet layers were swapped.}}{12}{figure.8}\protected@file@percent }
+\newlabel{fig:Feature_importance}{{8}{12}{Validation accuracy and loss for different experiments. The horizontal dashed lines indicate the best performance achieved with the baseline model. Note: the \textbf {reversed} model refers to the configuration where the GCN and DeepSet layers were swapped}{figure.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Overfitting and Mitigation Techniques}{12}{subsection.4.6}\protected@file@percent }
+\citation{goodfellow2016dlbook}
 \citation{akiba2019optuna}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.6.1}Hyperparameter Optimization}{13}{subsubsection.4.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Speedup}{13}{subsection.4.7}\protected@file@percent }
-\newlabel{sec:Speedup}{{4.7}{13}{Speedup}{subsection.4.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Speedup}{14}{subsection.4.7}\protected@file@percent }
+\newlabel{sec:Speedup}{{4.7}{14}{Speedup}{subsection.4.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.8}ROC Curve and AUC Evaluation}{14}{subsection.4.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Definitions}{14}{section*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Interpretation}{15}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Models Used in the End}{15}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Definitions}{15}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Interpretation}{15}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Summary of Evaluated Architectures}{15}{section.5}\protected@file@percent }
+\newlabel{sec:models}{{5}{15}{Summary of Evaluated Architectures}{section.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}General setup}{15}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}DeepSet Model}{15}{subsection.5.2}\protected@file@percent }
-\newlabel{model:DeepSet}{{5.2}{15}{DeepSet Model}{subsection.5.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces DeepSet Model Architecture}}{15}{table.4}\protected@file@percent }
-\newlabel{tab:deepset_arc}{{4}{15}{DeepSet Model Architecture}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}DeepSet Model}{16}{subsection.5.2}\protected@file@percent }
+\newlabel{model:DeepSet}{{5.2}{16}{DeepSet Model}{subsection.5.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces DeepSet Model Architecture}}{16}{table.4}\protected@file@percent }
+\newlabel{tab:deepset_arc}{{4}{16}{DeepSet Model Architecture}{table.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Combined Model}{16}{subsection.5.3}\protected@file@percent }
 \newlabel{model:CombinedModel}{{5.3}{16}{Combined Model}{subsection.5.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Architecture of the Combined Model with PDG embedding and DeepSet structure}}{16}{table.5}\protected@file@percent }
 \newlabel{tab:deepset_combined_arc}{{5}{16}{Architecture of the Combined Model with PDG embedding and DeepSet structure}{table.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}DeepSet with GCN}{16}{subsection.5.4}\protected@file@percent }
-\newlabel{model:DeepSet_wGCN}{{5.4}{16}{DeepSet with GCN}{subsection.5.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Combined Deepset with GCN}{16}{subsection.5.5}\protected@file@percent }
-\newlabel{model:CombinedModel_wGCN}{{5.5}{16}{Combined Deepset with GCN}{subsection.5.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}DeepSet with GCN}{17}{subsection.5.4}\protected@file@percent }
+\newlabel{model:DeepSet_wGCN}{{5.4}{17}{DeepSet with GCN}{subsection.5.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Architecture of the Combined Model with PDG embedding and DeepSet structure}}{17}{table.6}\protected@file@percent }
 \newlabel{tab:deepset_wgcn_arc}{{6}{17}{Architecture of the Combined Model with PDG embedding and DeepSet structure}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Combined Deepset with GCN}{17}{subsection.5.5}\protected@file@percent }
+\newlabel{model:CombinedModel_wGCN}{{5.5}{17}{Combined Deepset with GCN}{subsection.5.5}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Architecture of the Combined Model with PDG embedding, GCN and DeepSet structure}}{17}{table.7}\protected@file@percent }
 \newlabel{tab:deepset_gcn_combined_arc}{{7}{17}{Architecture of the Combined Model with PDG embedding, GCN and DeepSet structure}{table.7}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Combined Deepset with GCN Normalized}{17}{subsection.5.6}\protected@file@percent }
 \newlabel{model:CombinedModel_wGCN_Normalized}{{5.6}{17}{Combined Deepset with GCN Normalized}{subsection.5.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{Architecture}{17}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Transformer Model}{17}{subsection.5.7}\protected@file@percent }
-\newlabel{model:Transformer}{{5.7}{17}{Transformer Model}{subsection.5.7}{}}
+\@writefile{toc}{\contentsline {paragraph}{Architecture}{18}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Transformer Model}{18}{subsection.5.7}\protected@file@percent }
+\newlabel{model:Transformer}{{5.7}{18}{Transformer Model}{subsection.5.7}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Architecture of the Transformer Model with PDG embedding}}{18}{table.8}\protected@file@percent }
 \newlabel{tab:transformer_arc}{{8}{18}{Architecture of the Transformer Model with PDG embedding}{table.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}Optimal Model}{18}{subsection.5.8}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Results}{18}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}ROC curves and speedup results}{18}{subsection.6.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The resulting ROC curves of our different models}}{19}{figure.9}\protected@file@percent }
-\newlabel{fig:ROC_curves_results}{{9}{19}{The resulting ROC curves of our different models}{figure.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Speedup gained by our seperate models}}{19}{figure.10}\protected@file@percent }
-\newlabel{fig:speedup}{{10}{19}{Speedup gained by our seperate models}{figure.10}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Model evaluation metrics (rounded to 3 decimals)}}{20}{table.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{20}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A}Code Listings}{21}{appendix.A}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Normalization function}{21}{subsection.A.1}\protected@file@percent }
-\newlabel{app:normalization}{{A.1}{21}{Normalization function}{subsection.A.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Validation metrics for every model}}{19}{table.9}\protected@file@percent }
+\newlabel{tab:validation_metrics}{{9}{19}{Validation metrics for every model}{table.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Optimal model}{19}{subsection.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Architecture of the Optimal Model}}{19}{table.10}\protected@file@percent }
+\newlabel{tab:transformer_arc}{{10}{19}{Architecture of the Optimal Model}{table.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}ROC curves and speedup results}{19}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The resulting ROC curves of our different models}}{20}{figure.9}\protected@file@percent }
+\newlabel{fig:ROC_curves_results}{{9}{20}{The resulting ROC curves of our different models}{figure.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Speedup gained by our seperate models}}{21}{figure.10}\protected@file@percent }
+\newlabel{fig:speedup}{{10}{21}{Speedup gained by our seperate models}{figure.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Model evaluation metrics (rounded to 3 decimals)}}{21}{table.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{21}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Code Listings}{22}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Normalization function}{22}{subsection.A.1}\protected@file@percent }
+\newlabel{app:normalization}{{A.1}{22}{Normalization function}{subsection.A.1}{}}
 \bibstyle{plain}
 \bibdata{mybib}
 \bibcite{akiba2019optuna}{1}
