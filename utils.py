@@ -48,7 +48,12 @@ def normalize_inputs(inputs: dict) -> dict:
     return {**inputs, "feat": x_norm}
 
 def load_data(filename, row_groups):
-    "Load course data into a pandas dataframe. Also returns the labels for each event as a numpy array."
+    """Load course data into a pandas dataframe. 
+    Also returns the labels for each event as a numpy array.
+
+    Parameters
+    ----------
+    """
     data = ak.from_parquet(filename, row_groups=row_groups)
     labels = data.label.to_numpy()
     df_particles = ak.to_dataframe(data.particles, levelname=lambda i: {0: "event", 1: "particle"}[i])
@@ -62,6 +67,9 @@ def map_np(array, mapping, fallback):
     """
     Apply a mapping over a numpy array - along the lines of
     https://stackoverflow.com/a/16993364
+
+    Parameters
+    ----------
     """
     # inv is the original array with the values replaced by their indices in the unique array
     unique, inv = np.unique(array, return_inverse=True)
@@ -72,7 +80,8 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
     """
     Preprocess data from pandas DataFrame and return dictionary of flat numpy arrays per event.
 
-    Args:
+    Parameters
+    ----------
         df (pd.DataFrame): Input data containing particle features and metadata
         pdg_maping (dict): Mapping from pdg ids to token ids
         feature_columns (list): Columns to use as input features
@@ -110,6 +119,11 @@ def pad_sequences(sequences, maxlen=None):
 
     Similar to https://keras.io/api/preprocessing/timeseries/#padsequences-function
     but works for 2D arrays as well
+
+
+    Parameters
+    ----------
+
     """
     if maxlen is None:
         maxlen = max(len(array) for array in sequences)
@@ -129,6 +143,9 @@ def normalize_adjacency(adj):
     The scalefactor for each entry is given by 1 / c_ij
     where c_ij = sqrt(N_i) * sqrt(N_j)
     where N_i and N_j are the number of neighbors (Node degrees) of Node i and j.
+
+    Parameters
+    ----------
     """
     deg_diag = adj.sum(axis=2)
     deg12_diag = torch.where(deg_diag != 0, deg_diag**-0.5, 0)
@@ -141,6 +158,9 @@ def pad_adjacencies(adj_list):
     """
     Converts a sequence of adjacency matrices to a 3D numpy array of fixed
     matrix size with zero padded entries
+
+    Parameters
+    ----------
     """
     maxlen = max(len(adj) for adj in adj_list)
     batch = np.zeros((len(adj_list), maxlen, maxlen), dtype=bool)
@@ -155,6 +175,9 @@ def get_adj(index, mother):
 
     Returns the adjacency matrix with mother-daughter and
     daughter-mother relations as well as self-loops (diagonal is 1) as an array
+
+    Parameters
+    ----------
     """
     return (
         (mother[np.newaxis, :] == index[:, np.newaxis]) # mother-daughter relations
@@ -184,6 +207,10 @@ class GraphDataset(torch.utils.data.Dataset):
 
 
 def collate_fn(inputs):
+    """
+    Parameters
+    ----------
+    """
     feat, pdg, adj = [
         [x[key] for x, y in inputs] for key in ["feat", "pdg", "adj"]
     ]
@@ -199,6 +226,10 @@ def collate_fn(inputs):
 
 
 def loss_fn(logits, y):
+    """
+    Parameters
+    ----------
+    """
     return F.binary_cross_entropy_with_logits(logits.squeeze(), y.float())
 
 
@@ -210,7 +241,8 @@ def fit(model, dl_train, dl_val, epochs=50, device="cpu", history=None, patience
     """
     Train a model with optional early stopping.
 
-    Args:
+    Parameters
+    ----------
         model: PyTorch model to train
         dl_train: DataLoader for training set
         dl_val: DataLoader for validation set
@@ -307,11 +339,13 @@ def transform_to_cylindrical(df):
         '''
         Transform Cartesian coordinates and momenta in a DataFrame to cylindrical form.
 
-        Args: 
+        Parameters
+        ----------
             df (pd.DataFrame): A pandas Dataframe containing at least the columns 
                 'x', 'y', and 'px', 'py'.
 
-        Returns:
+        Returns
+        -------
             pd.Dataframe: A DataFrame with cylindrical features:
                  'r', 'p_xy', replacing 'x', 'y', and 'px', 'py'
 
