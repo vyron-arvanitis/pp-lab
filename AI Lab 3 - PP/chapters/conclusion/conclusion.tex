@@ -1,1 +1,9 @@
 \section{Conclusion}
+
+In this project, we successfully developed and evaluated several nerual network architectures aimed at identifying events likely to survive downstream selection in the Belle II simulation pipeline. Starting from a simple Deep Set baseline, we incrementally introduced architectural innovations such as PDG embeddings, graph convolutional layers, normalization, and coordinate transformations to improve predictive performance. 
+
+Out results demonstrate that incorporating domain knowledge into the model design significantly enhances classification accuracy and computational efficency. Specifically, the Optimal Model, which combines PDG embeddings, multiple GCN layers, and cylindrical coordinate inputs with stron regularization techniques, achieved the best performance acoss all metric. It reached an AUC of $0.880$, test accuracy of $80.1\%$, and maximum speedup of $6.01\times$, enabling a substantial reduction in computational cost for event simulation. 
+
+While the Transformer model also showed strong performance (AUC = $0.872$, speedup = $5.30$), it was slightly outperformed by the Optimal Model, suggesting that tailored architectures that incorporate physical symmetries and relational structures may be better suited for this specific task than more general-purpose models.
+
+Overall, this work confirms the feasibility of using machine learning models to intelligently filter unimportant events eraly in the simulation chain, allowing for more efficient resource usage in high-energy physics experiments. 

@@ -6,14 +6,13 @@ using a $75 \% $-$25\%$ train-validation split. Training was conducted over 10 e
 Evaluation was performed on the full test dataset contained in \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}, using a batch size of 256.
 
 Table \ref{tab:validation_metrics} shows the validation loss and accuracy for every model presented in section \ref{sec:models}.
-Comparing the different models yields following conclusions: Using the PDG numbers on the 
 \begin{table}[h]
     \centering
     \caption{Validation metrics for every model}
     \label{tab:validation_metrics}
     \begin{tabular}{lcc}
     \hline
-    \textbf{Model} & \textbf{Validation Loss} & \textbf{Validation Accuracy} / (\%) \\
+    \textbf{Model} & \textbf{Loss} & \textbf{Accuracy} / (\%) \\
     \hline
     \texttt{deepset}&$0.6330$&$63.56\%$ \\
     \texttt{deepset\_combined}&$0.4778$&$77.50$ \\
@@ -25,10 +24,21 @@ Comparing the different models yields following conclusions: Using the PDG numbe
     \end{tabular}
     \end{table}
 
+Comparing the different models leads to the following conclusions: Incorporating  PDG IDs through learned embeddings improves performance by enrichting the particle representation. Similarly, adding GCN layers to the DeepSet architecture enhances performance by capturing structural information from particle relationships. Combining both techniques, embeddings and GCNs, yields furhter improvement. 
+
+In contrast, normalzing the input features slightly reduces the performance
+of the \texttt{deepset\_combined\_gcn} model by $0.39\%$ in validation accuracy. 
+    
+Among the implemented models, the Transformer currently achieves the highest accuracy at $79.39\%$. 
+
 \subsection{Optimal model}
 
-Section \ref{sec:methodology} aims to find the optimal regularization, feature processing, and model architecture.
-With all the finding, we merged everything into one model, expecting this to be the optimal model:
+Section \ref{sec:methodology} explores various strategies for regularization, feature processing, and architectural design. Based on the insights gained, we combined the most effective components into a single architecture, referred to as the Optimal Model. 
+
+The model builds upon a base architecture in which the input features are augmented with PDG ID embeddings, increasing the feature dimensionality by 25. The network consists of four sequential layers: the input layer, second, and third layer are implemented as GCNs, followed by one linear layer. THis is followed by mean pooling across particles and final two-layer MLP to produce the output. 
+
+Each trainable layer is followed by Dropout (with a rate of $0.179$), a LeakyReLU activation (slope $0.01$), and Batch Normalization. Training was conducted using cylindrical coordinates, while all other settings remained consistent with previous experiments. 
+
 \begin{table}[h]
     \caption{Architecture of the Optimal Model}
     \label{tab:transformer_arc}
@@ -88,23 +98,23 @@ The Optimal Model attains the highest maximum speedup,
 followed closely by the Transformer and Deep Set Combined with GCN variants.
 
 
-\begin{table}[ht]
-\centering
-\caption{Model evaluation metrics (rounded to 3 decimals)}
-\begin{tabular}{lccccc}
-\hline
-\textbf{Model} & \textbf{Loss} & \textbf{Accuracy} & \textbf{AUC} & \textbf{Max. Speedup} & \textbf{Best Threshold} \\
-\hline
-DS & 0.633 & 0.636 & 0.699 & 2.485 & 0.618 \\
-DS\_combined & 0.476 & 0.775 & 0.852 & 4.758 & 1.757 \\
-DS\_gcn & 0.625 & 0.647 & 0.707 & 2.734 & 1.193 \\
-DS\_combined\_wgcn & 0.467 & 0.779 & 0.859 & 5.236 & 1.993 \\
-transformer & 0.441 & 0.795 & 0.872 & 5.301 & 1.774 \\
-DS\_combined\_wgcn\_normalized & 0.477 & 0.773 & 0.851 & 4.979 & 1.721 \\
-optimal\_model & 0.445 & 0.792 & 0.872 & 5.934 & 1.901 \\
-\hline
-\end{tabular}
+\begin{table}[h]
+    \centering
+    \caption{Evaluation metrics for all models}
+    \label{tab:model_summary}
+    \begin{tabular}{l|c|c|c|c|c}
+        \textbf{Model} & \textbf{Loss} & \textbf{Acc.} & \textbf{AUC} & \textbf{Max. Speedup} & \textbf{Best Threshold} \\
+        \hline
+        DS & 0.633 & 0.636 & 0.699 & 2.485 & 0.618 \\
+        DS\_combined & 0.476 & 0.776 & 0.852 & 4.758 & 1.757 \\
+        DS\_gcn & 0.625 & 0.647 & 0.707 & 2.734 & 1.193 \\
+        DS\_combined\_wgcn & 0.467 & 0.779 & 0.859 & 5.236 & 1.993 \\
+        transformer & 0.441 & 0.795 & 0.872 & 5.301 & 1.774 \\
+        DS\_combined\_wgcn\_normalized & 0.477 & 0.773 & 0.851 & 4.979 & 1.721 \\
+        optimal\_model & 0.432 & 0.801 & 0.880 & 6.009 & 1.899 \\
+    \end{tabular}
 \end{table}
+
 
 
 The \emph{Best Threshold} column is obtained from the set 
