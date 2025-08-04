@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{akiba2019optuna}
 Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama.
@@ -46,6 +46,13 @@ Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan
   Salakhutdinov.
 \newblock Dropout: A simple way to prevent neural networks from overfitting.
 \newblock {\em Journal of Machine Learning Research}, 15(1):1929--1958, 2014.
+
+\bibitem{zhihu-figure-qc}
+Zhihu User.
+\newblock Figure from: Relationship and prospects of quantum neural networks
+  and quantum computing.
+\newblock \url{https://zhuanlan.zhihu.com/p/51990489}, 2019.
+\newblock Accessed: 2025-08-04.
 
 \bibitem{DBLP:journals/corr/VaswaniSPUJGKP17}
 Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
