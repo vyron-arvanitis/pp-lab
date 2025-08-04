@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.11)  4 AUG 2025 11:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.11)  4 AUG 2025 12:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -507,13 +507,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
                    \relax 
 l.88 \newpage
               [1] (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/introduction/introduction.tex
-<chapters/introduction/MC_data_flow-keep-discard_NN.png, id=175, 545.43396pt x 112.49576pt>
+<chapters/introduction/MC_data_flow-keep-discard_NN.png, id=180, 545.43396pt x 112.49576pt>
 File: chapters/introduction/MC_data_flow-keep-discard_NN.png Graphic file (type png)
 <use chapters/introduction/MC_data_flow-keep-discard_NN.png>
 Package pdftex.def Info: chapters/introduction/MC_data_flow-keep-discard_NN.png  used on input line 15.
 (pdftex.def)             Requested size: 455.24411pt x 93.89842pt.
 ) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Belle_experiment/belle_exp.tex [2 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/introduction/MC_data_flow-keep-discard_NN.png>]
-<chapters/Belle_experiment/Overview_collider.png, id=193, 1116.17pt x 626.34pt>
+<chapters/Belle_experiment/Overview_collider.png, id=198, 1116.17pt x 626.34pt>
 File: chapters/Belle_experiment/Overview_collider.png Graphic file (type png)
 <use chapters/Belle_experiment/Overview_collider.png>
 Package pdftex.def Info: chapters/Belle_experiment/Overview_collider.png  used on input line 70.
@@ -524,25 +524,25 @@ Overfull \hbox (14.74869pt too wide) in paragraph at lines 79--90
  []
 
 [3 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Belle_experiment/Overview_collider.png>]
-<chapters/Belle_experiment/Belle_resonances.png, id=205, 1354.05875pt x 890.32625pt>
+<chapters/Belle_experiment/Belle_resonances.png, id=210, 1354.05875pt x 890.32625pt>
 File: chapters/Belle_experiment/Belle_resonances.png Graphic file (type png)
 <use chapters/Belle_experiment/Belle_resonances.png>
 Package pdftex.def Info: chapters/Belle_experiment/Belle_resonances.png  used on input line 112.
 (pdftex.def)             Requested size: 341.43307pt x 224.49654pt.
 ) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/theory/theory.tex [4 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Belle_experiment/Belle_resonances.png>]
-<chapters/theory/deep_set.png, id=215, 533.74406pt x 290.58563pt>
+<chapters/theory/deep_set.png, id=220, 533.74406pt x 290.58563pt>
 File: chapters/theory/deep_set.png Graphic file (type png)
 <use chapters/theory/deep_set.png>
 Package pdftex.def Info: chapters/theory/deep_set.png  used on input line 7.
 (pdftex.def)             Requested size: 318.66948pt x 173.49696pt.
  [5 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/theory/deep_set.png (PNG copy)>]
-<chapters/theory/cnn_vs_gcn.jpg, id=225, 628.6713pt x 352.02484pt>
+<chapters/theory/cnn_vs_gcn.jpg, id=230, 628.6713pt x 352.02484pt>
 File: chapters/theory/cnn_vs_gcn.jpg Graphic file (type jpg)
 <use chapters/theory/cnn_vs_gcn.jpg>
 Package pdftex.def Info: chapters/theory/cnn_vs_gcn.jpg  used on input line 29.
 (pdftex.def)             Requested size: 318.66948pt x 178.43988pt.
  [6 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/theory/cnn_vs_gcn.jpg>]
-<chapters/theory/Transformer_architecture.png, id=235, 521.95pt x 584.1825pt>
+<chapters/theory/Transformer_architecture.png, id=240, 521.95pt x 584.1825pt>
 File: chapters/theory/Transformer_architecture.png Graphic file (type png)
 <use chapters/theory/Transformer_architecture.png>
 Package pdftex.def Info: chapters/theory/Transformer_architecture.png  used on input line 84.
@@ -552,7 +552,7 @@ LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 8.
  (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [7 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/theory/Transformer_architecture.png>]
-<chapters/methodology/particle_graph.png, id=249, 1298.8525pt x 630.355pt>
+<chapters/methodology/particle_graph.png, id=254, 1298.8525pt x 630.355pt>
 File: chapters/methodology/particle_graph.png Graphic file (type png)
 <use chapters/methodology/particle_graph.png>
 Package pdftex.def Info: chapters/methodology/particle_graph.png  used on input line 26.
@@ -575,13 +575,13 @@ Overfull \hbox (60.50069pt too wide) in paragraph at lines 91--93
 []\T1/lmr/m/n/10.95 After per-form-ing mul-ti-ple cal-cu-la-tions with this ar-chi-tec-ture (see folder saved_models/Layers_investigation),
  []
 
-[9] [10]
-<chapters/methodology/feature_importance_comparison.png, id=271, 722.7pt x 361.35pt>
+[9] [10] [11]
+<chapters/methodology/feature_importance_comparison.png, id=288, 722.7pt x 361.35pt>
 File: chapters/methodology/feature_importance_comparison.png Graphic file (type png)
 <use chapters/methodology/feature_importance_comparison.png>
-Package pdftex.def Info: chapters/methodology/feature_importance_comparison.png  used on input line 178.
+Package pdftex.def Info: chapters/methodology/feature_importance_comparison.png  used on input line 233.
 (pdftex.def)             Requested size: 341.43307pt x 170.71672pt.
- [11] [12 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/methodology/feature_importance_comparison.png>] [13] [14]) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/models/models.tex [15] [16] [17]
+ [12] [13 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/methodology/feature_importance_comparison.png>] [14] [15]) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/models/models.tex [16] [17] [18]
 Overfull \hbox (22.99986pt too wide) in paragraph at lines 176--188
  [][] 
  []
@@ -599,7 +599,7 @@ Overfull \hbox (52.36638pt too wide) in paragraph at lines 6--7
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[18]
+[19]
 Overfull \hbox (40.60751pt too wide) in paragraph at lines 29--31
 []\T1/lmr/m/n/10.95 In con-trast, nor-malz-ing the in-put fea-tures slightly re-duces the per-for-mance of the \T1/lmtt/m/n/10.95 deepset_combined_gcn
  []
@@ -609,23 +609,23 @@ Overfull \hbox (9.67146pt too wide) in paragraph at lines 46--60
  [][] 
  []
 
-[19]
-<chapters/Results/ROC_curves.pdf, id=358, 578.16pt x 433.62pt>
+[20]
+<chapters/Results/ROC_curves.pdf, id=375, 578.16pt x 433.62pt>
 File: chapters/Results/ROC_curves.pdf Graphic file (type pdf)
 <use chapters/Results/ROC_curves.pdf>
 Package pdftex.def Info: chapters/Results/ROC_curves.pdf  used on input line 73.
 (pdftex.def)             Requested size: 341.43307pt x 256.07178pt.
-<chapters/Results/Speedupt.pdf, id=361, 578.16pt x 433.62pt>
+<chapters/Results/Speedupt.pdf, id=378, 578.16pt x 433.62pt>
 File: chapters/Results/Speedupt.pdf Graphic file (type pdf)
 <use chapters/Results/Speedupt.pdf>
 Package pdftex.def Info: chapters/Results/Speedupt.pdf  used on input line 89.
 (pdftex.def)             Requested size: 341.43307pt x 256.07178pt.
- [20 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Results/ROC_curves.pdf>]
+ [21 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Results/ROC_curves.pdf>]
 Overfull \hbox (20.62328pt too wide) in paragraph at lines 105--116
  [][] 
  []
 
-) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/conclusion/conclusion.tex [21 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Results/Speedupt.pdf>]) [22] (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Appendix/appendix.tex) [23] (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.bbl
+) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/conclusion/conclusion.tex [22 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Results/Speedupt.pdf>]) [23] (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Appendix/appendix.tex) [24] (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.bbl
 Underfull \hbox (badness 1997) in paragraph at lines 37--43
 []\T1/lmr/m/n/10.95 Nikolai Krug.  Prepa-ra-tion ma-te-ri-als for par-ti-cle physics lab group a.  [][]$\T1/lmtt/m/n/10.95 https :
  []
@@ -637,31 +637,31 @@ Underfull \hbox (badness 10000) in paragraph at lines 37--43
 
 )
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 104.
- [24]
+ [25]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 104.
  (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 104.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 104.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: F96B70326D17CAFB0313710D40CBEA2A;2037.
+(rerunfilecheck)             Checksum: CF2F8FF102F295F2E2CD73E29DECCB03;2107.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 11608 strings out of 480608
- 173643 string characters out of 5903630
+ 11620 strings out of 480608
+ 173804 string characters out of 5903630
  668976 words of memory out of 5000000
- 27127 multiletter control sequences out of 15000+600000
+ 27129 multiletter control sequences out of 15000+600000
  583696 words of font info for 57 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 44i,13n,40p,867b,1285s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 44i,13n,49p,867b,1285s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on "/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.pdf" (25 pages, 2089466 bytes).
+Output written on "/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.pdf" (26 pages, 2094434 bytes).
 PDF statistics:
- 568 PDF objects out of 1000 (max. 8388607)
- 429 compressed objects within 5 object streams
- 108 named destinations out of 1000 (max. 500000)
- 299 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 588 PDF objects out of 1000 (max. 8388607)
+ 448 compressed objects within 5 object streams
+ 118 named destinations out of 1000 (max. 500000)
+ 307 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,1 +1,1 @@
-{"model_name": "deepset_gcn", "units": 32, "num_features": 8}
+{"model_name": "deepset_gcn", "embed_dim": 8, "units": 32, "num_features": 8}

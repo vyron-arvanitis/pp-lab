@@ -19,7 +19,7 @@ from utils import (
 from models import from_config
 
 def main():
-    coordinates = "cylindrical"
+    coordinates = "cartesian"
 
     feature_columns_map = {
         "cartesian": ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"],
@@ -34,9 +34,9 @@ def main():
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
-    "model_name": "optimal_model",
-    "embed_dim": 25,          # add embedding size
-    "dropout_rate": 0.179,     # add dropout     30 was better
+    "model_name": "deepset_combined_wgcn_normalized",
+    "embed_dim": 8,          # add embedding size
+    #"dropout_rate": 0.179,     # add dropout     30 was better
     # "num_heads": 4,          # add number of heads
     # "num_layers": 2,         # add number of transformer layers
     "units": 32,
@@ -44,7 +44,7 @@ def main():
     }   
 
     # --- Select Model ---
-    tag = f'{config["model_name"]}_{coordinates}_test'
+    tag = f'{config["model_name"]}_{coordinates}'
 
     print("Selected model: ", tag)
 

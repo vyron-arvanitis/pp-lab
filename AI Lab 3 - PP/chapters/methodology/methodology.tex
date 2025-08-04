@@ -135,6 +135,61 @@ Cartesian and cylindrical coordinates. Training on cylindrical coordinates consi
 Specifically, the validation accuracy increases by $0.81\%$ for \texttt{deepset}, $1.42\%$ for \texttt{deepset\_gcn}, and $0.39\%$. 
 for \texttt{deepset\_combined}.
 
+\subsection{Activation functions}
+
+Activation functions introduce non-linearities into neural networks, enabling them to approximate complex functions beyond simple linear mappings. 
+
+\subsubsection*{Rectified Linear Unit (ReLU)}
+The ReLU is a piecewise linear activation function widely adopted for its simplicity and efficiency, given by
+\begin{equation}
+\text{ReLU}(x) )= \max(0,x).
+\end{equation}
+It introduces sparsity by zeroing out negative values. Also, it is efficient to compute and generally accelerates convergence in deep networks. 
+
+\subsubsection*{Leaky ReLU}
+Leaky ReLU modifies the ReLU function by allowing a small, non-zero gradient in the negative domain:
+\begin{equation}
+\text{LekayReLU}(x) = \begin{cases}
+x&\text{if}~x\geq 0 \\
+\alpha x &\text{otherwise}
+\end{cases}
+\end{equation}
+with $\alpha \in (0,1)$, here set to $0.01$. 
+LeakyReLU prevents complete inactivity of neurons by allowing gradient flow for negative inputs. It is slightly more flexible than ReLU with minimal additional computational cost. 
+
+\subsubsection*{Exponential Linear Unit (ELU)}
+ELU is a smoother alternative to ReLU, designed to improve gradient flow and convergence, given by
+\begin{equation}
+\text{LekayReLU}(x) = \begin{cases}
+x&\text{if}~x\geq 0 \\
+\alpha (\exp(x)-1) &\text{otherwise}
+\end{cases}\end{equation},
+with $\alpha > 0$ (here set to 1).
+It produces negative outputs that push mean activations closer to zero, improving learning dynamics. The non-zero gradient for negative inputs enhances backpropagtation compared to ReLU
+
+\subsubsection*{Investigation results}
+\texttt{deepset}, \texttt{deepset\_combined} and \texttt{deepset\_gcn} were trained using ReLU, Leaky ReLU and
+ELU to find a suitable activation function for the optimal model.
+\begin{table}[h]
+    \centering
+    \caption{Validation metrics for different activation functions}
+    \label{tab:validation_metrics_activations}
+    \begin{tabular}{l|cc|cc|cc}
+        \hline
+        & \multicolumn{2}{c|}{ReLU} & \multicolumn{2}{c|}{Leaky ReLU} & \multicolumn{2}{c}{ELU} \\
+        \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
+        \hline
+        \texttt{deepset} & 0.640 & 63.6 & 0.639 & 64.1 & 0.629 & 63.1 \\
+        \texttt{deepset\_combined} & 0.771 & 77.5 & 0.773 & 77.3 & 0.765 & 77.0 \\
+        \texttt{deepset\_gcn} & 0.658 & 66.0 & 0.660 & 66.1 & 0.637 & 64.0 \\
+        \hline
+    \end{tabular}
+\end{table}
+ELU consistently underperforms across all models. Leaky ReLU yields the best results for both \texttt{deepset} and \texttt{deepset\_gcn}, while 
+\texttt{deepset\_combined} achieves its highest performance with ReLU.
+
+
+
 \subsection{Transforming the feature values} \label{sec:Nomralize features}
 
 For this investigation, we used our best model obtained after the first 

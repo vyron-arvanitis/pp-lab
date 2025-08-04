@@ -124,11 +124,11 @@ class DeepSetLayer(nn.Module):
         super().__init__()
         self.per_item_mlp = nn.Sequential(
             nn.Linear(num_features, units),
-            nn.ReLU(),
+            nn.ELU(alpha=1.0),
         )
         self.global_mlp = nn.Sequential(
             nn.Linear(units, units),
-            nn.ReLU()
+            nn.ELU(alpha=1.0)
         )
 
     def forward(self, x:torch.Tensor, mask: torch.Tensor=None) -> torch.Tensor:
@@ -366,7 +366,7 @@ class GraphNetwork(nn.Module):
         adj = inputs["adj"]
         feat = inputs["feat"]
         adj = normalize_adjacency(adj)
-        x = self.gcn_layer(feat, adj)
+        x = F.relu(self.gcn_layer(feat, adj))
         x = self.output_layer(x)
         return x
 
@@ -434,7 +434,7 @@ class DeepSet_wGCN(nn.Module):
         x = inputs["feat"]
         adj = inputs["adj"]
         adj = normalize_adjacency(adj)
-        x = self.gcn_layer(x, adj)
+        x = F.elu(self.gcn_layer(x, adj), alpha=1.0)
         x = self.deep_set_layer(x, mask)
 
         x = self.output_layer(x)
@@ -527,13 +527,9 @@ class CombinedModel_wGCN(nn.Module):
         adj = normalize_adjacency(adj)
        
         emb = self.embedding_layer(pdg)
-        emb = self.dropout(emb)  # Apply dropout after the embeddings
+        #emb = self.dropout(emb)  # Apply dropout after the embeddings
         x = torch.cat([feat, emb], -1)
-        x = self.gcn_layer(x, adj)
-
-        # Apply Norm
-        x = self.batch_norm(x.transpose(1, 2)).transpose(1, 2)
-        x = self.dropout(x)  # Dropout after GCN
+        x = F.relu(self.gcn_layer(x, adj))
 
         x = self.deep_set_layer(x, mask)
         x = self.output_layer(x)
