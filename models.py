@@ -167,6 +167,110 @@ class DeepSet_Base_Arc(nn.Module):
 with open("pdg_mapping.json") as f:
     PDG_MAPPING = json.load(f)
 
+class FlatMLP(nn.Module): 
+    """
+    Flat MLP baseline.
+    This model treats each event as a fixed-size vector by padding 
+    the per-particle features and flattening the result.
+    Optionally, a binary mask of padded entries can be concatenated to the input.
+
+    Attributes
+    ----------
+    max_len : int
+        The global maximum number of particles per event (padding/truncation length).
+    concat_mask : bool
+        Whether to append the padding mask bits to the input vector.
+    net : nn.Sequential
+        The sequence of linear, activation, and dropout layers implementing the MLP.
+    """
+
+    def __init__(
+        self,
+        num_features: int,
+        max_len:      int,
+        hidden_dims:  tuple,
+        concat_mask:  bool = True, 
+        dropout:      float = 0.0,
+    ):
+        """
+        Initialize the FlatMLP.
+
+        Parameters
+        ----------
+        num_features : int
+            Number of features per particle.
+        max_len : int
+            Global padding length.
+        hidden_dims : tuple of int
+            Sizes of hidden layers in the MLP.
+        concat_mask : bool, optional
+            If True, append a binary mask of padded entries to the input vector, by default True.
+        dropout : float, optional
+            Dropout probability applied after each hidden layer, by default 0.0.
+        """
+        super().__init__()
+        self.max_len     = max_len
+        self.concat_mask = concat_mask
+
+        # compute the fixed input dimension
+        in_dim = num_features * max_len
+        if concat_mask:
+            in_dim += max_len   # one extra bit per particle slot
+
+        layers, prev = [], in_dim
+        for h in hidden_dims:
+            layers += [nn.Linear(prev, h), nn.ReLU(inplace=True)]
+            if dropout > 0:
+                layers.append(nn.Dropout(dropout))
+            prev = h
+        layers.append(nn.Linear(prev, 1))
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, inputs, mask=None):
+        """
+        Forward pass of the FlatMLP.
+
+        Parameters
+        ----------
+        inputs : dict
+            Dictionary containing:
+            - "feat": FloatTensor of shape (batch_size, N_pad, num_features),
+              the per-particle features for each event.
+        mask : torch.Tensor, optional
+            Boolean tensor of shape (batch_size, N_pad) where True indicates
+            padding rows, by default None. If concat_mask is True, this mask
+            will be appended to the flattened input.
+
+        Returns
+        -------
+        torch.Tensor
+            FloatTensor of shape (batch_size, 1) containing the raw logits.
+        """
+        x = inputs["feat"]
+        B, N_pad, F = x.shape
+
+        if N_pad < self.max_len:
+            pad_len = self.max_len - N_pad
+            pad = x.new_zeros((B, pad_len, F))
+            x = torch.cat([x, pad], dim=1)
+            if mask is not None:
+                pad_mask = torch.ones((B, pad_len), device=mask.device)
+                mask = torch.cat([mask, pad_mask], dim=1)
+        elif N_pad > self.max_len:
+            x = x[:, :self.max_len]
+            if mask is not None:
+                mask = mask[:, :self.max_len]
+
+        x = x.reshape(B, -1)
+
+        if self.concat_mask:
+            if mask is None:
+                mask = x.new_zeros((B, self.max_len))
+            else:
+                mask = mask.float()
+            x = torch.cat([x, mask], dim=1)
+
+        return self.net(x)
 
 class DeepSet(nn.Module):
     """
@@ -894,6 +998,7 @@ def from_config(config: dict):
     """
 
     models = {
+        "flat_mlp": FlatMLP,
         "deepset": DeepSet,
         "deepset_combined": CombinedModel,
         "deepset_gcn": DeepSet_wGCN,

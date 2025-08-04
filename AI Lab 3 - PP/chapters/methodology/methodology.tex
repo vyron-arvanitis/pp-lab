@@ -11,7 +11,8 @@ These investigations included the following:
     \item Are there any redundant features in the dataset that could be removed? (subsection \ref{sec:Unecessary Features})
     \item Methods to combat overfitting (subsection \ref{ssec:overfitting})
     \item Ideas for different model architectures (section \ref{sec:Transformer} and \ref{model:Transformer})
-    \item Is it possible to use a standard MLP as well? If yes how?
+    \item Is it possible to use a standard MLP as well? What is the effect of the masking in this case? (subsection) \ref{sec:method_flatmlp}
+
 \end{itemize}
 
 
@@ -283,6 +284,51 @@ Search intervals were selected based on common literature values. After multiple
 \end{itemize}
 
 This optimization process helped fine-tune the model's capacity and regularization, ultimately improving generalization and performance on the validation set.
+
+
+\subsection{Flat MLP and Masking} \label{sec:method_flatmlp}
+
+As a minimal baseline, we consider a fully‐connected “flat” MLP that ignores any set or graph structure and treats each event as a fixed‐length vector.
+
+\subsubsection*{Input and model architecture}
+Key steps in preparing the input and model are:
+
+\begin{itemize}
+  
+  \item \textbf{Padding.}  Because events contain a variable number of particles, we choose a global cap \(N_{\max}\) (e.g.\ 128) and \emph{Pad} events with fewer than \(N_{\max}\) particles by appending zero‐rows.
+
+  \item \textbf{Mask creation.}  During batching we record a Boolean mask of shape \((B,N_{\max})\) indicating which rows are padded, so the network can later ignore them.
+  \item \textbf{Flattening.}  The padded feature tensor \(\mathbb{R}^{B\times N_{\max}\times F}\) is reshaped into \(\mathbb{R}^{B\times(N_{\max}F)}\).  Optionally, the binary mask vector of length \(N_{\max}\) is concatenated, yielding an input dimension of \(N_{\max}F+N_{\max}\).
+\end{itemize}
+
+The MLP itself consists of a sequence of fully‐connected layers (128 → 64 → 32) with ReLU as activations, terminating in a single linear output per event.  
+
+
+
+\subsubsection*{Masking}
+To assess the effect of padding‐aware inputs, we compare two variants of this flat MLP:
+\begin{itemize}
+  \item \textbf{Masking On:} the binary mask is appended so the model can distinguish real entries from padding.
+  \item \textbf{Masking Off:} no mask is provided and zeros from padding are treated as genuine features.
+\end{itemize}
+
+We trained the flat MLP for both cases on 1000 events and 10 epochs, observing the following: 
+
+
+\begin{itemize}
+  \item \textbf{Rapid over-fitting.} For the non-masked model, the training loss steadily decreases while validation loss bottoms out 
+  around epoch 5 and then drifts upward. The corresponding accuracy curves diverge, signaling that the model memorizes training events.
+  This is because padding signal doesn’t generalise well to unseen events, as the network “cheats” on the train set but fails on validation
+  
+  
+  \item \textbf{Masking reduces over‐fit.} When the padding mask is included, the gap between training and validation accuracy shrinks noticeably. By explicitly telling the MLP which inputs are padding, the network can devote its capacity to learning true physics correlations ignoring empty slots, leading to better generalization.
+  
+  \item \textbf{Modest performance.} Overlall, even after considering optimized parameters, dropout strategies or adding PDG ids features, performances plateau at only about $60\%$ accuracy, far below our best models.
+\end{itemize}
+
+Given these results, we decided to exclude the flat MLP from further testing and optimization and focused on architectures that better exploit the symmetries and relational structure of particle-set data.
+
+
 
 \subsection{Speedup}  \label{sec:Speedup}
 
