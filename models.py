@@ -97,7 +97,7 @@ class OutputLayer(nn.Module):
         x = self.output_layer(x)
         return x
 
-class DeepSetLayer(nn.Module):
+class DeepSet_Base_Arc(nn.Module):
     """
     Deep Set layer.
 
@@ -111,7 +111,7 @@ class DeepSetLayer(nn.Module):
 
     def __init__(self, num_features: int=8, units: int=32):
         """
-        Initialize the DeepSetLayer.
+        Initialize the DeepSet_Base_Arc.
 
         Parameters
         ----------
@@ -133,7 +133,7 @@ class DeepSetLayer(nn.Module):
 
     def forward(self, x:torch.Tensor, mask: torch.Tensor=None) -> torch.Tensor:
         """
-        Forward pass of the DeepSetLayer.
+        Forward pass of the DeepSet_Base_Arc.
 
         Parameters
         ----------
@@ -174,8 +174,8 @@ class DeepSet(nn.Module):
 
     Attributes
     ----------
-    deep_set_layer : DeepSetLayer
-        Implementation of the DeepSetLayer
+    deep_set_layer : DeepSet_Base_Arc
+        Implementation of the DeepSet_Base_Arc
     output_layer : OutputLayer
         Implementation of the OutputLayer
     """
@@ -189,16 +189,16 @@ class DeepSet(nn.Module):
         num_features : int
             Number of input features per element in the set (default is 8).
         units : int
-            Number of hidden units used in both the DeepSetLayer and OutputLayer (default is 32).
+            Number of hidden units used in both the DeepSet_Base_Arc and OutputLayer (default is 32).
         """
 
         super().__init__()
-        self.deep_set_layer = DeepSetLayer(num_features, units)
+        self.deep_set_layer = DeepSet_Base_Arc(num_features, units)
         self.output_layer = OutputLayer(units)
 
     def forward(self, inputs: dict, mask: torch.Tensor=None) -> torch.Tensor:
         """
-        Forward pass of the DeepSetLayer.
+        Forward pass of the DeepSet_Base_Arc.
 
         Parameters
         ----------
@@ -228,8 +228,8 @@ class CombinedModel(nn.Module):
     ----------
     embedding_layer : nn.Embedding
         Implementation of an embedding layer for particle type identifiers (PDG codes).
-    deep_set_layer : DeepSetLayer
-        Implementation of the DeepSetLayer
+    deep_set_layer : DeepSet_Base_Arc
+        Implementation of the DeepSet_Base_Arc
     output_layer : OutputLayer
         Implementation of the OutputLayer
     """
@@ -255,7 +255,7 @@ class CombinedModel(nn.Module):
         num_pdg_ids : int
             Number of distinct PDG IDs (excluding padding or unknown class).
         units : int
-            Number of hidden units in the DeepSetLayer and OutputLayer (default is 32).
+            Number of hidden units in the DeepSet_Base_Arc and OutputLayer (default is 32).
         dropout_rate : float
             Dropout rate (not currently used but reserved for future use).
         num_heads : int
@@ -266,7 +266,7 @@ class CombinedModel(nn.Module):
 
         super().__init__()
         self.embedding_layer = nn.Embedding(num_pdg_ids + 1, embed_dim)
-        self.deep_set_layer = DeepSetLayer(num_features=num_features+ embed_dim, units=units)
+        self.deep_set_layer = DeepSet_Base_Arc(num_features=num_features+ embed_dim, units=units)
         self.output_layer = OutputLayer(units)
 
     def forward(self, inputs: dict, mask: torch.Tensor=None) -> torch.Tensor:
@@ -380,8 +380,8 @@ class DeepSet_wGCN(nn.Module):
     ----------
     gcn_layer : GCN
         Implementation of the Graph Convolutional Network layer.
-    deep_set_layer : DeepSetLayer
-        Implementation of the DeepSetLayer
+    deep_set_layer : DeepSet_Base_Arc
+        Implementation of the DeepSet_Base_Arc
     output_layer : OutputLayer
         Implementation of the OutputLayer
     """
@@ -407,7 +407,7 @@ class DeepSet_wGCN(nn.Module):
         """
         super().__init__()
         self.gcn_layer = GCN(num_features, units)
-        self.deep_set_layer = DeepSetLayer(units, units)
+        self.deep_set_layer = DeepSet_Base_Arc(units, units)
         self.output_layer = OutputLayer(units)
 
     def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
@@ -440,7 +440,6 @@ class DeepSet_wGCN(nn.Module):
         x = self.output_layer(x)
         return x
 
-
 class CombinedModel_wGCN(nn.Module):
     """
     Combined Deep Set and Graph Convolutional Network (GCN) model.
@@ -457,8 +456,8 @@ class CombinedModel_wGCN(nn.Module):
     dropout : nn.Dropout
         Implementation of a dropout layer for regularization, applied after embeddings
         and GCN.
-    deep_set_layer : DeepSetLayer
-        Implementation of the DeepSetLayer
+    deep_set_layer : DeepSet_Base_Arc
+        Implementation of the DeepSet_Base_Arc
     output_layer : OutputLayer
         Implementation of the OutputLayer
     """
@@ -476,7 +475,7 @@ class CombinedModel_wGCN(nn.Module):
         num_pdg_ids : int
             Number of distinct PDG IDs (excluding padding or unknown class).
         units : int
-            Number of hidden units in the GCN, DeepSetLayer, and OutputLayer (default is 32).
+            Number of hidden units in the GCN, DeepSet_Base_Arc, and OutputLayer (default is 32).
         dropout_rate : float
             Dropout rate applied after embeddings and GCN (default is 0.3).
         num_heads : int
@@ -494,7 +493,7 @@ class CombinedModel_wGCN(nn.Module):
         self.dropout = nn.Dropout(dropout_rate)  # Dropout layer defined here
         # Note: Dropout is applied after the embedding layer and GCN layer
         # This is to prevent overfitting by randomly dropping units during training
-        self.deep_set_layer = DeepSetLayer(units, units)
+        self.deep_set_layer = DeepSet_Base_Arc(units, units)
         self.output_layer = OutputLayer(units)
 
     def forward(self, inputs: dict, mask: torch.Tensor = None) -> torch.Tensor:
