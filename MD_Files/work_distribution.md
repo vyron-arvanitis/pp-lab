@@ -22,15 +22,12 @@ where everybody wrote the part of his own investigation.
 
 ## Paul
 
-- Wrote the introduction to **Deep Sets** and **Graph Neural Networks**.  
 - Implemented and evaluated:  
   - **DeepSet model** 
   - **DeepSet + GCN model**
 - Refactored:  
   - All models to use a unified `OutputLayer` class  
   - The main notebook into a standalone Python script (`workbook.py`)  
-- Investigated the impact of increasing the number of **GCN** and **Linear layers**.
-- Speedup model comparison and evaluation
 - Code cleanup
 
 ---
