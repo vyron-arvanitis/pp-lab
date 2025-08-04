@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.8)  4 AUG 2025 18:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.7.8)  4 AUG 2025 18:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -376,7 +376,8 @@ File: lstlang1.sty 2020/03/24 1.8d listings language file
 LaTeX Font Info:    Trying to load font information for T1+lmr on input line 45.
  (/usr/share/texmf/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) (./main.aux)
+)
+No file main.aux.
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
@@ -397,7 +398,6 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 45.
 LaTeX Font Info:    ... okay on input line 45.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 45.
 LaTeX Font Info:    ... okay on input line 45.
-
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -590,97 +590,97 @@ Package pdftex.def Info: chapters/theory/Transformer_architecture.png  used on i
 LaTeX Warning: Citation `DBLP:journals/corr/VaswaniSPUJGKP17' on page 7 undefined on input line 85.
 
 ) (./chapters/methodology/methodology.tex
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 8.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 7.
  (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 
-LaTeX Warning: Reference `sec:Varying_layers_in_the_deepset_model' on page 7 undefined on input line 8.
+LaTeX Warning: Reference `sec:Varying_layers_in_the_deepset_model' on page 7 undefined on input line 7.
 
 
-LaTeX Warning: Reference `ssec:activations' on page 7 undefined on input line 10.
+LaTeX Warning: Reference `ssec:activations' on page 7 undefined on input line 9.
 
 [7 <./chapters/theory/Transformer_architecture.png>]
 
-LaTeX Warning: Reference `ssec:overfitting' on page 8 undefined on input line 11.
+LaTeX Warning: Reference `ssec:overfitting' on page 8 undefined on input line 10.
 
 
-LaTeX Warning: Reference `sec:Normalize features' on page 8 undefined on input line 12.
+LaTeX Warning: Reference `sec:Normalize features' on page 8 undefined on input line 11.
 
 
-LaTeX Warning: Reference `sec:Unecessary Features' on page 8 undefined on input line 13.
+LaTeX Warning: Reference `sec:Unecessary Features' on page 8 undefined on input line 12.
 
 
-LaTeX Warning: Reference `sec:Exploiting Rotational Symmetry' on page 8 undefined on input line 14.
+LaTeX Warning: Reference `sec:Exploiting Rotational Symmetry' on page 8 undefined on input line 13.
 
 
-LaTeX Warning: Reference `sec:Transformer' on page 8 undefined on input line 15.
+LaTeX Warning: Reference `sec:Transformer' on page 8 undefined on input line 14.
 
 
-LaTeX Warning: Reference `fig:graph_example' on page 8 undefined on input line 22.
+LaTeX Warning: Reference `fig:graph_example' on page 8 undefined on input line 21.
 
 <chapters/methodology/particle_graph.png, id=80, 1298.8525pt x 630.355pt>
 File: chapters/methodology/particle_graph.png Graphic file (type png)
 <use chapters/methodology/particle_graph.png>
-Package pdftex.def Info: chapters/methodology/particle_graph.png  used on input line 26.
+Package pdftex.def Info: chapters/methodology/particle_graph.png  used on input line 25.
 (pdftex.def)             Requested size: 341.43307pt x 165.69669pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 35.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 34.
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) [8 <./chapters/methodology/particle_graph.png>]
-Overfull \hbox (10.14992pt too wide) in paragraph at lines 60--61
+Overfull \hbox (10.14992pt too wide) in paragraph at lines 59--60
 []\T1/lmtt/m/n/10.95 hidden_layers \T1/lmr/m/n/10.95 (int): Num-ber of hid-den lay-ers. The to-tal num-ber of lay-ers is \T1/lmtt/m/n/10.95 hidden_layers
  []
 
 
-LaTeX Warning: Reference `tab:deepset_gcn_variable_arc' on page 9 undefined on input line 72.
+LaTeX Warning: Reference `tab:deepset_gcn_variable_arc' on page 9 undefined on input line 71.
 
 
-Overfull \hbox (10.13902pt too wide) in paragraph at lines 79--90
+Overfull \hbox (10.13902pt too wide) in paragraph at lines 78--89
  [][] 
  []
 
 
-Overfull \hbox (60.50069pt too wide) in paragraph at lines 92--94
+Overfull \hbox (60.50069pt too wide) in paragraph at lines 91--93
 []\T1/lmr/m/n/10.95 After per-form-ing mul-ti-ple cal-cu-la-tions with this ar-chi-tec-ture (see folder saved_models/Layers_investigation),
  []
 
 [9]
 
-LaTeX Warning: Reference `tab:coordinates_investigation' on page 10 undefined on input line 133.
+LaTeX Warning: Reference `tab:coordinates_investigation' on page 10 undefined on input line 132.
 
 [10]
 
-LaTeX Warning: Reference `tab:validation_metrics_activations' on page 11 undefined on input line 172.
+LaTeX Warning: Reference `tab:validation_metrics_activations' on page 11 undefined on input line 171.
 
 [11]
 
-LaTeX Warning: Reference `app:normalization' on page 12 undefined on input line 197.
+LaTeX Warning: Reference `app:normalization' on page 12 undefined on input line 196.
 
 <chapters/methodology/feature_importance_comparison.png, id=115, 722.7pt x 361.35pt>
 File: chapters/methodology/feature_importance_comparison.png Graphic file (type png)
 <use chapters/methodology/feature_importance_comparison.png>
-Package pdftex.def Info: chapters/methodology/feature_importance_comparison.png  used on input line 233.
+Package pdftex.def Info: chapters/methodology/feature_importance_comparison.png  used on input line 232.
 (pdftex.def)             Requested size: 341.43307pt x 170.71672pt.
 [12]
 
-LaTeX Warning: Reference `fig:Feature_importance' on page 13 undefined on input line 242.
+LaTeX Warning: Reference `fig:Feature_importance' on page 13 undefined on input line 241.
 
 
-LaTeX Warning: Citation `goodfellow2016dlbook' on page 13 undefined on input line 257.
+LaTeX Warning: Citation `goodfellow2016dlbook' on page 13 undefined on input line 256.
 
 
-LaTeX Warning: Citation `ioffe2015batchnorm' on page 13 undefined on input line 260.
+LaTeX Warning: Citation `ioffe2015batchnorm' on page 13 undefined on input line 259.
 
 
-LaTeX Warning: Citation `srivastava2014dropout' on page 13 undefined on input line 263.
+LaTeX Warning: Citation `srivastava2014dropout' on page 13 undefined on input line 262.
 
 [13 <./chapters/methodology/feature_importance_comparison.png>]
 
-LaTeX Warning: Citation `goodfellow2016dlbook' on page 14 undefined on input line 266.
+LaTeX Warning: Citation `goodfellow2016dlbook' on page 14 undefined on input line 265.
 
 
-LaTeX Warning: Citation `akiba2019optuna' on page 14 undefined on input line 276.
+LaTeX Warning: Citation `akiba2019optuna' on page 14 undefined on input line 275.
 
 [14] [15]) (./chapters/models/models.tex [16]
 
@@ -798,7 +798,7 @@ LaTeX Warning: Reference `fig:ROC_curves_results' on page 22 undefined on input 
 <template> \unskip \hfil }
                           \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
 l.83 ...ed & $0.467$ & $77.6$ & $0.860$ & $5.373 &
-                                                   $1.71988$ \\
+                                                   $1.719$ \\
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
 you forgot something else, as in `\hbox{$x}'. In such cases
@@ -809,7 +809,7 @@ deleted material, e.g., by typing `I$}'.
 <inserted text> 
                 $
 l.83 ...ed & $0.467$ & $77.6$ & $0.860$ & $5.373 &
-                                                   $1.71988$ \\
+                                                   $1.719$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
@@ -817,7 +817,7 @@ you left one out. Proceed, with fingers crossed.
 <inserted text> 
                 }
 l.83 ...ed & $0.467$ & $77.6$ & $0.860$ & $5.373 &
-                                                   $1.71988$ \\
+                                                   $1.719$ \\
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
 With luck, this will get me unwedged. But if you
@@ -856,15 +856,15 @@ Package rerunfilecheck Info: Checksums for `main.out':
 (rerunfilecheck)             After:  E6464E3AAE518770085015B7686546A1;5202.
  ) 
 Here is how much of TeX's memory you used:
- 14558 strings out of 480247
- 220048 string characters out of 5896152
+ 14556 strings out of 480247
+ 220030 string characters out of 5896152
  764837 words of memory out of 5000000
  32128 multiletter control sequences out of 15000+600000
  520617 words of font info for 61 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  68i,13n,77p,683b,1288s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}</usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb>
-Output written on main.pdf (26 pages, 2084222 bytes).
+Output written on main.pdf (26 pages, 2084207 bytes).
 PDF statistics:
  390 PDF objects out of 1000 (max. 8388607)
  268 compressed objects within 3 object streams
