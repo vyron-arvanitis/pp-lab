@@ -91,7 +91,7 @@ units and is always set to $u = 32$. $B$ denotes the batch size, $N$ the number 
 
 After performing multiple calculations with this architecture (see folder saved\_models/Layers\_investigation), 
 the best model was \texttt{DS\_4\_GCN\_123}: 4 hidden layers, with GCNs at the input, 2nd and 3rd layer. 
-All models used in this study can be found in \texttt{saved_models/Layers_investigation}.
+All models used in this study can be found in \texttt{saved\_models/Layers\_investigation}.
 
 \subsection{Exploiting Rotational Symmetry} \label{sec:Exploiting Rotational Symmetry}
 
@@ -117,7 +117,7 @@ Training was conducted on all four row groups of the training set for 10 epochs,
 a batch size of 256, early stopping with a patience of 5, and the Adam optimizer with a weight decay of 
 $10^{-4}$. The Cartesian coordinate representation included the features 
 \texttt{"prodTime"}, \texttt{"x"}, \texttt{"y"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"px"}, \texttt{"py"}, and \texttt{"pz"}, 
-while the cylindrical coordinates were reduced to \texttt{"prodTime"}, \texttt{"r"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"p_xy"}, and \texttt{"pz"}.
+while the cylindrical coordinates were reduced to \texttt{"prodTime"}, \texttt{"r"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"p\_xy"}, and \texttt{"pz"}.
 
 \begin{table}[h]
     \caption{Validation metrics for Cartesian vs. cylindrical coordinates}
@@ -128,9 +128,9 @@ while the cylindrical coordinates were reduced to \texttt{"prodTime"}, \texttt{"
          & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
         \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
         \hline
-        \texttt{deepset}& $0.633$&$63.6$ & $0.624$&$64.5~\%$ \\
-        \texttt{deepset\_gcn}&$0.614$&$66.0$&$0.610$&$66.3~\%$ \\
-        \texttt{deepset\_combined}&$0.478$&$77.5$&$0.4727$ &$77.6~\%$\\
+        \texttt{deepset}& $0.633$&$63.6$ & $0.624$&$64.5$ \\
+        \texttt{deepset\_gcn}&$0.614$&$66.0$&$0.610$&$66.3$ \\
+        \texttt{deepset\_combined}&$0.478$&$77.5$&$0.4727$ &$77.6$\\
         \hline
     \end{tabular}
 \end{table}
