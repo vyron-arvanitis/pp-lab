@@ -1,7 +1,7 @@
 \section{Summary of Evaluated Architectures}
 \label{sec:models}
 Based on our cumulative research, we implemented and evaluated a variety of model architectures to better 
-understnad which components and design choices contribute most to performance. Rather than being pre-selected 
+understand which components and design choices contribute most to performance. Rather than being pre-selected 
 as the most promising, these models served as investigative tools to explore the effects of 
 architectural elements such as embeddings, graph structure, and normalization. 
 Simpler baseline models were also included to isolate and quantify the impact of these additions. 
@@ -10,7 +10,7 @@ Simpler baseline models were also included to isolate and quantify the impact of
 All models described below take at least the following arguments:
 \begin{itemize}
     \item \texttt{num\_features} (int): Number of input features
-    \item \texttt{units} (int): Number of hidden units
+    \item \texttt{units} (int): Number of hidden units 
 \end{itemize}
 
 To describe the shapes of the model layers, we adopt the following notation:
@@ -18,20 +18,20 @@ To describe the shapes of the model layers, we adopt the following notation:
     \item $B$: Batch size
     \item $N$: Number of particles per event
     \item $f$: Number of input features
-    \item $u$: Number of hidden units
+    \item $u$: Number of hidden units ($= 32$ in every model)
 \end{itemize}
 
 The input to every model is given by $B$ batches, each containing $N$ particles, each having $f$ features. The input shape is therefore $[B,N,f]$.
 Any deviation will be further specified for each model individually.
 
-\subsection{DeepSet Model} \label{model:DeepSet}
+\subsection{Deep Set Model} \label{model:DeepSet}
 
-This model follows the Deep Sets framework (as introduced in Section \ref{sec:DeepSet}), 
+This model follows the Deep Sets framework (as introduced in section \ref{sec:DeepSet}), 
 in which the same transformation is applied independently to each element of the input set, followed by a permutation-invariant aggregation. All other models are built upon this base architecture. 
 
 The architecture of the model is summarized in table \ref{tab:deepset_arc}.
 \begin{table}[h]
-    \caption{DeepSet Model Architecture}
+    \caption{Deep Set Model Architecture}
     \label{tab:deepset_arc}
     \centering
     \begin{tabular}{l|l|c|c}
@@ -48,7 +48,7 @@ The architecture of the model is summarized in table \ref{tab:deepset_arc}.
 
 \subsection{Combined Model} \label{model:CombinedModel}
 
-This model extends the DeepSet architecture by introducing an eight dimensional PDG code for each particle,
+This model extends the Deep Set architecture by introducing an eight dimensional PDG code for each particle,
 which is then mapped to an embedding vector. The resulting embeddings are concatenated with the original particle features before being processed by the rest of the network
 
 The input to this model includes both the feature vector of each particle and the corresponding PDG ID vector.
@@ -61,7 +61,7 @@ The additional arguments introduced by this model are:
 
 The architecture of the model is summarized in table \ref{tab:deepset_combined_arc}.
 \begin{table}[h]
-    \caption{Architecture of the Combined Model with PDG embedding and DeepSet structure}
+    \caption{Architecture of the Combined Model with PDG embedding and Deep Set structure}
     \label{tab:deepset_combined_arc}
     \centering
     \begin{tabular}{l|l|c|c}
@@ -91,11 +91,11 @@ The adjacency matrix is a symmetric binary matrix that encodes
 \item as well as self-connections (i.e., diagonal entries are 1).
 \end{itemize}
 
-This structure ensures that information can flow both directions alogn the graph edges, while also preserving each particle's self-information during message passing in the GCN. 
-The models architecture is summarized in \ref{tab:deepset_wgcn_arc}
+This structure ensures that information can flow both directions along the graph edges, while also preserving each particle's self-information during message passing in the GCN. 
+The models architecture is summarized in table \ref{tab:deepset_wgcn_arc}.
 
 \begin{table}[h]
-    \caption{Architecture of the Combined Model with PDG embedding and DeepSet structure}
+    \caption{Architecture of the Deep Set structure with additional GCN layer}
     \label{tab:deepset_wgcn_arc}
     \centering
     \begin{tabular}{l|l|c|c}
@@ -119,7 +119,7 @@ Additionally the input requires the PDG codes, and the adjacency matrix as meant
 The architecture of the model is summarized in table \ref{tab:deepset_gcn_combined_arc}
 
 \begin{table}[h]
-    \caption{Architecture of the Combined Model with PDG embedding, GCN and DeepSet structure}
+    \caption{Architecture of the Combined Model with PDG embedding, GCN and Deep Set structure}
     \label{tab:deepset_gcn_combined_arc}
     \centering
     \begin{tabular}{l|l|c|c}
@@ -139,10 +139,7 @@ The architecture of the model is summarized in table \ref{tab:deepset_gcn_combin
 
 \subsection{Combined Deepset with GCN Normalized} \label{model:CombinedModel_wGCN_Normalized}
 This model extends the Combined Deepset with GCN architecture (model \ref{model:CombinedModel_wGCN})
-by introducing a normalization of the inputs according to section \ref{sec:Nomralize features}.
-
-\paragraph{Architecture}
-The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
+by introducing a normalization of the inputs according to section \ref{sec:Nomralize features}. The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
 with an additional normalization layer.
 
 \subsection{Transformer Model} \label{model:Transformer}
@@ -186,3 +183,36 @@ The architecture of the Transformer model is summarized in Table~\ref{tab:transf
         \hline
     \end{tabular}
 \end{table}
+
+\subsection{Performance Comparison}
+All models were trained on the full training dataset contained in \texttt{"smartbkg\_dataset\_4k\_training.parquet"}, 
+using a $75\%$-$25\%$ train-validation split. Training was conducted over 10 epochs using the Adam optimizer with a weight decay of $10^{-4}$. Furthermore, the models were trained on Cartesian coordinates with features \texttt{"prodTime", "x", "y", "z", "energy", "px", "py"}, and \texttt{"pz"}. 
+
+Evaluation was performed on the full test dataset contained in \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}, using a batch size of 256.
+
+Table \ref{tab:train_validation_metrics} shows the validation loss and accuracy for every model presented in section \ref{sec:models}.
+\begin{table}[h]
+    \centering
+    \caption{Train and validation metrics for every model}
+    \label{tab:train_validation_metrics}
+    \begin{tabular}{l|cc|cc}
+    \hline
+    & \multicolumn{2}{c|}{Train} & \multicolumn{2}{c}{Validation} \\
+    \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
+    \hline
+    \texttt{deepset}& $0.629$&$64.0$&$0.633$&$63.6$\\
+    \texttt{deepset\_combined}&$0.480$&$77.2$&$0.478$&$77.5$\\
+    \texttt{deepset\_gcn}&$0.617$&$65.8$&$0.614$&$66.0$\\
+    \texttt{deepset\_combined\_gcn}&$0.463$&$78.2$&$0.467$&$78.0$\\
+    \texttt{transformer}&$0.446$&$79.2$&$0.443$&$79.4$\\
+    \texttt{deepset\_combined\_gcn\_normalized}& $0.475$&$77.3$&$0.474$&$77.2$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+Comparing the different models leads to the following conclusions: Incorporating  PDG IDs through learned embeddings improves performance by enriching the particle representation. Similarly, adding GCN layers to the DeepSet architecture enhances performance by capturing structural information from particle relationships. Combining both techniques, embeddings and GCNs, yields further improvement. 
+
+In contrast, normalizing the input features slightly reduces the performance
+of the \texttt{deepset\_combined\_gcn} model by $0.8\%$ in validation accuracy. 
+    
+Among the implemented models, the Transformer currently achieves the highest accuracy at $79.4\%$. 
