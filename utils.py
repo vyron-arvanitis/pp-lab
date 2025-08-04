@@ -22,6 +22,7 @@ def masked_average(batch: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
         A tensor of shape (batch_size, num_features) containing the mean of the unmasked
         entries for each sample in the batch.
     """
+
     batch = batch.masked_fill(mask[..., np.newaxis], 0)
     sizes = (~mask).sum(axis=1, keepdim=True)
     return batch.sum(axis=1) / sizes
@@ -40,6 +41,7 @@ def normalize_inputs(inputs: dict) -> dict:
     dict
         A copy of the input dictionary with the inputs tensor normalized.
     """
+
     x = inputs["feat"]
     # x.shape = (batch_size, num_particles, num_features)
     mean = x.mean(dim=(0,1), keepdim=True) # Collapse batch and particle dimensions end up with (num_featurs) -> one mean per feature!
@@ -47,13 +49,25 @@ def normalize_inputs(inputs: dict) -> dict:
     x_norm = (x - mean) / std
     return {**inputs, "feat": x_norm}
 
-def load_data(filename, row_groups):
+def load_data(filename: str, row_groups: list):
     """Load course data into a pandas dataframe. 
     Also returns the labels for each event as a numpy array.
 
     Parameters
     ----------
+    filename : str
+        Path to the input parquet file.
+    row_groups : list or int or None
+        Row groups to load from the parquet file (passed to awkward).
+
+    Returns
+    -------
+    df : pd.DataFrame
+        A pandas DataFrame containing all particles, indexed by (event, particle).
+    labels : np.ndarray
+        Array of event-level labels (shape: [num_events]).
     """
+
     data = ak.from_parquet(filename, row_groups=row_groups)
     labels = data.label.to_numpy()
     df_particles = ak.to_dataframe(data.particles, levelname=lambda i: {0: "event", 1: "particle"}[i])
@@ -63,14 +77,26 @@ def load_data(filename, row_groups):
     return df, labels
 
 
-def map_np(array, mapping, fallback):
+def map_np(array: np.ndarray, mapping: dict, fallback: Any):
     """
     Apply a mapping over a numpy array - along the lines of
     https://stackoverflow.com/a/16993364
 
     Parameters
     ----------
+    array : np.ndarray
+        Input array of values to be mapped.
+    mapping : dict
+        Mapping from unique values in array to new values.
+    fallback : Any
+        Value to assign when an input is not present in the mapping.
+
+    Returns
+    -------
+    np.ndarray
+        Array of mapped values, same shape as input.
     """
+
     # inv is the original array with the values replaced by their indices in the unique array
     unique, inv = np.unique(array, return_inverse=True)
     np_mapping = np.array([mapping.get(x, fallback) for x in unique])
@@ -88,7 +114,13 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
         coordinates (str): Coordinate system to use for features 
                 Must be either "cartesian" (default), or "cylindrical".
                 "cylindrical" assumes cylindrical symmetry, excluding angular coordinates
+    Returns
+    -------
+    dict
+        Dictionary with keys "features", "pdg_mapped", "index", and "mother",
+        each mapped to a list of arrays (one per event).
     """
+
     df = df.assign(pdg_mapped=map_np(df.pdg, pdg_mapping, fallback=len(pdg_mapping) + 1))
     
     if coordinates == "cylindrical":
@@ -110,7 +142,7 @@ def preprocess(df, pdg_mapping, feature_columns, coordinates="cartesian"):
     return data
 
 
-def pad_sequences(sequences, maxlen=None):
+def pad_sequences(sequences: list[np.ndarray], maxlen=None):
     """
     Converts a list of sequences to a numpy array with fixed length on the
     sequence dimension (second to last) where entries for sequences shorter than
@@ -123,7 +155,15 @@ def pad_sequences(sequences, maxlen=None):
 
     Parameters
     ----------
+    sequences : list of np.ndarray
+        List of 1D or 2D arrays (variable length).
+    maxlen : int, optional
+        Length to pad all sequences to. If None, uses the length of the longest sequence.
 
+    Returns
+    -------
+    np.ndarray
+        Array of shape (batch, maxlen, ...) with shorter sequences padded with zeros.
     """
     if maxlen is None:
         maxlen = max(len(array) for array in sequences)
@@ -136,7 +176,7 @@ def pad_sequences(sequences, maxlen=None):
         batch[i, : len(array)] = array[:maxlen]
     return batch
 
-def normalize_adjacency(adj):
+def normalize_adjacency(adj: torch.Tensor):
     """
     Normalizes an adjacency matrix as proposed in Kipf & Welling (https://arxiv.org/abs/1609.02907)
 
@@ -146,7 +186,15 @@ def normalize_adjacency(adj):
 
     Parameters
     ----------
+    adj : torch.Tensor
+        Batch of adjacency matrices of shape (batch_size, num_nodes, num_nodes).
+
+    Returns
+    -------
+    torch.Tensor
+        Normalized adjacency matrices of the same shape as input.
     """
+
     deg_diag = adj.sum(axis=2)
     deg12_diag = torch.where(deg_diag != 0, deg_diag**-0.5, 0)
     # normalization coefficients are outer product of inverse square root of degree vector
@@ -154,14 +202,22 @@ def normalize_adjacency(adj):
     coeffs = deg12_diag[:, :, np.newaxis] @ deg12_diag[:, np.newaxis, :]
     return adj.float() * coeffs
 
-def pad_adjacencies(adj_list):
+def pad_adjacencies(adj_list: list[np.ndarray]):
     """
     Converts a sequence of adjacency matrices to a 3D numpy array of fixed
     matrix size with zero padded entries
 
     Parameters
     ----------
+    adj_list : list of np.ndarray
+        List of (num_nodes, num_nodes) boolean adjacency matrices, one per event.
+
+    Returns
+    -------
+    np.ndarray
+        3D array of shape (batch_size, max_nodes, max_nodes), zero-padded.
     """
+
     maxlen = max(len(adj) for adj in adj_list)
     batch = np.zeros((len(adj_list), maxlen, maxlen), dtype=bool)
     for i, adj in enumerate(adj_list):
@@ -169,7 +225,7 @@ def pad_adjacencies(adj_list):
     return batch
 
 
-def get_adj(index, mother):
+def get_adj(index: np.ndarray, mother: np.ndarray) -> np.ndarray:
     """
     Construct adjacency matrix from arrays of indices and mother indices
 
@@ -178,7 +234,17 @@ def get_adj(index, mother):
 
     Parameters
     ----------
+    index : np.ndarray
+        Array of particle indices.
+    mother : np.ndarray
+        Array of mother indices, same length as index.
+
+    Returns
+    -------
+    np.ndarray
+        Boolean adjacency matrix of shape (num_particles, num_particles).
     """
+
     return (
         (mother[np.newaxis, :] == index[:, np.newaxis]) # mother-daughter relations
         | (index[np.newaxis, :] == mother[:, np.newaxis]) # daughter-mother relations
@@ -208,8 +274,22 @@ class GraphDataset(torch.utils.data.Dataset):
 
 def collate_fn(inputs):
     """
+    Collate function for DataLoader: pads all sequences and adjacencies in a batch.
+
     Parameters
     ----------
+    inputs : list of tuple
+        Each tuple is (x, y), where x is a dict with keys "feat", "pdg", "adj"
+        and y is a label.
+
+    Returns
+    -------
+    x : dict
+        Dictionary of batch tensors ("feat", "pdg", "adj").
+    y : torch.Tensor
+        Tensor of batch labels.
+    mask : torch.Tensor
+        Boolean mask indicating which particles are padding.
     """
     feat, pdg, adj = [
         [x[key] for x, y in inputs] for key in ["feat", "pdg", "adj"]
@@ -225,15 +305,42 @@ def collate_fn(inputs):
     return x, y, mask
 
 
-def loss_fn(logits, y):
+def loss_fn(logits: torch.Tensor, y: torch.Tensor):
     """
+    Compute the binary cross-entropy loss between logits and targets.
+
     Parameters
     ----------
+    logits : torch.Tensor
+        Raw model outputs (logits), shape (batch_size,) or (batch_size, 1).
+    y : torch.Tensor
+        Ground truth binary labels, shape (batch_size,) or (batch_size, 1).
+
+    Returns
+    -------
+    torch.Tensor
+        Scalar loss (average over batch).
     """
     return F.binary_cross_entropy_with_logits(logits.squeeze(), y.float())
 
 
-def accuracy_fn(logits, y):
+def accuracy_fn(logits: torch.Tensor, y: torch.Tensor):
+        """
+    Compute accuracy given logits and targets.
+
+    Parameters
+    ----------
+    logits : torch.Tensor
+        Raw model outputs (logits).
+    y : torch.Tensor
+        Ground truth binary labels.
+
+    Returns
+    -------
+    float
+        Fraction of correct predictions (between 0 and 1).
+    """
+
     return ((logits.squeeze().sigmoid() >= 0.5) == y).float().mean()
 
 
