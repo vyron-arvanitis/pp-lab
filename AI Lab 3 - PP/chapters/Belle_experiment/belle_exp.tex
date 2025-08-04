@@ -126,7 +126,7 @@ In parallel, Monte Carlo (MC) simulations are used to model the
 detector response and to train and validate analysis strategies.
 These simulated events must pass through all stages of detector 
 simulation, digitization, reconstruction, and selection, mirroring 
-the real data processing pipeline. However,this process is 
+the real data processing pipeline. However, this process is 
 computationally expensive, especially when simulating large 
 background samples, most of which are eventually discarded by skims.
 
@@ -137,7 +137,7 @@ network that can predict early on whether a given event will survive a
 later skim. This skim selects events in which at least one $B^0$ meson 
 can be reconstructed through hadronic decays. 
 After building several neural networks we evaluate their performance
-on an independent test set and calculate the speedup offered by each network.
+on an independent test set and calculate the speedup (see sec \ref{sec:Speedup}) offered by each network.
 
 
 
