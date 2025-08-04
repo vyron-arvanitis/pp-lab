@@ -212,10 +212,10 @@ class FlatMLP(nn.Module):
         self.max_len     = max_len
         self.concat_mask = concat_mask
 
-        # compute the fixed input dimension
+
         in_dim = num_features * max_len
         if concat_mask:
-            in_dim += max_len   # one extra bit per particle slot
+            in_dim += max_len
 
         layers, prev = [], in_dim
         for h in hidden_dims:
