@@ -37,7 +37,6 @@ where everybody wrote the part of his own investigation.
 - Implemented and evaluated the **MLP (Multi-Layer Perceptron)** model with normalization.  
 - Investigated the effect of **input masking** on performance.  
 - Explored the internal behavior of the **embedding layer for PDG IDs**, analyzing whether similar particles are mapped to similar embeddings.
-
 ---
 
 ## Moritz
@@ -52,7 +51,7 @@ where everybody wrote the part of his own investigation.
 ## Angelos
 
 - Investigated **cylindrical symmetry** in the input data and its modeling implications.
-- Collaborated with Moritz on evaluating the **optimal model**.  
+- Collaborated with Moritz on building and evaluating the **optimal model**.  
 - Tested various sequences of **GCN** and **Linear layers**, identifying the most effective combinations.  
 - Investigated different activation functions 
 - Code cleanup / Docstrings

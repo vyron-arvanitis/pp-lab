@@ -90,7 +90,8 @@ units and is always set to $u = 32$. $B$ denotes the batch size, $N$ the number 
 \end{table}
 
 After performing multiple calculations with this architecture (see folder saved\_models/Layers\_investigation), 
-the best model was \texttt{DS\_4\_GCN\_123}: 4 hidden layers, with GCNs at the input, 2nd and 3rd layer.
+the best model was \texttt{DS\_4\_GCN\_123}: 4 hidden layers, with GCNs at the input, 2nd and 3rd layer. 
+All models used in this study can be found in \texttt{saved_models/Layers_investigation}.
 
 \subsection{Exploiting Rotational Symmetry} \label{sec:Exploiting Rotational Symmetry}
 
@@ -112,7 +113,11 @@ To enabale coordinate transformation, the function \texttt{preprocess} in \textt
 Theoretically, one would expect improved performance by reducing the number of parameters by compressing essential information into a 
 more compact format using cylindrical coordinates, while discarding unnecessary information by neglecting the angular coordinate. To test this hypothesis, the models \texttt{deepset}, \texttt{deepset\_gcn}, and \texttt{deepset\_combined} were trained using both Cartesian and cylindrical coordinate representations. 
 
-Training was performed on all four row groups of the training set over 10 epochs, using a $75\%/25\%$ train-validation split, a batch size of 256, and early stopping with a patience of 5.
+Training was conducted on all four row groups of the training set for 10 epochs, using a $75\%$/$2\%$ train-validation split, 
+a batch size of 256, early stopping with a patience of 5, and the Adam optimizer with a weight decay of 
+$10^{-4}$. The Cartesian coordinate representation included the features 
+\texttt{"prodTime"}, \texttt{"x"}, \texttt{"y"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"px"}, \texttt{"py"}, and \texttt{"pz"}, 
+while the cylindrical coordinates were reduced to \texttt{"prodTime"}, \texttt{"r"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"p_xy"}, and \texttt{"pz"}.
 
 \begin{table}[h]
     \caption{Validation metrics for Cartesian vs. cylindrical coordinates}
@@ -169,7 +174,8 @@ It produces negative outputs that push mean activations closer to zero, improvin
 
 \subsubsection*{Investigation results}
 \texttt{deepset}, \texttt{deepset\_combined}, and \texttt{deepset\_gcn} were trained using ReLU, Leaky ReLU and
-ELU to find a suitable activation function for the optimal model. The results are presented in table \ref{tab:validation_metrics_activations}.
+ELU to find a suitable activation function for the optimal model. The training procedure followed the same setup as described in subsection \ref{sec:Exploiting Rotational Symmetry}.  
+The results are presented in table \ref{tab:validation_metrics_activations}.
 \begin{table}[h]
     \centering
     \caption{Validation metrics for different activation functions}

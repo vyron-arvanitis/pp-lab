@@ -47,6 +47,15 @@ Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan
 \newblock Dropout: A simple way to prevent neural networks from overfitting.
 \newblock {\em Journal of Machine Learning Research}, 15(1):1929--1958, 2014.
 
+\bibitem{turing}
+turing.com.
+\newblock Figure from: Detailed explanation of deep neural network, multilayer
+  perceptron, and deep q-network.
+\newblock
+  \url{https://www.turing.com/kb/explanation-of-deep-neural-network-multilayer-perceptron-deep-q-network},
+  2022.
+\newblock Accessed: 2025-07-25.
+
 \bibitem{zhihu-figure-qc}
 Zhihu User.
 \newblock Figure from: Relationship and prospects of quantum neural networks
