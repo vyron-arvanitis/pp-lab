@@ -2,21 +2,19 @@
 
 This document summarizes the contributions of each team member in the lab project.
 
+The report was written by everybody equally. Individual work can be seen in section 4,
+where everybody wrote the part of his own investigation. 
+
 ---
 
 ## Vyron
 
-- Wrote the introduction to the **Belle II experiment** and the problem tackled in this lab.  
-- Methodology-> The dataset, transforming feature values, Unecessary features, Model architectures
-- Models -> Transformer
-- Results ->ROC curves and speedup results
 - Evaluated the **Transformer model**.  
 - Investigated:  
   - Feature **normalization**  
   - **Redundant features** in the dataset  
   - The effect of **reversing GCN with DeepSet Layers**  
 - Implemented and included final **configuration parameters**.
-- Speedup model comparison and evaluation of all models
 - Code cleanup
 - Docstrings
 
@@ -47,17 +45,17 @@ This document summarizes the contributions of each team member in the lab projec
 
 ## Moritz
 
-- Collaborated with Aggelos on creatubg the **Avenger (optimal)** and **Transformer** models.  
+- Collaborated with Angelos on creating the **Optimal model** and **Transformer** models.  
 - Investigated **overfitting symptoms** and proposed effective **regularization strategies**.  
 - Explored and tested **alternative model architectures**.  
-- Docstrings
-
+- Implemented an **optuna study** (optuna_study.py) to find the best hyperparameters for the optimal model
 
 ---
 
-## Aggelos
+## Angelos
 
-- Investigated **cylindrical symmetry** in the input data and its modeling implications.  
-- Collaborated with Moritz on evaluating the **Avenger (optimal)** model.  
+- Investigated **cylindrical symmetry** in the input data and its modeling implications.
+- Collaborated with Moritz on evaluating the **optimal model**.  
 - Tested various sequences of **GCN** and **Linear layers**, identifying the most effective combinations.  
-- Contributed to **architectural improvements** based on approximate symmetries in the dataset.
+- Investigated different activation functions 
+- Code cleanup / Docstrings
