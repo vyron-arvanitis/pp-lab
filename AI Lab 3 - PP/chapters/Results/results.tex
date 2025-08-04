@@ -2,15 +2,19 @@
 
 \subsection{Optimal model}
 
-Section \ref{sec:methodology} explores various strategies for regularization, feature processing, and architectural design. Based on the insights gained, we combined the most effective components into a single architecture, referred to as the Optimal Model. 
+Section~\ref{sec:methodology} discusses strategies for regularization, feature processing, and hyperparameter optimization, while Section~\ref{sec:models} investigates architectural modifications to identify the most effective model design.
+Based on the insights gained, we combined the most effective components into a single architecture, referred to as the Optimal Model. 
 
 The model builds upon a base architecture in which the input features are augmented with PDG ID embeddings, increasing the feature dimensionality by 25. The network consists of four sequential layers: the input layer, second, and third layer are implemented as GCNs, followed by one linear layer. This is followed by mean pooling across particles and a final two-layer MLP to produce the output. 
 
 Each trainable layer is followed by dropout (with a rate of $0.179$), a LeakyReLU activation (slope $0.01$), and Batch Normalization. Training was conducted using cylindrical coordinates, while all other settings remained consistent with previous experiments. 
 
+Table \ref{tab:optimalmodel_arc} presents the architecture of the optimal model. Achieving a training loss of $0.451$ with a training accuracy of $79.0\%$, and a
+validation loss of $0.430$ with a accuracy of $80.1\%$, it was identified as the best-performing model.
+
 \begin{table}[H]
     \caption{Architecture of the Optimal Model}
-    \label{tab:transformer_arc}
+    \label{tab:optimalmodel_arc}
     \centering
     \begin{tabular}{l|l|c|c}
         \hline
@@ -44,13 +48,13 @@ Our exploration culminated in a Transformer model and an ``Optimal Model'' confi
     \label{fig:ROC_curves_results}
 \end{figure}
 
-From Figure~\ref{fig:ROC_curves_results}, it is evident that all but 
+From figure~\ref{fig:ROC_curves_results}, it is evident that all but 
 the simplest baseline models achieve strong results,  
 with most AUC scores exceeding $0.85$, indicating strong classification performance.  
 The Transformer and Optimal Model stand out with the highest AUC values.
 
 While ROC curves indicate classification quality, they do not reflect entirely the impact
-on computational efficiency. To address this, we also evaluate the \emph{speedup}—(\ref{sec:Speedup})
+on computational efficiency. To address this, we also evaluate the speedup—(\ref{sec:Speedup})
 if events are filtered using the model predictions.
 
 \begin{figure}[H]
@@ -60,7 +64,7 @@ if events are filtered using the model predictions.
     \label{fig:speedup}
 \end{figure}
 
-From figure  (fig \ref{fig:ROC_curves_results}), we observe that the
+From figure \ref{fig:ROC_curves_results}, we observe that the
 more advanced models are indistinguishable as far as their ROC performance is concerned,
 however they diverge in the achievable speedup. 
 The Optimal Model attains the highest maximum speedup, 
@@ -69,7 +73,7 @@ followed closely by the Transformer and Deep Set Combined with GCN variants.
 
 \begin{table}[h]
     \centering
-    \caption{Evaluation metrics for all models}
+    \caption{Evaluation metrics on the test dataset for all models}
     \label{tab:model_summary}
     \begin{tabular}{l|c|c|c|c|c}
         \hline
@@ -80,13 +84,13 @@ followed closely by the Transformer and Deep Set Combined with GCN variants.
         DS\_gcn & $0.614$ & $66.0$ & $0.721$ & $2.795$ & $1.149$ \\
         DS\_combined\_wgcn & $0.464$ & $78.0$ & $0.862$ & $5.323$ & $1.586$ \\
         transformer & $0.441$ & $79.5$ & $0.872$ & $5.301$ & $1.774$ \\
-        DS\_combined\_wgcn\_normalized & $0.467$ & $77.6$ & $0.860$ & $5.373 & $1.719$ \\
+        DS\_combined\_wgcn\_normalized & $0.467$ & $77.6$ & $0.860$ & $5.373$ & $1.719$ \\
         optimal\_model & $0.432$ & $80.1$ & $0.880$ & $6.009$ & $1.899$ \\
         \hline
     \end{tabular}
 \end{table}
 
-The \emph{Best Threshold} column is obtained from the set 
+The "Best Threshold" column is obtained from the set 
 of decision thresholds returned by the \verb|roc_curve| function.  
 These thresholds correspond to decreasing cut values on 
 the model’s decision function that are used to compute 

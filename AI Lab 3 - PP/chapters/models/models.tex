@@ -48,8 +48,7 @@ The architecture of the model is summarized in table \ref{tab:deepset_arc}.
 
 \subsection{Combined Model} \label{model:CombinedModel}
 
-This model extends the Deep Set architecture by introducing an eight dimensional PDG code for each particle,
-which is then mapped to an embedding vector. The resulting embeddings are concatenated with the original particle features before being processed by the rest of the network
+Each PDG ID is mapped to an embedding vector, which is then concatenated with the corresponding particle features. The resulting embeddings are concatenated with the original particle features before being processed by the rest of the network.
 
 The input to this model includes both the feature vector of each particle and the corresponding PDG ID vector.
 
@@ -111,12 +110,12 @@ The models architecture is summarized in table \ref{tab:deepset_wgcn_arc}.
     \end{tabular}
 \end{table}
 
-\subsection{Combined Deepset with GCN} \label{model:CombinedModel_wGCN}
-This model combines the architectures of the "DeepSet with GCN" (section \ref{model:DeepSet_wGCN}) and the "Combined Model" (section \ref{model:CombinedModel}): 
-The PDG ID of each particle is mapped to an embedding vector and concatenated with its feature vector. The resulting enriched representation is then processes by the DeepSet-GCN architecture.
+\subsection{Combined Deep Set with GCN} \label{model:CombinedModel_wGCN}
+This model combines the architectures of the "Deep Set with GCN" (section \ref{model:DeepSet_wGCN}) and the "Combined Model" (section \ref{model:CombinedModel}): 
+The PDG ID of each particle is mapped to an embedding vector and concatenated with its feature vector. The resulting enriched representation is then processed by the DeepSet-GCN architecture.
 
-Additionally the input requires the PDG codes, and the adjacency matrix as meantioned in section \ref{model:DeepSet_wGCN}. 
-The architecture of the model is summarized in table \ref{tab:deepset_gcn_combined_arc}
+Additionally the input requires the PDG codes, and the adjacency matrix as mentioned in section \ref{model:DeepSet_wGCN}. 
+The architecture of the model is summarized in table \ref{tab:deepset_gcn_combined_arc}.
 
 \begin{table}[h]
     \caption{Architecture of the Combined Model with PDG embedding, GCN and Deep Set structure}
@@ -137,9 +136,9 @@ The architecture of the model is summarized in table \ref{tab:deepset_gcn_combin
     \end{tabular}
 \end{table}
 
-\subsection{Combined Deepset with GCN Normalized} \label{model:CombinedModel_wGCN_Normalized}
-This model extends the Combined Deepset with GCN architecture (model \ref{model:CombinedModel_wGCN})
-by introducing a normalization of the inputs according to section \ref{sec:Nomralize features}. The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
+\subsection{Combined Deep Set with GCN Normalized} \label{model:CombinedModel_wGCN_Normalized}
+This model extends the Combined Deep Set with GCN architecture (model \ref{model:CombinedModel_wGCN})
+by introducing a normalization of the inputs according to section \ref{sec:Normalize features}. The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
 with an additional normalization layer.
 
 \subsection{Transformer Model} \label{model:Transformer}
