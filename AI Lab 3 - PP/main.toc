@@ -1,0 +1,35 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}The Belle experiment}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Problem Description}{3}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Theory}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Deep Sets}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Graph Convolutional Neural Networks}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Multi Layer Perceptron}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Transformer}{6}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Methodology}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}The Dataset}{8}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Varying Layers in the DeepSet model}{9}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Exploiting Rotational Symmetry}{10}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Activation functions}{11}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Transforming the feature values}{12}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Unecessary Features}{12}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Overfitting and Mitigation Techniques}{13}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Speedup}{15}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}ROC Curve and AUC Evaluation}{15}{subsection.4.9}%
+\contentsline {paragraph}{Definitions}{16}{section*.12}%
+\contentsline {paragraph}{Interpretation}{16}{section*.13}%
+\contentsline {section}{\numberline {5}Summary of Evaluated Architectures}{16}{section.5}%
+\contentsline {subsection}{\numberline {5.1}General setup}{16}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Deep Set Model}{17}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Combined Model}{17}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}DeepSet with GCN}{17}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Combined Deep Set with GCN}{18}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Combined Deep Set with GCN Normalized}{18}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Transformer Model}{19}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Performance Comparison}{19}{subsection.5.8}%
+\contentsline {section}{\numberline {6}Results}{20}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Optimal model}{20}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}ROC curves and speedup results}{21}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Conclusion}{23}{section.7}%
+\contentsline {section}{\numberline {A}Code Listings}{24}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Normalization function}{24}{subsection.A.1}%
