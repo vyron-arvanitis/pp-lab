@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.11)  4 AUG 2025 12:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.11)  4 AUG 2025 14:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -579,7 +579,7 @@ Overfull \hbox (60.50069pt too wide) in paragraph at lines 91--93
 <chapters/methodology/feature_importance_comparison.png, id=288, 722.7pt x 361.35pt>
 File: chapters/methodology/feature_importance_comparison.png Graphic file (type png)
 <use chapters/methodology/feature_importance_comparison.png>
-Package pdftex.def Info: chapters/methodology/feature_importance_comparison.png  used on input line 233.
+Package pdftex.def Info: chapters/methodology/feature_importance_comparison.png  used on input line 232.
 (pdftex.def)             Requested size: 341.43307pt x 170.71672pt.
  [12] [13 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/methodology/feature_importance_comparison.png>] [14] [15]) (/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/models/models.tex [16] [17] [18]
 Overfull \hbox (22.99986pt too wide) in paragraph at lines 176--188
@@ -600,12 +600,12 @@ Overfull \hbox (52.36638pt too wide) in paragraph at lines 6--7
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [19]
-Overfull \hbox (40.60751pt too wide) in paragraph at lines 29--31
-[]\T1/lmr/m/n/10.95 In con-trast, nor-malz-ing the in-put fea-tures slightly re-duces the per-for-mance of the \T1/lmtt/m/n/10.95 deepset_combined_gcn
+Overfull \hbox (43.64915pt too wide) in paragraph at lines 30--32
+[]\T1/lmr/m/n/10.95 In con-trast, nor-mal-iz-ing the in-put fea-tures slightly re-duces the per-for-mance of the \T1/lmtt/m/n/10.95 deepset_combined_gcn
  []
 
 
-Overfull \hbox (9.67146pt too wide) in paragraph at lines 46--60
+Overfull \hbox (9.67146pt too wide) in paragraph at lines 47--61
  [][] 
  []
 
@@ -613,15 +613,15 @@ Overfull \hbox (9.67146pt too wide) in paragraph at lines 46--60
 <chapters/Results/ROC_curves.pdf, id=375, 578.16pt x 433.62pt>
 File: chapters/Results/ROC_curves.pdf Graphic file (type pdf)
 <use chapters/Results/ROC_curves.pdf>
-Package pdftex.def Info: chapters/Results/ROC_curves.pdf  used on input line 73.
+Package pdftex.def Info: chapters/Results/ROC_curves.pdf  used on input line 74.
 (pdftex.def)             Requested size: 341.43307pt x 256.07178pt.
 <chapters/Results/Speedupt.pdf, id=378, 578.16pt x 433.62pt>
 File: chapters/Results/Speedupt.pdf Graphic file (type pdf)
 <use chapters/Results/Speedupt.pdf>
-Package pdftex.def Info: chapters/Results/Speedupt.pdf  used on input line 89.
+Package pdftex.def Info: chapters/Results/Speedupt.pdf  used on input line 90.
 (pdftex.def)             Requested size: 341.43307pt x 256.07178pt.
  [21 </Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/chapters/Results/ROC_curves.pdf>]
-Overfull \hbox (20.62328pt too wide) in paragraph at lines 105--116
+Overfull \hbox (45.42654pt too wide) in paragraph at lines 106--119
  [][] 
  []
 
@@ -651,14 +651,14 @@ LaTeX Warning: There were multiply-defined labels.
  ) 
 Here is how much of TeX's memory you used:
  11620 strings out of 480608
- 173804 string characters out of 5903630
+ 173810 string characters out of 5903630
  668976 words of memory out of 5000000
  27129 multiletter control sequences out of 15000+600000
  583696 words of font info for 57 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,13n,49p,867b,1285s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on "/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.pdf" (26 pages, 2094434 bytes).
+Output written on "/Users/yellouz/Documents/pp-lab-group-a/AI Lab 3 - PP/main.pdf" (26 pages, 2090276 bytes).
 PDF statistics:
  588 PDF objects out of 1000 (max. 8388607)
  448 compressed objects within 5 object streams

@@ -19,7 +19,7 @@ from utils import (
 from models import from_config
 
 def main():
-    coordinates = "cartesian"
+    coordinates = "cylindrical"
 
     feature_columns_map = {
         "cartesian": ["prodTime", "x", "y", "z", "energy", "px", "py", "pz"],
@@ -34,10 +34,10 @@ def main():
     feature_columns = feature_columns_map.get(coordinates)
 
     config = {
-    "model_name": "deepset_combined_wgcn_normalized",
+    "model_name": "deepset_combined",
     "embed_dim": 8,          # add embedding size
     #"dropout_rate": 0.179,     # add dropout     30 was better
-    # "num_heads": 4,          # add number of heads
+    # "num_heads": 4,          # add number of transformer heads
     # "num_layers": 2,         # add number of transformer layers
     "units": 32,
     "num_features": len(feature_columns)
@@ -51,7 +51,7 @@ def main():
     # --- Configuration ---
     dataset_path = "smartbkg_dataset_4k_training.parquet"
     pdg_map_path = "pdg_mapping.json"
-    save_path = Path("models_fulltrain")
+    save_path = Path("saved_models/Coordinates_Investigation")
     save_path.mkdir(exist_ok=True)
     model_path = save_path / tag
     model_path.mkdir(exist_ok=True)

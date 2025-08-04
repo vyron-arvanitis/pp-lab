@@ -124,11 +124,11 @@ class DeepSetLayer(nn.Module):
         super().__init__()
         self.per_item_mlp = nn.Sequential(
             nn.Linear(num_features, units),
-            nn.ELU(alpha=1.0),
+            nn.ReLU(),
         )
         self.global_mlp = nn.Sequential(
             nn.Linear(units, units),
-            nn.ELU(alpha=1.0)
+            nn.ReLU()
         )
 
     def forward(self, x:torch.Tensor, mask: torch.Tensor=None) -> torch.Tensor:
@@ -434,7 +434,7 @@ class DeepSet_wGCN(nn.Module):
         x = inputs["feat"]
         adj = inputs["adj"]
         adj = normalize_adjacency(adj)
-        x = F.elu(self.gcn_layer(x, adj), alpha=1.0)
+        x = F.relu(self.gcn_layer(x, adj))
         x = self.deep_set_layer(x, mask)
 
         x = self.output_layer(x)

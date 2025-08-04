@@ -120,19 +120,18 @@ Training was performed on all four row groups of the training set over 10 epochs
     \begin{tabular}{l|cc|cc}
         \hline
          & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
-        \hline 
-        Model& Loss & Accuracy  & Loss & Accuracy\\
+        \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
         \hline
-        \texttt{deepset}& $0.6294$ & $63.88~\%$ & $0.6219$&$64.69~\%$ \\
-        \texttt{deepset\_gcn}&$0.6235$&$64.79~\%$&$0.6119$&$66.21~\%$ \\
-        \texttt{deepset\_combined}&$0.4767$&$77.04~\%$&$0.4727$ &$77.43~\%$\\
+        \texttt{deepset}& $0.633$&$63.6$ & $0.624$&$64.5~\%$ \\
+        \texttt{deepset\_gcn}&$0.614$&$66.0$&$0.610$&$66.3~\%$ \\
+        \texttt{deepset\_combined}&$0.478$&$77.5$&$0.4727$ &$77.6~\%$\\
         \hline
     \end{tabular}
 \end{table}
 
 Table \ref{tab:coordinates_investigation} presents the validation loss and accuracy for each model trained using both
 Cartesian and cylindrical coordinates. Training on cylindrical coordinates consistently leads to improved performance across all models.
-Specifically, the validation accuracy increases by $0.81\%$ for \texttt{deepset}, $1.42\%$ for \texttt{deepset\_gcn}, and $0.39\%$. 
+Specifically, the validation accuracy increases by $0.9\%$ for \texttt{deepset}, $0.3\%$ for \texttt{deepset\_gcn}, and $0.1\%$. 
 for \texttt{deepset\_combined}.
 
 \subsection{Activation functions}
@@ -142,7 +141,7 @@ Activation functions introduce non-linearities into neural networks, enabling th
 \subsubsection*{Rectified Linear Unit (ReLU)}
 The ReLU is a piecewise linear activation function widely adopted for its simplicity and efficiency, given by
 \begin{equation}
-\text{ReLU}(x) )= \max(0,x).
+\text{ReLU}(x) = \max(0,x).
 \end{equation}
 It introduces sparsity by zeroing out negative values. Also, it is efficient to compute and generally accelerates convergence in deep networks. 
 
@@ -179,9 +178,9 @@ ELU to find a suitable activation function for the optimal model.
         & \multicolumn{2}{c|}{ReLU} & \multicolumn{2}{c|}{Leaky ReLU} & \multicolumn{2}{c}{ELU} \\
         \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
         \hline
-        \texttt{deepset} & 0.640 & 63.6 & 0.639 & 64.1 & 0.629 & 63.1 \\
-        \texttt{deepset\_combined} & 0.771 & 77.5 & 0.773 & 77.3 & 0.765 & 77.0 \\
-        \texttt{deepset\_gcn} & 0.658 & 66.0 & 0.660 & 66.1 & 0.637 & 64.0 \\
+        \texttt{deepset} & $0.633$&$63.6$& $0.628$ & $64.1$ & $0.639$ & $63.1$ \\
+        \texttt{deepset\_combined} &$0.478$&$77.5$& $0.478$ & $77.3$ & $0.487$ & $77.0$ \\
+        \texttt{deepset\_gcn} &$0.614$&$66.0$& $0.614$ & $66.1$ & $0.6312$ & $64.0 $\\
         \hline
     \end{tabular}
 \end{table}
