@@ -330,7 +330,7 @@ We trained the model for both cases on 1000 events for 10 epochs, observing the 
   
   \item \textbf{Masking reduces over‐fit.} When the padding mask is included, the gap between training and validation accuracy shrinks noticeably. By explicitly telling the MLP which inputs are padding, the network can devote its capacity to learning true physics correlations ignoring empty slots, leading to better generalization.
   
-  \item \textbf{Modest performance.} Overlall, even after normalization, dropout or adding PDG ids features, performances plateau at only about $60-65\%$ accuracy, far below our best models.
+  \item \textbf{Modest performance.} Even with normalization, dropout or adding PDG ids features, accuracy plateaus around $60-65\%$, far below our best models.
 \end{itemize}
 
 Given these results, we decided to exclude the MLP from further testing and optimization and focused on architectures that better exploit the symmetries and relational structure of particle-set data.
