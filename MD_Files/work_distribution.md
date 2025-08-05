@@ -37,6 +37,7 @@ where everybody wrote the part of his own investigation.
 - Implemented and evaluated the **MLP (Multi-Layer Perceptron)** model with normalization.  
 - Investigated the effect of **input masking** on performance.  
 - Explored the internal behavior of the **embedding layer for PDG IDs**, analyzing whether similar particles are mapped to similar embeddings.
+- Code cleanup
 ---
 
 ## Moritz
