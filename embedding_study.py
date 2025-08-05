@@ -104,7 +104,6 @@ for p, pm in pairs:
     key = f"sim_{p}_{pm}"
     results_emb[key] = S[i,j].item()
     
-    # TODO: check if this is ok commented out or not!
     scores.append( S[i,j].item() )
     
 # Save nearest‐neighbour top1 sims
