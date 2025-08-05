@@ -11,7 +11,8 @@ These investigations included the following:
     \item Are there any redundant features in the dataset that could be removed? (subsection \ref{sec:Unecessary Features})
     \item Methods to combat overfitting (subsection \ref{ssec:overfitting})
     \item Ideas for different model architectures (section \ref{sec:Transformer} and \ref{model:Transformer})
-    \item Is it possible to use a standard MLP as well? What is the effect of the masking in this case? (subsection) \ref{sec:method_flatmlp}
+    \item Is it possible to use a standard MLP as well? What is the effect of the masking in this case? (subsection \ref{sec:method_flatmlp})
+    \item Can we inspect the embedding layer for the PDG id? E.g. are similar particles embedded to similar vectors? (section \ref{sec:embedding_study})
 
 \end{itemize}
 
@@ -334,6 +335,60 @@ We trained the flat MLP for both cases on 1000 events and 10 epochs, observing t
 
 Given these results, we decided to exclude the flat MLP from further testing and optimization and focused on architectures that better exploit the symmetries and relational structure of particle-set data.
 
+
+\subsection{Inspection of the PDG‐ID Embedding Layer} \label{sec:embedding_study}
+
+To verify that our network learns meaningful representations of particle types, we extracted the learned embedding matrix for PDG identifiers and performed a series of analyses:
+
+\begin{enumerate}
+  \item \textbf{Embedding extraction.} We loaded the trained configuration for our optimal model (\texttt{optimal\_model\_cylindrical} described in the next section) and read out the weight tensor of the embedding layer.
+
+
+\item \textbf{Cosine‐similarity matrix.}
+  Restricting to the “real” PDG entries (excluding the padding token),
+  we normalized each embedding to unit length and computed the
+  full pairwise cosine matrix \(S\). We recorded both the full–matrix and off‐diagonal statistics.
+ 
+
+  \item \textbf{Antiparticle similarity.}  For each of \(\pi^\pm\), \(K^\pm\), \(\mu^\pm\), and \(p/\bar p\), we directly read the cosine similarity between each particle and its antiparticle from \(S\). All numerical results are summarized in Table \ref{tab:pdg_embedding_stats}.
+
+    
+  \item \textbf{Nearest neighbours.}  We also computed each species’ top‐1 nearest neighbour in embedding space (by cosine similarity) to confirm that, for example, \(\pi^+\) is closest to \(\pi^-\), muons to antimuons, etc.
+  \item \textbf{Visualization.}  We produced a 2D t‐SNE projection of the embeddings (Figure~\ref{fig:pdg_tsne}), highlighting six common species (\(\mu^-, \gamma, \pi^0, \pi^+, K^+, p\)).  Finally, we plotted a histogram of the off‐diagonal cosine similarities (Figure~\ref{fig:pdg_hist}) to show the broad distribution from \(-1\) to \(+1\).
+\end{enumerate}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrr}
+    \toprule
+    Quantity & Mean & Std.\ Dev.\ \\ 
+    \midrule
+    All entries of \(S\)            & 0.1045 & 0.4000 \\
+    Off‐diagonal entries of \(S\)   & 0.0997 & 0.3956 \\
+    \(\pi^\pm\) similarity         & 0.9171 & ---    \\
+    \(p/\bar p\) similarity        & 0.8730 & ---    \\
+    Average antiparticle similarity & 0.7558 & ---    \\
+    \bottomrule
+  \end{tabular}
+  \caption{Summary of cosine‐similarity statistics for PDG embeddings.}
+  \label{tab:pdg_embedding_stats}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pdg_embeddings_tsne.png}
+  \caption{t‐SNE projection of the PDG embeddings.  Six common species are highlighted to illustrate that particles and their antiparticles (e.g.\ \(\pi^\pm\), \(p/\bar p\)) are close to each other.}
+  \label{fig:pdg_tsne}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pdg_embedding_hist.png}
+  \caption{Histogram of off‐diagonal cosine similarities among PDG embeddings.  Most pairs are near orthogonal (peak near 0), with tails extending toward \(\pm1\) for strongly related or strongly opposed species.}
+  \label{fig:pdg_hist}
+\end{figure}
+
+Overall, these results demonstrate that the learned PDG embedding space meaningfully reflects particle‐type similarities: antiparticles and isospin partners achieve high cosine similarity, while unrelated species remain nearly orthogonal.
 
 
 \subsection{Speedup}  \label{sec:Speedup}

@@ -28,7 +28,7 @@ In terms of Deep Sets, graph convolutions can be seen as permutation equivariant
 	\centering
 	\includegraphics[width=0.7\linewidth]{chapters/theory/cnn_vs_gcn.jpg}
 	\caption{Analogy between CNNs and GCNs. In CNNs, pixels are updated based on spatial neighborhoods; 
-    in GCNs, nodes are updated based on graph neighborhoods. \cite{zhihu-figure-qc} }
+    in GCNs, nodes are updated based on graph neighborhoods \cite{zhihu-figure-qc}.}
 	\label{fig:gcn}
 \end{figure}
 
@@ -40,19 +40,19 @@ A Multi‐Layer Perceptron (MLP) is the canonical feed‐forward neural network:
 \[
 h^{(\ell)} = \phi\bigl(W^{(\ell)} h^{(\ell-1)} + b^{(\ell)}\bigr),
 \]
-where \(W^{(\ell)},b^{(\ell)}\) are the layer’s learnable weights and biases, and \(\phi\) is a pointwise nonlinearity such as ReLU. Figure \ref{fig:mlp}  showS the structure of a vanilla MLP.
+where \(W^{(\ell)},b^{(\ell)}\) are the layer’s learnable weights and biases, and \(\phi\) is a pointwise nonlinearity such as ReLU. Figure \ref{fig:mlp} shows the structure of a vanilla MLP.
 
-MLP are universal function approximators: by stacking several layers, an MLP can approximate arbitrarily complex mappings from its fixed‐length input vector to the desired output.
+MLP are universal function approximators: by stacking several layers one can approximate arbitrarily complex mappings from its fixed‐length input vector to the desired output.
 
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{chapters/theory/mlp_1.png}
-	\caption{Schematic illustration of a Multi‐Layer Perceptron. \cite{turing} }
+	\caption{Schematic illustration of a Multi‐Layer Perceptron \cite{turing}.}
 	\label{fig:mlp}
 \end{figure}
 
-Because an MLP operates on a flat vector of features, it requires a predetermined input size and implicitly assumes an ordering of those inputs.  In tasks where the data are naturally sets or graphs (e.g.\ collections of particles), this fixed‐order assumption provides no mechanism to enforce permutation invariance or to leverage relational structure.  
+Because an MLP operates on a flat vector of features, it requires a predetermined input size and implicitly assumes an ordering of those inputs.  In tasks where the data are naturally sets or graphs (e.g.\ collections of particles), this fixed‐order assumption provides no direct mechanism to enforce permutation invariance or to leverage relational structure, as opposed to Deep Sets or GCN. 
 
 
 \subsection{Transformer} \label{sec:Transformer}

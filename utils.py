@@ -77,7 +77,7 @@ def load_data(filename: str, row_groups: list):
     return df, labels
 
 
-def map_np(array: np.ndarray, mapping: dict, fallback: Any):
+def map_np(array: np.ndarray, mapping: dict, fallback: any):
     """
     Apply a mapping over a numpy array - along the lines of
     https://stackoverflow.com/a/16993364
@@ -325,7 +325,7 @@ def loss_fn(logits: torch.Tensor, y: torch.Tensor):
 
 
 def accuracy_fn(logits: torch.Tensor, y: torch.Tensor):
-        """
+    """
     Compute accuracy given logits and targets.
 
     Parameters
