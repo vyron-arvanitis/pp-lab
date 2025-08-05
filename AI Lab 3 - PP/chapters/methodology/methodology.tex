@@ -341,20 +341,20 @@ Given these results, we decided to exclude the MLP from further testing and opti
 To verify that our network learns meaningful representations of particle types, we extracted the learned embedding matrix for PDG identifiers and performed a series of analyses:
 
 \begin{enumerate}
-  \item \textbf{Embedding extraction.} We loaded the trained configuration for our optimal model (\texttt{optimal\_model\_cylindrical} described in the next section) and read out the weight tensor of the embedding layer.
+  \item \textbf{Embedding extraction.} We considered the trained configuration for our optimal model (\texttt{optimal\_model\_cylindrical} described in the next section) and read out the weight tensor of the embedding layer.
 
 
 \item \textbf{Cosine‐similarity matrix.}
   Restricting to the “real” PDG entries (excluding the padding token),
   we normalized each embedding to unit length and computed the
-  full pairwise cosine matrix \(S\). We recorded both the full–matrix and off‐diagonal statistics.
+  full pairwise cosine matrix \(S\). Both the full–matrix and off‐diagonal statistics are recorded.
  
 
   \item \textbf{Antiparticle similarity.}  For each of \(\pi^\pm\), \(K^\pm\), \(\mu^\pm\), and \(p/\bar p\), we directly read the cosine similarity between each particle and its antiparticle from \(S\). All numerical results are summarized in Table \ref{tab:pdg_embedding_stats}.
 
     
   \item \textbf{Nearest neighbours.}  We also computed each species’ top‐1 nearest neighbour in embedding space (by cosine similarity) to confirm that, for example, \(\pi^+\) is closest to \(\pi^-\), muons to antimuons, etc.
-  \item \textbf{Visualization.}  We produced a 2D t‐SNE projection of the embeddings (Figure~\ref{fig:pdg_tsne}), highlighting six common species (\(\mu^-, \gamma, \pi^0, \pi^+, K^+, p\)).  Finally, we plotted a histogram of the off‐diagonal cosine similarities (Figure~\ref{fig:pdg_hist}) to show the broad distribution from \(-1\) to \(+1\).
+  \item \textbf{Visualization.} We produce a 2D t‐SNE projection of the embeddings (Figure~\ref{fig:pdg_tsne}), highlighting six common species (\(\mu^-, \gamma, \pi^0, \pi^+, K^+, p\)).  Finally, we plotted a histogram of the off‐diagonal cosine similarities (Figure~\ref{fig:pdg_hist}) to show the broad distribution from \(-1\) to \(+1\).
 \end{enumerate}
 
 
