@@ -357,7 +357,24 @@ To verify that our network learns meaningful representations of particle types, 
   \item \textbf{Visualization.}  We produced a 2D t‐SNE projection of the embeddings (Figure~\ref{fig:pdg_tsne}), highlighting six common species (\(\mu^-, \gamma, \pi^0, \pi^+, K^+, p\)).  Finally, we plotted a histogram of the off‐diagonal cosine similarities (Figure~\ref{fig:pdg_hist}) to show the broad distribution from \(-1\) to \(+1\).
 \end{enumerate}
 
-\begin{table}[h]
+
+Overall, these results demonstrate that the learned PDG embedding space meaningfully reflects particle‐type similarities: antiparticles and isospin partners achieve high cosine similarity, while unrelated species remain nearly orthogonal.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pdg_embeddings_tsne.png}
+  \caption{t‐SNE projection of the PDG embeddings. Six common species are highlighted to illustrate that particles and their antiparticles (e.g.\ \(\pi^\pm\), \(p/\bar p\)), here plotted with the same colour, are close to each other.}
+  \label{fig:pdg_tsne}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{pdg_embedding_hist.png}
+  \caption{Histogram of off‐diagonal cosine similarities among PDG embeddings.  Most pairs are near orthogonal (peak near 0), with tails extending toward \(\pm1\) for strongly related or strongly opposed species.}
+  \label{fig:pdg_hist}
+\end{figure}
+
+\begin{table}[H]
   \centering
   \begin{tabular}{lrr}
     \toprule
@@ -373,22 +390,6 @@ To verify that our network learns meaningful representations of particle types, 
   \caption{Summary of cosine‐similarity statistics for PDG embeddings.}
   \label{tab:pdg_embedding_stats}
 \end{table}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{pdg_embeddings_tsne.png}
-  \caption{t‐SNE projection of the PDG embeddings. Six common species are highlighted to illustrate that particles and their antiparticles (e.g.\ \(\pi^\pm\), \(p/\bar p\)), here plotted with the same colour, are close to each other.}
-  \label{fig:pdg_tsne}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{pdg_embedding_hist.png}
-  \caption{Histogram of off‐diagonal cosine similarities among PDG embeddings.  Most pairs are near orthogonal (peak near 0), with tails extending toward \(\pm1\) for strongly related or strongly opposed species.}
-  \label{fig:pdg_hist}
-\end{figure}
-
-Overall, these results demonstrate that the learned PDG embedding space meaningfully reflects particle‐type similarities: antiparticles and isospin partners achieve high cosine similarity, while unrelated species remain nearly orthogonal.
 
 
 \subsection{Speedup}  \label{sec:Speedup}
