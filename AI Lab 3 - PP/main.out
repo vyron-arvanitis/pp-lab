@@ -14,21 +14,22 @@
 \BOOKMARK [2][-]{subsection.4.5}{Transforming the feature values}{section.4}% 14
 \BOOKMARK [2][-]{subsection.4.6}{Unecessary Features}{section.4}% 15
 \BOOKMARK [2][-]{subsection.4.7}{Overfitting and Mitigation Techniques}{section.4}% 16
-\BOOKMARK [2][-]{subsection.4.8}{Flat MLP and Masking}{section.4}% 17
-\BOOKMARK [2][-]{subsection.4.9}{Speedup}{section.4}% 18
-\BOOKMARK [2][-]{subsection.4.10}{ROC Curve and AUC Evaluation}{section.4}% 19
-\BOOKMARK [1][-]{section.5}{Summary of Evaluated Architectures}{}% 20
-\BOOKMARK [2][-]{subsection.5.1}{General setup}{section.5}% 21
-\BOOKMARK [2][-]{subsection.5.2}{Deep Set Model}{section.5}% 22
-\BOOKMARK [2][-]{subsection.5.3}{Combined Model}{section.5}% 23
-\BOOKMARK [2][-]{subsection.5.4}{DeepSet with GCN}{section.5}% 24
-\BOOKMARK [2][-]{subsection.5.5}{Combined Deep Set with GCN}{section.5}% 25
-\BOOKMARK [2][-]{subsection.5.6}{Combined Deep Set with GCN Normalized}{section.5}% 26
-\BOOKMARK [2][-]{subsection.5.7}{Transformer Model}{section.5}% 27
-\BOOKMARK [2][-]{subsection.5.8}{Performance Comparison}{section.5}% 28
-\BOOKMARK [1][-]{section.6}{Results}{}% 29
-\BOOKMARK [2][-]{subsection.6.1}{Optimal model}{section.6}% 30
-\BOOKMARK [2][-]{subsection.6.2}{ROC curves and speedup results}{section.6}% 31
-\BOOKMARK [1][-]{section.7}{Conclusion}{}% 32
-\BOOKMARK [1][-]{appendix.A}{Code Listings}{}% 33
-\BOOKMARK [2][-]{subsection.A.1}{Normalization function}{appendix.A}% 34
+\BOOKMARK [2][-]{subsection.4.8}{MLP and Masking}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.9}{PDG Embedding Layer Inspection}{section.4}% 18
+\BOOKMARK [2][-]{subsection.4.10}{Speedup}{section.4}% 19
+\BOOKMARK [2][-]{subsection.4.11}{ROC Curve and AUC Evaluation}{section.4}% 20
+\BOOKMARK [1][-]{section.5}{Summary of Evaluated Architectures}{}% 21
+\BOOKMARK [2][-]{subsection.5.1}{General setup}{section.5}% 22
+\BOOKMARK [2][-]{subsection.5.2}{Deep Set Model}{section.5}% 23
+\BOOKMARK [2][-]{subsection.5.3}{Combined Model}{section.5}% 24
+\BOOKMARK [2][-]{subsection.5.4}{DeepSet with GCN}{section.5}% 25
+\BOOKMARK [2][-]{subsection.5.5}{Combined Deep Set with GCN}{section.5}% 26
+\BOOKMARK [2][-]{subsection.5.6}{Combined Deep Set with GCN Normalized}{section.5}% 27
+\BOOKMARK [2][-]{subsection.5.7}{Transformer Model}{section.5}% 28
+\BOOKMARK [2][-]{subsection.5.8}{Performance Comparison}{section.5}% 29
+\BOOKMARK [1][-]{section.6}{Results}{}% 30
+\BOOKMARK [2][-]{subsection.6.1}{Optimal model}{section.6}% 31
+\BOOKMARK [2][-]{subsection.6.2}{ROC curves and speedup results}{section.6}% 32
+\BOOKMARK [1][-]{section.7}{Conclusion}{}% 33
+\BOOKMARK [1][-]{appendix.A}{Code Listings}{}% 34
+\BOOKMARK [2][-]{subsection.A.1}{Normalization function}{appendix.A}% 35

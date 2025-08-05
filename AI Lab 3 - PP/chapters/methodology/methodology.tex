@@ -8,7 +8,7 @@ These investigations included the following:
     \item Could one make use of some (approximate) symmetries in the data? (subsection \ref{sec:Exploiting Rotational Symmetry})
     \item Which activation function performs best? (subsection \ref{ssec:activations})
     \item Do we need to transform the values for the particle features? (subsection \ref{sec:Normalize features})
-    \item Are there any redundant features in the dataset that could be removed? (subsection \ref{sec:Unecessary Features})
+    \item Are there any redundant features in the dataset that could be removed? (subsection \ref{sec:Unnecessary Features})
     \item Methods to combat overfitting (subsection \ref{ssec:overfitting})
     \item Ideas for different model architectures (section \ref{sec:Transformer} and \ref{model:Transformer})
     \item Is it possible to use a standard MLP as well? What is the effect of the masking in this case? (subsection \ref{sec:method_flatmlp})
@@ -56,7 +56,7 @@ The naming convention follows the pattern:
 \end{center}
 For example, the model \texttt{DS\_6\_GCN\_135} consists of six layers (including input and output), with the 1st, 3rd, and 5th layers implemented as GCN layers. All other layers default to linear.
 
-This models introduces two additional configuration arguments:
+This model introduces two additional configuration arguments:
 \begin{itemize}
     \item \texttt{hidden\_layers}  (int): Number of hidden layers. The total number of layers is \texttt{hidden\_layers} + 3 (one input and two output layers)
     \item \texttt{gcn\_layers} (list): A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers} = [2,4] replaces the 2nd and 4th layers with GCNs. 
@@ -67,7 +67,7 @@ Layer behaviour is defined as follows:
 \item If index 1 is included in \texttt{gcn\_layers}, the input layer is implemented as a GCN; otherwise, it is a linear layer. 
 \item Hidden layers not specified in \texttt{gcn\_layers} are standard linear layers. 
 \item After all hidden layers, aggregation is performed using masked mean pooling (or mean over $N$ if no mask is provided).
-\item  The final output module consits of two linear layers speparated by a ReLU activation (i.e., a small MLP).
+\item  The final output module consists of two linear layers separated by a ReLU activation (i.e., a small MLP).
 \end{itemize}
 
 The complete architecture is summarized in table \ref{tab:deepset_gcn_variable_arc}, where $h$ is the number of hidden layers. $u$ is the number of hidden
@@ -108,7 +108,7 @@ The implementation requires an additional function, \texttt{transform\_to\_cylin
 a DataFrame as input, which must contain at least the features \texttt{'x'}, \texttt{'y'}, \texttt{'px'}, and \texttt{'py'}. The output is a modified DataFrame in which the original
 features are replaced by \texttt{'r'}, and \texttt{'p\_xy'}. 
 
-To enabale coordinate transformation, the function \texttt{preprocess} in \texttt{utils.py} takes an additional argument, 
+To enable coordinate transformation, the function \texttt{preprocess} in \texttt{utils.py} takes an additional argument, 
 \texttt{"coordinates"}, which can be set to \texttt{"cylindrical"}. If this argument is not specified, the data is processed using the original Cartesian coordinates. 
 
 Theoretically, one would expect improved performance by reducing the number of parameters by compressing essential information into a 

@@ -10,7 +10,7 @@ The model builds upon a base architecture in which the input features are augmen
 Each trainable layer is followed by dropout (with a rate of $0.179$), a LeakyReLU activation (slope $0.01$), and Batch Normalization. Training was conducted using cylindrical coordinates, while all other settings remained consistent with previous experiments. 
 
 Table \ref{tab:optimalmodel_arc} presents the architecture of the optimal model. Achieving a training loss of $0.451$ with a training accuracy of $79.0\%$, and a
-validation loss of $0.430$ with a accuracy of $80.1\%$, it was identified as the best-performing model.
+validation loss of $0.430$ with an accuracy of $80.1\%$, it was identified as the best-performing model.
 
 \begin{table}[H]
     \caption{Architecture of the Optimal Model}
@@ -54,19 +54,17 @@ with most AUC scores exceeding $0.85$, indicating strong classification performa
 The Transformer and Optimal Model stand out with the highest AUC values.
 
 While ROC curves indicate classification quality, they do not reflect entirely the impact
-on computational efficiency. To address this, we also evaluate the speedup—(\ref{sec:Speedup})
+on computational efficiency. To address this, we also evaluate the speedup, as discussed in section (\ref{sec:Speedup}),
 if events are filtered using the model predictions.
 
 \begin{figure}[H]
  \centering
     \includegraphics[width=0.75\textwidth]{chapters/Results/Speedup.png}
-    \caption{Speedup gained by our seperate models}
+    \caption{Speedup gained by our separate models}
     \label{fig:speedup}
 \end{figure}
 
-From figure \ref{fig:ROC_curves_results}, we observe that the
-more advanced models are indistinguishable as far as their ROC performance is concerned,
-however they diverge in the achievable speedup. 
+From figure \ref{fig:ROC_curves_results}, we observe that the more advanced models are nearly indistinguishable in terms of ROC performance; however, they diverge significantly in the achievable speedup, as shown in figure \ref{fig:speedup}.
 The Optimal Model attains the highest maximum speedup, 
 followed closely by the Transformer and Deep Set Combined with GCN variants.
 
@@ -84,7 +82,7 @@ followed closely by the Transformer and Deep Set Combined with GCN variants.
         DS\_gcn & $0.614$ & $66.0$ & $0.721$ & $2.795$ & $1.149$ \\
         DS\_combined\_wgcn & $0.464$ & $78.0$ & $0.862$ & $5.323$ & $1.586$ \\
         transformer & $0.441$ & $79.5$ & $0.872$ & $5.301$ & $1.774$ \\
-        DS\_combined\_wgcn\_normalized & $0.467$ & $77.6$ & $0.860$ & $5.373$ & $1.719$ \\
+        DS\_combined\_wgcn\_norm & $0.467$ & $77.6$ & $0.860$ & $5.373$ & $1.719$ \\
         optimal\_model & $0.432$ & $80.1$ & $0.880$ & $6.009$ & $1.899$ \\
         \hline
     \end{tabular}
