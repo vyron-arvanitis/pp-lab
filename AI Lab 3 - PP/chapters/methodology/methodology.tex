@@ -293,7 +293,7 @@ Search intervals were selected based on common literature values. After multiple
 This optimization process helped fine-tune the model's capacity and regularization, ultimately improving generalization and performance on the validation set.
 
 
-\subsection{Flat MLP and Masking} \label{sec:method_flatmlp}
+\subsection{MLP and Masking} \label{sec:method_flatmlp}
 
 As a minimal baseline, we consider a fully‐connected “flat” MLP that ignores any set or graph structure and treats each event as a fixed‐length vector.
 
@@ -313,13 +313,13 @@ The MLP itself consists of a sequence of fully‐connected layers (128 → 64 �
 
 
 \subsubsection*{Masking}
-To assess the effect of padding‐aware inputs, we compare two variants of this flat MLP:
+To assess the effect of padding‐aware inputs, we compare two variants of this MLP:
 \begin{itemize}
   \item \textbf{Masking On:} the binary mask is appended so the model can distinguish real entries from padding.
   \item \textbf{Masking Off:} no mask is provided and zeros from padding are treated as genuine features.
 \end{itemize}
 
-We trained the flat MLP for both cases on 1000 events and 10 epochs, observing the following: 
+We trained the model for both cases on 1000 events for 10 epochs, observing the following: 
 
 
 \begin{itemize}
@@ -333,7 +333,7 @@ We trained the flat MLP for both cases on 1000 events and 10 epochs, observing t
   \item \textbf{Modest performance.} Overlall, even after normalization, dropout or adding PDG ids features, performances plateau at only about $60-65\%$ accuracy, far below our best models.
 \end{itemize}
 
-Given these results, we decided to exclude the flat MLP from further testing and optimization and focused on architectures that better exploit the symmetries and relational structure of particle-set data.
+Given these results, we decided to exclude the MLP from further testing and optimization and focused on architectures that better exploit the symmetries and relational structure of particle-set data.
 
 
 \subsection{Inspection of the PDG‐ID Embedding Layer} \label{sec:embedding_study}
