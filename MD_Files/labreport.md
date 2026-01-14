@@ -4,10 +4,20 @@ Your submitted code and your documentation both are part of your submission and 
 
 Below we list the requirements of what should be part of your lab report. When in doubt, please reach out to your advisor.
 
-- A basic introduction about the Belle II experiment and the problem you try to solve in this lab course.
-- A basic introduction about Deep Sets and Graph neural networks.
-- A summary of the types of networks you were examining.
-- A summary describing how you approached the respective tasks.
+- A basic introduction about the Belle II experiment and the problem you try to solve in this lab course.[@vyron]
+- A basic introduction about Deep Sets and Graph neural networks.[@paul]
+- A summary of the types of networks you were examining.[@emanuele: mlp,mask, @aggelos,@moritz transformer]
+- 1. --deepset **NO norm**[@paul]
+- 1. --deepset GCN **norm**[@paul]
+- 1. --deepset combined w GCN **norm** [@paul: fix bug]
+- 1. --mlp[@emanuele: make it work] **norm**
+- 1. --Transformer **norm** [@vyron: evaluate transformer]  **THIS IS DONE**
+- 1. --optimal[@avenger model] **norm**[@moritz,aggelos: evaluate it]
+- 1. [TODO:@vyron] include a { "embed_dim": 6,"dropout_rate": 0.17,"num_heads": 4,"num_layers": 2,"units": 32,"num_features"} **THIS IS DONE**
+
+
+
+- A summary describing how you approached the respective tasks.[@vyron: normalization,features,reversed,@moritz: overfitting,other architectures,@aggelos: spherical symmetry]
 - A summary of the results and a discussion on possible issues with the approach taken in this lab course. In particular you should discuss a potential systematic bias that could be introduced by this method.
 
 **Your repository:**

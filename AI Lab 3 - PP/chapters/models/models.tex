@@ -1,0 +1,216 @@
+\section{Summary of Evaluated Architectures}
+\label{sec:models}
+Based on our cumulative research, we implemented and evaluated a variety of model architectures to better 
+understand which components and design choices contribute most to performance. Rather than being pre-selected 
+as the most promising, these models served as investigative tools to explore the effects of 
+architectural elements such as embeddings, graph structure, and normalization. 
+Simpler baseline models were also included to isolate and quantify the impact of these additions. 
+
+\subsection{General setup}
+All models described below take at least the following arguments:
+\begin{itemize}
+    \item \texttt{num\_features} (int): Number of input features
+    \item \texttt{units} (int): Number of hidden units 
+\end{itemize}
+
+To describe the shapes of the model layers, we adopt the following notation:
+\begin{itemize}
+    \item $B$: Batch size
+    \item $N$: Number of particles per event
+    \item $f$: Number of input features
+    \item $u$: Number of hidden units ($= 32$ in every model)
+\end{itemize}
+
+The input to every model is given by $B$ batches, each containing $N$ particles, each having $f$ features. The input shape is therefore $[B,N,f]$.
+Any deviation will be further specified for each model individually.
+
+\subsection{Deep Set Model} \label{model:DeepSet}
+
+This model follows the Deep Sets framework (as introduced in section \ref{sec:DeepSet}), 
+in which the same transformation is applied independently to each element of the input set, followed by a permutation-invariant aggregation. All other models are built upon this base architecture. 
+
+The architecture of the model is summarized in table \ref{tab:deepset_arc}.
+\begin{table}[h]
+    \caption{Deep Set Model Architecture}
+    \label{tab:deepset_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1 & Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times f + u$ \\
+        -- & Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
+        2 & Linear + ReLU (global MLP)& $[B,u]$ & $u \times u + u$ \\
+        3 & Linear (Output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Combined Model} \label{model:CombinedModel}
+
+Each PDG ID is mapped to an embedding vector, which is then concatenated with the corresponding particle features. The resulting embeddings are concatenated with the original particle features before being processed by the rest of the network.
+
+The input to this model includes both the feature vector of each particle and the corresponding PDG ID vector.
+
+The additional arguments introduced by this model are:
+\begin{itemize}
+    \item \texttt{embed\_dim:} Embedding dimension ($= e$)
+    \item \texttt{num\_pdg\_ids:} Number of PDG ID categories ($= n_\text{PDG}$)
+\end{itemize}
+
+The architecture of the model is summarized in table \ref{tab:deepset_combined_arc}.
+\begin{table}[h]
+    \caption{Architecture of the Combined Model with PDG embedding and Deep Set structure}
+    \label{tab:deepset_combined_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1& Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
+        --& Concatenation of features and embeddings & $[B,N,f+e]$& --\\
+        2& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times (f+e) + u$ \\
+        --& Masked mean pooling (or mean over $N$) & $[B,u]$ & --\\
+        3& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\
+        4& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\subsection{DeepSet with GCN} \label{model:DeepSet_wGCN}
+
+This model combines a Graph Convolutional Network (GCN) layer with the Deep Set architecture.
+The GCN captures local structure between particles as defined by an adjacency matrix (typically based on mother-daughter relations).
+
+The additional input this model takes is an adjacency matrix that encodes the particles pairwise relationships. 
+The adjacency matrix is a symmetric binary matrix that encodes
+\begin{itemize}
+\item mother-daughter and daughter-mother relationships between particles,
+\item as well as self-connections (i.e., diagonal entries are 1).
+\end{itemize}
+
+This structure ensures that information can flow both directions along the graph edges, while also preserving each particle's self-information during message passing in the GCN. 
+The models architecture is summarized in table \ref{tab:deepset_wgcn_arc}.
+
+\begin{table}[h]
+    \caption{Architecture of the Deep Set structure with additional GCN layer}
+    \label{tab:deepset_wgcn_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1& Graph Convolution (GCN) & $[B,N,u]$ & $u \times f + u$ \\
+        2& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
+        --& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        3& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        4& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\ 
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Combined Deep Set with GCN} \label{model:CombinedModel_wGCN}
+This model combines the architectures of the "Deep Set with GCN" (section \ref{model:DeepSet_wGCN}) and the "Combined Model" (section \ref{model:CombinedModel}): 
+The PDG ID of each particle is mapped to an embedding vector and concatenated with its feature vector. The resulting enriched representation is then processed by the DeepSet-GCN architecture.
+
+Additionally the input requires the PDG codes, and the adjacency matrix as mentioned in section \ref{model:DeepSet_wGCN}. 
+The architecture of the model is summarized in table \ref{tab:deepset_gcn_combined_arc}.
+
+\begin{table}[h]
+    \caption{Architecture of the Combined Model with PDG embedding, GCN and Deep Set structure}
+    \label{tab:deepset_gcn_combined_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1& Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
+        --& Concatenation of features and embeddings & $[B,N,f+e]$& --\\
+        2& Graph Convolution (GCN) & $[B,N,u]$ & $u \times (e+f) + u$ \\
+        3& Linear + ReLU (shared across particles) & $[B,N,u]$ & $u \times u + u$ \\
+        --& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        4& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        5& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Combined Deep Set with GCN Normalized} \label{model:CombinedModel_wGCN_Normalized}
+This model extends the Combined Deep Set with GCN architecture (model \ref{model:CombinedModel_wGCN})
+by introducing a normalization of the inputs according to section \ref{sec:Normalize features}. The architecture is the same as in the case of \ref{model:CombinedModel_wGCN}
+with an additional normalization layer.
+
+\subsection{Transformer Model} \label{model:Transformer}
+This architecture is quite different from the Graph Convolution 
+and Deep Set approaches explored earlier.  
+The Transformer leverages self-attention, a mechanism that enables the model to learn long-range 
+interactions between particles — a capability particularly valuable in 
+particle physics tasks.
+
+The input to the Transformer model consists of both the particle feature vectors and their corresponding PDG codes.  
+The PDG codes are first mapped to embedding vectors, which are concatenated with the original particle features.  
+The combined representation is then projected to the Transformer’s internal dimension before being passed  
+through a stack of Transformer encoder layers.
+
+The additional arguments introduced by this model are:
+\begin{itemize}
+    \item \texttt{embed\_dim} (int): Embedding dimension ($= e$)
+    \item \texttt{num\_pdg\_ids} (int): Number of PDG ID categories ($= n_\text{PDG}$)
+    \item \texttt{num\_heads} (int): Number of attention heads in each Transformer layer
+    \item \texttt{num\_layers} (int): Number of Transformer encoder layers
+    \item \texttt{dropout\_rate} (float): Dropout probability applied in the Transformer layers
+\end{itemize}
+
+The architecture of the Transformer model is summarized in Table~\ref{tab:transformer_arc}.
+
+\begin{table}[h]
+    \caption{Architecture of the Transformer Model with PDG embedding}
+    \label{tab:transformer_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1 & Embedding lookup (PDG code) & $[B,N,e]$ & $(n_\text{PDG} + 1) \times e $ \\
+        -- & Concatenation of features and embeddings & $[B,N,f+e]$ & -- \\
+        2 & Linear projection to Transformer units & $[B,N,u]$ & $u \times (f+e) + u$ \\
+        3 & Transformer encoder stack & $[B,N,u]$ & per-layer: MHSA + FFN  \\
+        -- & Mean pooling over particle dimension & $[B,u]$ & -- \\
+        4 & Linear output layer & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Performance Comparison}
+All models were trained on the full training dataset contained in \texttt{"smartbkg\_dataset\_4k\_training.parquet"}, 
+using a $75\%$-$25\%$ train-validation split. Training was conducted over 10 epochs using the Adam optimizer with a weight decay of $10^{-4}$. Furthermore, the models were trained on Cartesian coordinates with features \texttt{"prodTime", "x", "y", "z", "energy", "px", "py"}, and \texttt{"pz"}. 
+
+Evaluation was performed on the full test dataset contained in \texttt{"smartbkg\_dataset\_4k\_testing.parquet"}, using a batch size of 256.
+
+Table \ref{tab:train_validation_metrics} shows the validation loss and accuracy for every model presented in section \ref{sec:models}.
+\begin{table}[h]
+    \centering
+    \caption{Train and validation metrics for every model}
+    \label{tab:train_validation_metrics}
+    \begin{tabular}{l|cc|cc}
+    \hline
+    & \multicolumn{2}{c|}{Train} & \multicolumn{2}{c}{Validation} \\
+    \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
+    \hline
+    \texttt{deepset}& $0.629$&$64.0$&$0.633$&$63.6$\\
+    \texttt{deepset\_combined}&$0.480$&$77.2$&$0.478$&$77.5$\\
+    \texttt{deepset\_gcn}&$0.617$&$65.8$&$0.614$&$66.0$\\
+    \texttt{deepset\_combined\_gcn}&$0.463$&$78.2$&$0.467$&$78.0$\\
+    \texttt{transformer}&$0.446$&$79.2$&$0.443$&$79.4$\\
+    \texttt{deepset\_combined\_gcn\_normalized}& $0.460$&$78.0$&$0.468$&$77.7$ \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+Comparing the different models leads to the following conclusions: Incorporating  PDG IDs through learned embeddings improves performance by enriching the particle representation. Similarly, adding GCN layers to the DeepSet architecture enhances performance by capturing structural information from particle relationships. Combining both techniques, embeddings and GCNs, yields further improvement. 
+
+In contrast, normalizing the input features slightly reduces the performance
+of the \texttt{deepset\_combined\_gcn} model by $0.3\%$ in validation accuracy. 
+    
+Among the implemented models, the Transformer currently achieves the highest accuracy at $79.4\%$. 

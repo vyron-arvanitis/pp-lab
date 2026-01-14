@@ -1,0 +1,17 @@
+\section*{Appendix}
+
+\textbf{Note:} LLMs like DeepSeek and ChatGPT were used for spell check and debugging of the code. 
+They also assisted with creating docstrings. 
+
+\section{Code Listings}
+
+\subsection{Normalization function} \label{app:normalization}
+\begin{lstlisting}
+def normalize_inputs(inputs):
+    x = inputs["feat"]  # position, momentum, production time, energy
+    # x.shape = (batch_size, num_particles, num_features)
+    mean = x.mean(dim=(0,1), keepdim=True)
+    std = x.std(dim=(0,1), keepdim=True) + 1e-8  # avoid divide-by-zero
+    x_norm = (x - mean) / std
+    return {**inputs, "feat": x_norm}
+\end{lstlisting}

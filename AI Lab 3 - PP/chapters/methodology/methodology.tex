@@ -1,0 +1,468 @@
+\section{Methodology} \label{sec:methodology}
+To identify the optimal model architecture, each group member conducted 
+small-scale investigations targeting specific aspects of the model design. 
+These investigations included the following:
+
+\begin{itemize}
+    \item Does it help to increase the number of linear layers? Which sequence of GCN and Linear layers works best? (subsection \ref{sec:Varying_layers_in_the_deepset_model})
+    \item Could one make use of some (approximate) symmetries in the data? (subsection \ref{sec:Exploiting Rotational Symmetry})
+    \item Which activation function performs best? (subsection \ref{ssec:activations})
+    \item Do we need to transform the values for the particle features? (subsection \ref{sec:Normalize features})
+    \item Are there any redundant features in the dataset that could be removed? (subsection \ref{sec:Unnecessary Features})
+    \item Methods to combat overfitting (subsection \ref{ssec:overfitting})
+    \item Ideas for different model architectures (section \ref{sec:Transformer} and \ref{model:Transformer})
+    \item Is it possible to use a standard MLP as well? What is the effect of the masking in this case? (subsection \ref{sec:method_flatmlp})
+    \item Can we inspect the embedding layer for the PDG id? E.g. are similar particles embedded to similar vectors? (section \ref{sec:embedding_study})
+
+\end{itemize}
+
+
+\subsection{The Dataset}
+
+The dataset of the experiment consists of simulated particle collision events, with 
+each event containing multiple decay particles. These events contain a variable number of final state and intermediate particles. Hence, they can be structured as a graph, where each particle is a node and the edges represent the relationships between particles (e.g., parent-child relationships in decays). The graph can be seen in figure \ref{fig:graph_example}.
+
+\begin{figure}[H]
+ \centering
+    \includegraphics[width=0.75\textwidth]{chapters/methodology/particle_graph.png}
+    \caption{Example of a particle decay graph. The nodes represent particles, 
+    and the edges represent the decay relationships between them.}
+    \label{fig:graph_example}
+\end{figure}
+
+Each particle is described by a fixed number of features, which include:
+
+\begin{itemize}
+    \item \texttt{prodTime} — the production time of the particle,
+    \item \texttt{energy} — the energy of the particle,
+    \item \texttt{x}, \texttt{y}, \texttt{z} — the spatial coordinates of the particle at production,
+    \item \texttt{px}, \texttt{py}, \texttt{pz} — the momentum components of the particle,
+    \item \texttt{pdg} — the PDG identifier of the particle, indicating its type,
+    \item \texttt{index}, \texttt{mother\_index} — the particle’s index and the index of its mother particle (if any).
+    \item \texttt{label} — this indicates weather or not the particle has passed the downstream event selection or not, it takes binary values 0 or 1
+\end{itemize}
+
+Each event is represented as a tensor of shape \texttt{(num\_particles, num\_features)}. 
+Since the number of particles can vary between events, padding is applied to ensure consistent input dimensions across batches. These padded values are properly masked during training to prevent them from affecting the model.
+
+\subsection{Varying Layers in the DeepSet model} \label{sec:Varying_layers_in_the_deepset_model}
+
+The architecture was developed to explore the optimal number and arrangement of 
+GCN and linear layers. To support this flexibility, an additional script (deepset\_gcn\_variator.py) was introduced. This script allows dynamic model construction and naming based on the layer configuration. 
+
+The naming convention follows the pattern: 
+\begin{center}
+\texttt{DS\_\{TotalLayers\}\_GCN\_\{GCNIndices\}}.
+\end{center}
+For example, the model \texttt{DS\_6\_GCN\_135} consists of six layers (including input and output), with the 1st, 3rd, and 5th layers implemented as GCN layers. All other layers default to linear.
+
+This model introduces two additional configuration arguments:
+\begin{itemize}
+    \item \texttt{hidden\_layers}  (int): Number of hidden layers. The total number of layers is \texttt{hidden\_layers} + 3 (one input and two output layers)
+    \item \texttt{gcn\_layers} (list): A list of layer indices to be implemented as GCN layers. For example \texttt{gcn\_layers} = [2,4] replaces the 2nd and 4th layers with GCNs. 
+\end{itemize}
+
+Layer behaviour is defined as follows:
+\begin{itemize}
+\item If index 1 is included in \texttt{gcn\_layers}, the input layer is implemented as a GCN; otherwise, it is a linear layer. 
+\item Hidden layers not specified in \texttt{gcn\_layers} are standard linear layers. 
+\item After all hidden layers, aggregation is performed using masked mean pooling (or mean over $N$ if no mask is provided).
+\item  The final output module consists of two linear layers separated by a ReLU activation (i.e., a small MLP).
+\end{itemize}
+
+The complete architecture is summarized in table \ref{tab:deepset_gcn_variable_arc}, where $h$ is the number of hidden layers. $u$ is the number of hidden
+units and is always set to $u = 32$. $B$ denotes the batch size, $N$ the number of particles, and $f$ the number of features.
+
+\begin{table}[h]
+    \caption{Architecture of the variable DeepSet model with configurable GCN and Linear layers}
+    \label{tab:deepset_gcn_variable_arc}
+    \centering
+    \begin{tabular}{l|l|c|c}
+        \hline
+        Layer \# & Description & Output shape & Parameters \\
+        \hline 
+        1& Input layer (GCN or Linear with ReLU) & $[B,N,u]$ & $u \times f + u$ \\
+        2 - ($h$+1)& Hidden layers (GCN or Linear with ReLU)& $[B,N,u]$&$u \times u + u$ (per layer) \\
+        --& Masked mean pooling (or mean over $N$)& $[B,u]$& -- \\
+        $h$+2& Linear + ReLU (global MLP) & $[B,u]$ & $u \times u + u$ \\ 
+        $h$+3& Linear (output layer) & $[B,1]$ & $1 \times u + 1$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+After performing multiple calculations with this architecture (see folder saved\_models/Layers\_investigation), 
+the best model was \texttt{DS\_4\_GCN\_123}: 4 hidden layers, with GCNs at the input, 2nd and 3rd layer. 
+All models used in this study can be found in \texttt{saved\_models/Layers\_investigation}.
+
+\subsection{Exploiting Rotational Symmetry} \label{sec:Exploiting Rotational Symmetry}
+
+Ideally, the collision of the electrons occurs parallel to the walls of the detector. This setup allows one to introduce
+cylindrical coordinates and exploit rotational symmetry around the $z$ axis. In this coordinate system, the angular component can be neglected, and the transformation is defined as
+\begin{equation}
+    r = \sqrt{x^2 + y^2}, \quad \text{and} \quad p_{xy} = \sqrt{p_x^2 + p_y^2}.
+\end{equation}
+Here, $r$ denotes the radial position, and $p_{xy}$ is the transverse momentum in the $xy$ plane. This transformation reduces the feature vector by
+two dimensions, thereby lowering the risk of overfitting without discarding relevant information about the particle collision.
+
+The implementation requires an additional function, \texttt{transform\_to\_cylindrical}, located in \texttt{utils.py}. This function takes
+a DataFrame as input, which must contain at least the features \texttt{'x'}, \texttt{'y'}, \texttt{'px'}, and \texttt{'py'}. The output is a modified DataFrame in which the original
+features are replaced by \texttt{'r'}, and \texttt{'p\_xy'}. 
+
+To enable coordinate transformation, the function \texttt{preprocess} in \texttt{utils.py} takes an additional argument, 
+\texttt{"coordinates"}, which can be set to \texttt{"cylindrical"}. If this argument is not specified, the data is processed using the original Cartesian coordinates. 
+
+Theoretically, one would expect improved performance by reducing the number of parameters by compressing essential information into a 
+more compact format using cylindrical coordinates, while discarding unnecessary information by neglecting the angular coordinate. To test this hypothesis, the models \texttt{deepset}, \texttt{deepset\_gcn}, and \texttt{deepset\_combined} were trained using both Cartesian and cylindrical coordinate representations. 
+
+Training was conducted on all four row groups of the training set for 10 epochs, using a $75\%$/$2\%$ train-validation split, 
+a batch size of 256, early stopping with a patience of 5, and the Adam optimizer with a weight decay of 
+$10^{-4}$. The Cartesian coordinate representation included the features 
+\texttt{"prodTime"}, \texttt{"x"}, \texttt{"y"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"px"}, \texttt{"py"}, and \texttt{"pz"}, 
+while the cylindrical coordinates were reduced to \texttt{"prodTime"}, \texttt{"r"}, \texttt{"z"}, \texttt{"energy"}, \texttt{"p\_xy"}, and \texttt{"pz"}.
+
+\begin{table}[h]
+    \caption{Validation metrics for Cartesian vs. cylindrical coordinates}
+    \label{tab:coordinates_investigation}
+    \centering
+    \begin{tabular}{l|cc|cc}
+        \hline
+         & \multicolumn{2}{c|}{Cartesian} & \multicolumn{2}{c}{Cylindrical} \\
+        \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
+        \hline
+        \texttt{deepset}& $0.633$&$63.6$ & $0.624$&$64.5$ \\
+        \texttt{deepset\_gcn}&$0.614$&$66.0$&$0.610$&$66.3$ \\
+        \texttt{deepset\_combined}&$0.478$&$77.5$&$0.4727$ &$77.6$\\
+        \hline
+    \end{tabular}
+\end{table}
+
+Table \ref{tab:coordinates_investigation} presents the validation loss and accuracy for each model trained using both
+Cartesian and cylindrical coordinates. Training on cylindrical coordinates consistently leads to improved performance across all models.
+Specifically, the validation accuracy increases by $0.9\%$ for \texttt{deepset}, $0.3\%$ for \texttt{deepset\_gcn}, and $0.1\%$. 
+for \texttt{deepset\_combined}.
+
+\subsection{Activation functions}
+\label{ssec:activations}
+Activation functions introduce non-linearities into neural networks, enabling them to approximate complex functions beyond simple linear mappings. 
+
+\subsubsection*{Rectified Linear Unit (ReLU)}
+The ReLU is a piecewise linear activation function widely adopted for its simplicity and efficiency, given by
+\begin{equation}
+\text{ReLU}(x) = \max(0,x).
+\end{equation}
+It introduces sparsity by zeroing out negative values. Also, it is efficient to compute and generally accelerates convergence in deep networks. 
+
+\subsubsection*{Leaky ReLU}
+Leaky ReLU modifies the ReLU function by allowing a small, non-zero gradient in the negative domain:
+\begin{equation}
+\text{LeakyReLU}(x) = \begin{cases}
+x&\text{if}~x\geq 0, \\
+\alpha x &\text{otherwise,}
+\end{cases}
+\end{equation}
+with $\alpha \in (0,1)$, here set to $0.01$. 
+LeakyReLU prevents complete inactivity of neurons by allowing gradient flow for negative inputs. It is slightly more flexible than ReLU with minimal additional computational cost. 
+
+\subsubsection*{Exponential Linear Unit (ELU)}
+ELU is a smoother alternative to ReLU, designed to improve gradient flow and convergence, given by
+\begin{equation}
+\text{ELU}(x) = \begin{cases}
+x&\text{if}~x\geq 0, \\
+\alpha (\exp(x)-1) &\text{otherwise,}
+\end{cases}\end{equation}
+with $\alpha > 0$ (here set to 1).
+It produces negative outputs that push mean activations closer to zero, improving learning dynamics. The non-zero gradient for negative inputs enhances backpropagation compared to ReLU.
+
+\subsubsection*{Investigation results}
+\texttt{deepset}, \texttt{deepset\_combined}, and \texttt{deepset\_gcn} were trained using ReLU, Leaky ReLU and
+ELU to find a suitable activation function for the optimal model. The training procedure followed the same setup as described in subsection \ref{sec:Exploiting Rotational Symmetry}.  
+The results are presented in table \ref{tab:validation_metrics_activations}.
+\begin{table}[h]
+    \centering
+    \caption{Validation metrics for different activation functions}
+    \label{tab:validation_metrics_activations}
+    \begin{tabular}{l|cc|cc|cc}
+        \hline
+        & \multicolumn{2}{c|}{ReLU} & \multicolumn{2}{c|}{Leaky ReLU} & \multicolumn{2}{c}{ELU} \\
+        \textbf{Model} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} & \textbf{Loss} & \textbf{Acc. (\%)} \\
+        \hline
+        \texttt{deepset} & $0.633$&$63.6$& $0.628$ & $64.1$ & $0.639$ & $63.1$ \\
+        \texttt{deepset\_combined} &$0.478$&$77.5$& $0.478$ & $77.3$ & $0.487$ & $77.0$ \\
+        \texttt{deepset\_gcn} &$0.614$&$66.0$& $0.614$ & $66.1$ & $0.6312$ & $64.0 $\\
+        \hline
+    \end{tabular}
+\end{table}
+ELU consistently underperforms across all models. Leaky ReLU yields the best results for both \texttt{deepset} and \texttt{deepset\_gcn}, while 
+\texttt{deepset\_combined} achieves its highest performance with ReLU.
+
+
+
+\subsection{Transforming the feature values} \label{sec:Normalize features}
+
+For this investigation, we used our best model obtained after the first 
+lab day — that is \textbf{CombinedModel with GCN} model — and focused on normalizing
+the inputs. The implementation details can be found in Appendix~\ref{app:normalization}.
+
+Essentially, subtracting the mean and dividing by the standard deviation of each feature, 
+calculated across both the batch and particle dimensions. 
+
+\subsection{Unecessary Features} \label{sec:Unecessary Features}
+
+To investigate whether or not some features are unnecessary in our analysis,
+we used again the same model (\textbf{CombinedModel with GCN}) and evaluated it,
+subtracting features via physical arguments. We performed six tests. 
+
+First of all, we removed the momentum vector ($\vec{p}$). The argument for this was that 
+the energy and momenta of a particle are associated with the well-known relationship:
+\[
+E^2 = p^2 + m^2
+\]
+so, in principle, the model could reconstruct the momenta from the energy (or vice versa), assuming the mass is constant or implicitly learned.
+
+For the same reason mentioned above, we explored removing the energy of the particles.
+
+Afterwards, we removed the position vectors $x$, $y$, and $z$. 
+This started as a simple test, however the following argument was made: 
+in our problem, there exists a cylindrical symmetry — the $x$ and $y$ axes can be arbitrarily chosen (as the beams are considered to be colliding along the $z$ axis). Therefore, we considered removing only the $x$ and $y$ coordinates. 
+
+However, after consideration we came to the conclusion that this is 
+physically wrong because removing both $x$ and $y$ would eliminate any 
+information about the transverse plane. Therefore, we opted to remove only the 
+$x$ position coordinate, as a compromise to test sensitivity to symmetry 
+arguments.
+
+In the end, we removed the \texttt{prodTime} feature just for further 
+analysis, since its physical importance was unclear and we wanted to check 
+if it had any significant impact on performance.
+
+\begin{figure}[H]
+ \centering
+    \includegraphics[width=0.75\textwidth]{chapters/methodology/feature_importance_comparison.png}
+    \caption{Validation accuracy and loss for different experiments. 
+    The horizontal dashed lines indicate the best performance 
+    achieved with the baseline model. Note: the \textbf{reversed} 
+    model refers to the configuration where the GCN 
+    and DeepSet layers were swapped.}
+    \label{fig:Feature_importance}
+\end{figure}
+
+From figure \ref{fig:Feature_importance} it is evident that no significant 
+improvement in model performance was observed when removing features. In all 
+cases, the validation accuracy and loss remained close to the baseline values. The only 
+slight performance gain was observed when applying normalization to the input 
+features, confirming its importance as a preprocessing step.
+    
+
+\subsection{Overfitting and Mitigation Techniques}
+\label{ssec:overfitting}
+
+Overfitting occurs when a model learns not only the underlying patterns in the training data but also noise or statistical fluctuations that do not generalize to new, unseen data. This results in low training loss but poor performance on validation or test sets. In high-energy physics tasks, overfitting can severely undermine the model's ability to detect meaningful physical signatures, especially in the presence of detector noise and variable event topologies.
+
+To combat overfitting, we employed several regularization strategies that improve generalization:
+
+\subsubsection*{Early Stopping}
+Early stopping halts training when the validation loss stops improving, even if the training loss continues to decrease~\cite{goodfellow2016dlbook}. This prevents the model from over-optimizing on the training data, offering a simple yet effective guard against overfitting.
+
+\subsubsection*{Batch Normalization}
+Batch normalization normalizes the activations within each mini-batch to have zero mean and unit variance~\cite{ioffe2015batchnorm}. This reduces internal covariate shift and stabilizes learning, which allows for higher learning rates and often acts as an implicit regularizer, discouraging overfitting.
+
+\subsubsection*{Dropout}
+Dropout randomly sets a subset of neurons to zero during training~\cite{srivastava2014dropout}, forcing the network to develop redundant representations. This reduces co-adaptation of neurons and enhances robustness, as the model cannot rely on any single pathway to make predictions.
+
+\subsubsection*{Regularization (L1/L2)}
+Regularization adds a penalty term to the loss function based on the magnitude of the model's weights. L2 regularization (weight decay) discourages overly large weights by penalizing their squared magnitude. This constrains model complexity and promotes simpler, more generalizable solutions~\cite{goodfellow2016dlbook}.
+
+\subsubsection*{Increased Training Data}
+Expanding the training set—either through real data or augmentation—exposes the model to a broader range of examples, making it harder to memorize specific samples. More diverse data reduces variance and improves the model's ability to generalize. In physics applications, techniques such as event reweighting or simulation-based augmentation can help increase effective training diversity.
+
+Collectively, these methods reduce model variance and promote generalization, which is essential for ensuring reliable performance on physical inference tasks.
+
+\subsubsection*{Hyperparameter Optimization}
+Hyperparameter optimization involves empirically testing different configurations that influence the learning behavior of a neural network. Key hyperparameters include the number of layers, neurons per layer, activation function, dropout rate, L2-regularization parameter ($\lambda$), and learning rate.
+
+For this task, we employed the Optuna library~\cite{akiba2019optuna}, which uses the Tree-structured Parzen Estimator (TPE)—a Bayesian optimization algorithm. Unlike random search, TPE models the relationship between hyperparameters and the objective function (in our case, validation loss), and strategically explores regions of the hyperparameter space that are more likely to yield better results.
+
+Search intervals were selected based on common literature values. After multiple trials, the following configuration produced the best performance:
+
+\begin{itemize}
+\item Dropout rate: $0.179$
+\item Embedding dimension: $25$
+\item Weight decay: $2.18 \times 10^{-5}$
+\end{itemize}
+
+This optimization process helped fine-tune the model's capacity and regularization, ultimately improving generalization and performance on the validation set.
+
+
+\subsection{MLP and Masking} \label{sec:method_flatmlp}
+
+As a minimal baseline, we consider a fully‐connected “flat” MLP that ignores any set or graph structure and treats each event as a fixed‐length vector.
+
+\subsubsection*{Input and model architecture}
+Key steps in preparing the input and model are:
+
+\begin{itemize}
+  
+  \item \textbf{Padding.}  Because events contain a variable number of particles, we choose a global cap \(N_{\max}\) (e.g.\ 128) and \emph{Pad} events with fewer than \(N_{\max}\) particles by appending zero‐rows.
+
+  \item \textbf{Mask creation.}  During batching we record a Boolean mask of shape \((B,N_{\max})\) indicating which rows are padded, so the network can later ignore them.
+  \item \textbf{Flattening.}  The padded feature tensor \(\mathbb{R}^{B\times N_{\max}\times F}\) is reshaped into \(\mathbb{R}^{B\times(N_{\max}F)}\).  Optionally, the binary mask vector of length \(N_{\max}\) is concatenated, yielding an input dimension of \(N_{\max}F+N_{\max}\).
+\end{itemize}
+
+The MLP itself consists of a sequence of fully‐connected layers (128 → 64 → 32) with ReLU as activations, terminating in a single linear output per event.  
+
+
+
+\subsubsection*{Masking}
+To assess the effect of padding‐aware inputs, we compare two variants of this MLP:
+\begin{itemize}
+  \item \textbf{Masking On:} the binary mask is appended so the model can distinguish real entries from padding.
+  \item \textbf{Masking Off:} no mask is provided and zeros from padding are treated as genuine features.
+\end{itemize}
+
+We trained the model for both cases on 1000 events for 10 epochs, observing the following: 
+
+
+\begin{itemize}
+  \item \textbf{Rapid over-fitting.} For the non-masked model, the training loss steadily decreases while validation loss bottoms out 
+  around epoch 5 and then drifts upward. The corresponding accuracy curves diverge, signaling that the model memorizes training events.
+  This is because padding signal doesn’t generalise well to unseen events, as the network “cheats” on the train set but fails on validation
+  
+  
+  \item \textbf{Masking reduces over‐fit.} When the padding mask is included, the gap between training and validation accuracy shrinks noticeably. By explicitly telling the MLP which inputs are padding, the network can devote its capacity to learning true physics correlations ignoring empty slots, leading to better generalization.
+  
+  \item \textbf{Modest performance.} Even with normalization, dropout or adding PDG ids features, accuracy plateaus around $60-65\%$, far below our best models.
+\end{itemize}
+
+Given these results, we decided to exclude the MLP from further testing and optimization and focused on architectures that better exploit the symmetries and relational structure of particle-set data.
+
+
+\subsection{PDG Embedding Layer Inspection} \label{sec:embedding_study}
+
+To verify that our network learns meaningful representations of particle types, we extracted the learned embedding matrix for PDG identifiers and performed a series of analyses:
+
+\begin{enumerate}
+  \item \textbf{Embedding extraction.} We considered the trained configuration for our optimal model (\texttt{optimal\_model\_cylindrical} described in the next section) and read out the weight tensor of the embedding layer.
+
+
+\item \textbf{Cosine‐similarity matrix.}
+  Restricting to the “real” PDG entries (excluding the padding token),
+  we normalized each embedding to unit length and computed the
+  full pairwise cosine matrix \(S\). Both the full–matrix and off‐diagonal statistics are recorded.
+ 
+
+  \item \textbf{Antiparticle similarity.}  For each of \(\pi^\pm\), \(K^\pm\), \(\mu^\pm\), and \(p/\bar p\), we directly read the cosine similarity between each particle and its antiparticle from \(S\). All numerical results are summarized in Table \ref{tab:pdg_embedding_stats}.
+
+    
+  \item \textbf{Nearest neighbours.}  We also computed each species’ top‐1 nearest neighbour in embedding space (by cosine similarity) to confirm that, for example, \(\pi^+\) is closest to \(\pi^-\), muons to antimuons, etc.
+  \item \textbf{Visualization.} We produced a 2D t‐SNE projection of the embeddings (Figure~\ref{fig:pdg_tsne}), highlighting six common species (\(\mu^-, \gamma, \pi^0, \pi^+, K^+, p\)).  Finally, we plotted a histogram of the off‐diagonal cosine similarities (Figure~\ref{fig:pdg_hist}) to show the broad distribution from \(-1\) to \(+1\).
+\end{enumerate}
+
+
+Overall, these results demonstrate that the learned PDG embedding space meaningfully reflects particle‐type similarities: antiparticles and isospin partners achieve high cosine similarity, while unrelated species remain nearly orthogonal.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{chapters/methodology/pdg_embeddings_tsne.png}
+  \caption{t‐SNE projection of the PDG embeddings. Six common species are highlighted to illustrate that particles and their antiparticles (e.g.\ \(\pi^\pm\), \(p/\bar p\)), here plotted with the same colour, are close to each other.}
+  \label{fig:pdg_tsne}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{chapters/methodology/pdg_embedding_hist.png}
+  \caption{Histogram of off‐diagonal cosine similarities among PDG embeddings.  Most pairs are near orthogonal (peak near 0), with tails extending toward \(\pm1\) for strongly related or strongly opposed species.}
+  \label{fig:pdg_hist}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Summary of cosine‐similarity statistics for PDG embeddings.}
+  \label{tab:pdg_embedding_stats}
+  \begin{tabular}{lrr}
+    \toprule
+    Quantity & Mean & Std.\ Dev.\ \\ 
+    \midrule
+    All entries of \(S\)            & 0.1045 & 0.4000 \\
+    Off‐diagonal entries of \(S\)   & 0.0997 & 0.3956 \\
+    \(\pi^\pm\) similarity         & 0.9171 & ---    \\
+    \(p/\bar p\) similarity        & 0.8730 & ---    \\
+    Average antiparticle similarity & 0.7558 & ---    \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\subsection{Speedup}  \label{sec:Speedup}
+
+To evaluate the efficiency of using a NN as a filter before detector simulation, we define the speedup as the ratio of time needed to process events \emph{without} and \emph{with} the NN, for the same number of positively selected (skimmed) events.
+
+Let:
+\begin{itemize}
+    \item \( t_g \): time for event generation
+    \item \( t_s \): time for detector simulation and reconstruction
+    \item \( r = 0.05 \): fraction of events passing the original skim (without NN)
+    \item \( f_1 \): true positive rate (TPR)
+    \item \( f_0 \): false positive rate (FPR)
+    \item \( X \): number of events generated
+\end{itemize}
+
+Further, we define:
+\begin{align*}
+    X_i &= r \cdot X \quad \text{(number of events passing skim)} \\
+    X_i &= f_1 \cdot X' \quad \text{(true positives from NN)} \\
+    \Rightarrow X' &= \frac{r}{f_1} \cdot X \quad \text{(number of events to be generated with NN)} \\
+    P &= f_1 \cdot X' + f_0 \cdot (1 - r) \cdot X \quad \text{(events passing NN)} \\
+\end{align*}
+
+The speedup is the ratio of total time without and with NN:
+\[
+\text{Speedup} = \frac{X \cdot (t_g + t_s)}{X' \cdot t_g + P \cdot t_s}
+\]
+
+Substituting \( X' \) and \( P \) into the equation:
+\[
+\text{Speedup} = \frac{f_1 \cdot (t_g + t_s)}{t_g + t_s \cdot \left( f_1 + f_0 \cdot \frac{1 - r}{r} \right)}
+\]
+
+Finally, assuming \( t_s = 100 \cdot t_g \), we simplify to:
+\[
+\text{Speedup} = \frac{101 \cdot f_1}{1 + 100 \cdot \left( f_1 + f_0 \cdot \left( \frac{1 - r}{r} \right) \right)}
+\]
+
+\subsection{ROC Curve and AUC Evaluation}
+
+To evaluate the performance of each model, we use the Receiver Operating 
+Characteristic (ROC) curve, a widely adopted metric for binary 
+classification tasks. The ROC curve plots the \textbf{True Positive Rate (TPR)} 
+against the \textbf{False Positive Rate (FPR)}.
+
+\paragraph{Definitions}
+\begin{itemize}
+    \item \textbf{True Positive Rate (TPR):} It measures the proportion of actual positives that are correctly identified: 
+    \[
+    \text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+    \]
+    \item \textbf{False Positive Rate (FPR):} It measures the proportion of actual negatives that are incorrectly identified as positives:
+    \[
+    \text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+    \]
+\end{itemize}
+
+
+The ideal model achieves a high TPR while maintaining a low FPR. 
+The performance of a model can be quantified using the 
+\textbf{Area Under the Curve (AUC)}. 
+A higher AUC indicates better separability between the two classes.
+
+\paragraph{Interpretation}
+\begin{itemize}
+    \item AUC = 1.0: Perfect classifier.
+    \item AUC = 0.5: Random guessing.
+    \item AUC < 0.5: Model performs worse than random (potentially inverted labels).
+\end{itemize}
+
+
+
+
+
+

@@ -1,0 +1,101 @@
+\section{Theory}
+\subsection{Deep Sets} \label{sec:DeepSet}
+In many physical systems, such as collections of particles or events in high-energy physics, the data can be naturally represented as unordered sets. Traditional neural networks, however, are not inherently permutation-invariant. This means that they assume an order in their input. To address this, Deep Sets provide a principled way to process such set-structured data while maintaining invariance to the order of elements. Figure \ref{fig:deepset} visualizes the structure of a Deep Set model. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{chapters/theory/deep_set.png}
+    \caption{Schematic illustration of a Deep Set model.}
+    \label{fig:deepset}
+\end{figure}
+
+A Deep Set model operates by applying a shared function $\phi$ independently to each element in the set. This produces a new set of embeddings, which are then aggregated using a permutation-invariant operation such as sum, mean, or max. The aggregated result is passed through a second function $\rho$, typically implemented as a multilayer perceptron (MLP), to produce the final output:
+
+\begin{equation}
+    f(X) = \rho\left( \sum_{x \in X} \phi(x) \right)
+\end{equation}
+
+This structure ensures that the model respects the symmetry of sets. The theoretical foundation of Deep Sets is discussed in \cite{zaheer2017deep}, where it is shown that any function on a set that is invariant to permutations can be decomposed in this form.
+
+In our project, we use this architecture to model collections of particles, where the order of particles is physically irrelevant. The Deep Set model thus provides a natural and efficient baseline for learning from such data.
+
+\subsection{Graph Convolutional Neural  Networks} \label{sec:GCN}
+In contrast to Deep Set models, which treat the input as an unordered collection, Graph Neural Networks (GNNs) explicitly leverage relational information between data points. This is particularly important in our context, where particles are connected through a decay tree structure that naturally forms a graph. Each node in the graph represents a particle, and edges represent physical relationships (e.g., parent-child connections in the decay chain).
+
+In terms of Deep Sets, graph convolutions can be seen as permutation equivariant operations. As long as the aggregation function (e.g., sum, mean, or max) is symmetric, the update remains invariant to the ordering of neighbors.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{chapters/theory/cnn_vs_gcn.jpg}
+	\caption{Analogy between CNNs and GCNs. In CNNs, pixels are updated based on spatial neighborhoods; 
+    in GCNs, nodes are updated based on graph neighborhoods \cite{zhihu-figure-qc}.}
+	\label{fig:gcn}
+\end{figure}
+
+Figure \ref{fig:gcn} illustrates the analogy between Convolutional Neural Networks (CNNs) and Graph Convolutional Networks (GCNs). In CNNs, pixels are updated based on their spatial neighborhoods, while in GCNs, nodes are updated based on their graph neighborhoods. This allows GNNs to capture complex relationships and dependencies in the data, making them particularly suitable for tasks involving structured data like particle decays.
+
+
+\subsection{Multi Layer Perceptron}\label{sec:theory_mlp}
+A Multi‐Layer Perceptron (MLP) is the canonical feed‐forward neural network: a sequence of fully‐connected layers interleaved with nonlinear activation functions.  Each layer computes
+\[
+h^{(\ell)} = \phi\bigl(W^{(\ell)} h^{(\ell-1)} + b^{(\ell)}\bigr),
+\]
+where \(W^{(\ell)},b^{(\ell)}\) are the layer’s learnable weights and biases, and \(\phi\) is a pointwise nonlinearity such as ReLU. Figure \ref{fig:mlp} shows the structure of a vanilla MLP.
+
+MLPs are universal function approximators: by stacking several layers one can approximate arbitrarily complex mappings from its fixed‐length input vector to the desired output.
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{chapters/theory/mlp_1.png}
+	\caption{Schematic illustration of a Multi‐Layer Perceptron \cite{turing}.}
+	\label{fig:mlp}
+\end{figure}
+
+Because an MLP operates on a flat vector of features, it requires a predetermined input size and implicitly assumes an ordering of those inputs.  In tasks where the data are naturally sets or graphs (e.g.\ collections of particles), this fixed‐order assumption provides no direct mechanism to enforce permutation invariance or to leverage relational structure, as opposed to Deep Sets or GCN. 
+
+
+\subsection{Transformer} \label{sec:Transformer}
+
+The Transformer architecture was introduced by Vaswani 
+\cite{DBLP:journals/corr/VaswaniSPUJGKP17}.
+The key ingredient in the success of the Transformer is the \emph{self-attention} mechanism, 
+which enables the model to 
+capture long-range dependencies between elements of the input. 
+
+The encoder takes the input sequence (in our case, the set of particles 
+in an event),  
+maps  tokens such as PDG identifiers to dense embedding vectors,  
+adds positional encodings, and processes them through multiple layers 
+of multi-head self-attention and feedforward sublayers. 
+Each encoder layer contains connections and layer normalization,  
+allowing information to propagate effectively through the network.
+In our architecture, only the encoder component of the Transformer is used,  
+as our task is classification rather than sequence generation.
+
+
+The outputs of the decoder are generated by attending both 
+to the encoder outputs and to its own previously generated tokens.  
+It introduces a \emph{masked} self-attention mechanism to prevent the model 
+from attending to future positions in the output sequence.  
+Since our problem does not involve generating sequences, 
+the decoder component is omitted in our implementation.  
+
+
+The attention mechanism computes a weighted sum of vectors,  
+where the weights are determined by the similarity between a 
+query vector and a set of key vectors.  
+In the multi-head self-attention setting, several independent attention “heads” 
+are computed in parallel, allowing the model to focus on different types 
+of relationships simultaneously.  
+Self-attention enables each particle to directly incorporate information from 
+all others in the event.
+The aforementioned property makes the transformer architecture highly suitable for
+particle physics tasks.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{chapters/theory/Transformer_architecture.png}
+    \caption{Transformer-model architecture \cite{DBLP:journals/corr/VaswaniSPUJGKP17}}
+    \label{fig:Transformer_architecture}
+\end{figure}

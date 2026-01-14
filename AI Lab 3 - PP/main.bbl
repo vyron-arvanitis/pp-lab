@@ -1,0 +1,78 @@
+\begin{thebibliography}{10}
+
+\bibitem{akiba2019optuna}
+Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama.
+\newblock Optuna: A next-generation hyperparameter optimization framework.
+\newblock In {\em Proceedings of the 25th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, 2019.
+
+\bibitem{belle2-image}
+Belle~II Collaboration.
+\newblock Belle ii detector overview.
+\newblock
+  \url{https://software.belle2.org/development/sphinx/_images/detector_labeled.jpg},
+  2023.
+\newblock Accessed: 2025-07-12.
+
+\bibitem{belle2-Y-resonances}
+Belle~II Collaboration.
+\newblock Belle ii detector overview.
+\newblock
+  \url{https://software.belle2.org/development/sphinx/_images/Uresonances.svg},
+  2023.
+\newblock Accessed: 2025-07-12.
+
+\bibitem{goodfellow2016dlbook}
+Ian Goodfellow, Yoshua Bengio, and Aaron Courville.
+\newblock {\em Deep Learning}.
+\newblock MIT Press, 2016.
+
+\bibitem{ioffe2015batchnorm}
+Sergey Ioffe and Christian Szegedy.
+\newblock Batch normalization: Accelerating deep network training by reducing
+  internal covariate shift.
+\newblock {\em International Conference on Machine Learning}, 2015.
+
+\bibitem{ai-lab-repo}
+Nikolai Krug.
+\newblock Preparation materials for particle physics lab group a.
+\newblock
+  \url{https://gitlab.physik.uni-muenchen.de/ai-lab/ss25/pp-lab-group-a/-/blob/main/preparation.md},
+  2025.
+\newblock Accessed: July 8, 2025.
+
+\bibitem{srivastava2014dropout}
+Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan
+  Salakhutdinov.
+\newblock Dropout: A simple way to prevent neural networks from overfitting.
+\newblock {\em Journal of Machine Learning Research}, 15(1):1929--1958, 2014.
+
+\bibitem{turing}
+turing.com.
+\newblock Figure from: Detailed explanation of deep neural network, multilayer
+  perceptron, and deep q-network.
+\newblock
+  \url{https://www.turing.com/kb/explanation-of-deep-neural-network-multilayer-perceptron-deep-q-network},
+  2022.
+\newblock Accessed: 2025-07-25.
+
+\bibitem{zhihu-figure-qc}
+Zhihu User.
+\newblock Figure from: Relationship and prospects of quantum neural networks
+  and quantum computing.
+\newblock \url{https://zhuanlan.zhihu.com/p/51990489}, 2019.
+\newblock Accessed: 2025-08-04.
+
+\bibitem{DBLP:journals/corr/VaswaniSPUJGKP17}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, Lukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock {\em CoRR}, abs/1706.03762, 2017.
+
+\bibitem{zaheer2017deep}
+Manzil Zaheer, Satwik Kottur, Siamak Ravanbakhsh, Barnabas Poczos, Ruslan
+  Salakhutdinov, and Alexander Smola.
+\newblock Deep sets.
+\newblock {\em Advances in neural information processing systems}, 30, 2017.
+
+\end{thebibliography}
