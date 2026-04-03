@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pp-lab-group-a"
+version = "0.1.0"
+description = "Particle-physics lab models, training scripts, and analysis tools."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "awkward",
+  "matplotlib",
+  "numpy",
+  "optuna",
+  "pandas",
+  "scikit-learn",
+  "seaborn",
+  "torch",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+pp-train = "pp_lab.cli.train_workbook:main"
+pp-compare-models = "pp_lab.cli.compare_model_features:main"
+pp-embedding-study = "pp_lab.cli.embedding_study:main"
+pp-optuna-study = "pp_lab.cli.optuna_study:main"
+pp-variator = "pp_lab.cli.deepset_gcn_variator:main"
+pp-create-pdg-mapping = "pp_lab.cli.create_pdg_mapping:main"

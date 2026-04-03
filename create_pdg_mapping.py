@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+from __future__ import annotations
 
-import json
-import awkward as ak
-import numpy as np
+import sys
+from pathlib import Path
 
-filename = "smartbkg_dataset_4k.parquet"
-data = ak.from_parquet(filename)
-unique_pdg_ids = np.unique(ak.flatten(data.x.pdg).to_numpy())
-mapping = list(zip(unique_pdg_ids.tolist(), range(1, len(unique_pdg_ids) + 1)))
-with open("pdg_mapping.json", "w") as f:
-    json.dump(mapping, f)
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+
+from pp_lab.cli.create_pdg_mapping import main
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
